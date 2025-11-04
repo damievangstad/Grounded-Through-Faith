@@ -72,6 +72,7 @@
           </div>
         </div>
         <div class="hidden items-center gap-6 text-sm font-medium text-stone-600 md:flex">
+          <a href="mens-discipleship.html" class="transition hover:text-[var(--color-honey)]">Men's Discipleship</a>
           <a href="#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
           <a href="#resources" class="transition hover:text-[var(--color-honey)]">Resources</a>
         </div>
@@ -251,18 +252,19 @@
             </p>
             <h3 class="mt-3 text-2xl font-semibold text-stone-900">Men's Discipleship</h3>
             <p class="mt-4 text-sm text-stone-600">
-              Weekly reflections, accountability prompts, and virtuous habits designed to forge holy brotherhood in the midst of everyday life.
+              Walk with brothers through a 52-week Catholic formation path that forges virtuous leaders, husbands, and fathers grounded in Christ.
             </p>
             <ul class="mt-6 space-y-3 text-sm text-stone-700">
-              <li>✔️ 12-week journey through the Gospel of Mark</li>
-              <li>✔️ Conversation guides for small groups</li>
-              <li>✔️ Companion prayer journal</li>
+              <li>✔️ Weekly themes exploring identity, integrity, work, family, purity, and legacy</li>
+              <li>✔️ Every session offers context, Scripture, reflection, and prayer</li>
+              <li>✔️ Built for small groups, mentorship, or personal study</li>
             </ul>
-            <button
-              class="mt-8 w-full rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]"
+            <a
+              href="mens-discipleship.html"
+              class="mt-8 flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]"
             >
-              Download Starter Guide
-            </button>
+              Explore the 52-week plan
+            </a>
           </article>
         </div>
       </section>
@@ -513,6 +515,7 @@
           const feedback = document.getElementById('devotional-feedback');
           const results = document.getElementById('devotional-results');
           const submitButton = form.querySelector('button[type="submit"]');
+          let currentPlan = null;
 
           if (!feedback || !results) {
             console.warn('Custom devotional UI elements are missing.');
@@ -918,6 +921,7 @@
             const safeVirtue = escapeHtml(plan.analysis.virtue || 'renewed hope');
             const safeCompanion = escapeHtml(plan.analysis.companion || 'a saintly friend');
             const safeEncouragement = escapeHtml(plan.analysis.encouragement || 'Invite the Holy Spirit to guide each step.');
+            currentPlan = plan;
 
             const daysHtml = plan.days
               .map((day) => {
@@ -943,11 +947,32 @@
 
             results.innerHTML = `
               <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-lg">
-                <h3 class="text-lg font-semibold text-stone-900">Your intention</h3>
-                <p class="mt-2 text-sm text-stone-600">Focus: <span class="font-semibold text-stone-900">${safeFocus}</span></p>
-                <p class="mt-2 text-sm text-stone-600">Virtue emphasis: <span class="font-semibold text-stone-900">${safeVirtue}</span></p>
-                <p class="mt-2 text-sm text-stone-600">Spiritual companion: <span class="font-semibold text-stone-900">${safeCompanion}</span></p>
-                <p class="mt-4 text-sm text-stone-600">${safeEncouragement}</p>
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-stone-900">Your intention</h3>
+                    <p class="mt-2 text-sm text-stone-600">Focus: <span class="font-semibold text-stone-900">${safeFocus}</span></p>
+                    <p class="mt-2 text-sm text-stone-600">Virtue emphasis: <span class="font-semibold text-stone-900">${safeVirtue}</span></p>
+                    <p class="mt-2 text-sm text-stone-600">Spiritual companion: <span class="font-semibold text-stone-900">${safeCompanion}</span></p>
+                    <p class="mt-4 text-sm text-stone-600">${safeEncouragement}</p>
+                  </div>
+                  <div class="flex flex-wrap gap-3">
+                    <button
+                      id="print-devotional"
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
+                    >
+                      Print devotional
+                    </button>
+                    <button
+                      id="email-devotional"
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-5 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]"
+                    >
+                      Email to myself
+                    </button>
+                  </div>
+                </div>
+                <p class="mt-4 text-xs text-stone-500">Download a printable copy or launch your email app so you can carry this seven-day journey wherever the Lord leads.</p>
               </div>
               <div class="grid gap-6 lg:grid-cols-2">
                 ${daysHtml}
@@ -955,6 +980,17 @@
             `;
 
             results.classList.remove('hidden');
+
+            const printButton = document.getElementById('print-devotional');
+            const emailButton = document.getElementById('email-devotional');
+
+            if (printButton) {
+              printButton.addEventListener('click', () => openPrintView(plan));
+            }
+
+            if (emailButton) {
+              emailButton.addEventListener('click', () => sharePlanByEmail(plan));
+            }
           }
 
           function analyzeFocus(text) {
@@ -993,6 +1029,182 @@
               .replace(/>/g, '&gt;')
               .replace(/"/g, '&quot;')
               .replace(/'/g, '&#39;');
+          }
+
+          function sanitizePlainText(value) {
+            return String(value || '')
+              .replace(/[<>]/g, '')
+              .replace(/\r/g, '')
+              .trim();
+          }
+
+          function truncateText(value, maxLength) {
+            const text = String(value || '').trim();
+            if (text.length <= maxLength) {
+              return text;
+            }
+            return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
+          }
+
+          function planToPlainText(plan) {
+            if (!plan) return '';
+
+            const lines = [];
+            lines.push('Grounded Through Faith - 7-Day Devotional');
+            lines.push(`Focus: ${sanitizePlainText(plan.focus)}`);
+            lines.push(`Virtue emphasis: ${sanitizePlainText(plan.analysis.virtue || 'renewed hope')}`);
+            lines.push(`Spiritual companion: ${sanitizePlainText(plan.analysis.companion || 'a saintly friend')}`);
+            lines.push('');
+
+            plan.days.forEach((day, index) => {
+              lines.push(`${sanitizePlainText(day.title || `Day ${index + 1}`)}`);
+              lines.push(`  Scripture: ${sanitizePlainText(day.scripture)} — ${sanitizePlainText(day.scriptureNote)}`);
+              lines.push(`  Reflection: ${sanitizePlainText(day.reflection)}`);
+              lines.push(`  Practice: ${sanitizePlainText(day.practice)}`);
+              lines.push(`  Prayer: ${sanitizePlainText(day.prayer)}`);
+              lines.push('');
+            });
+
+            lines.push('May the Holy Spirit guide your week in Christ.');
+
+            return lines.join('\n');
+          }
+
+          function createPrintableHtml(plan) {
+            if (!plan) return '';
+
+            const safeFocus = escapeHtml(plan.focus);
+            const safeVirtue = escapeHtml(plan.analysis.virtue || 'renewed hope');
+            const safeCompanion = escapeHtml(plan.analysis.companion || 'a saintly friend');
+            const safeEncouragement = escapeHtml(plan.analysis.encouragement || 'Invite the Holy Spirit to guide each step.');
+
+            const daySections = plan.days
+              .map((day, index) => {
+                const safeTitle = escapeHtml(day.title || `Day ${index + 1}`);
+                const safeScripture = escapeHtml(day.scripture);
+                const safeScriptureNote = escapeHtml(day.scriptureNote);
+                const safeReflection = escapeHtml(day.reflection);
+                const safePractice = escapeHtml(day.practice);
+                const safePrayer = escapeHtml(day.prayer);
+
+                return `
+                  <section class="day">
+                    <h2>${safeTitle}</h2>
+                    <p><strong>Scripture:</strong> ${safeScripture}</p>
+                    <p class="note">${safeScriptureNote}</p>
+                    <p><strong>Reflection:</strong> ${safeReflection}</p>
+                    <p><strong>Practice:</strong> ${safePractice}</p>
+                    <p><strong>Prayer:</strong> ${safePrayer}</p>
+                  </section>
+                `;
+              })
+              .join('');
+
+            return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Printable Devotional</title>
+    <style>
+      body {
+        font-family: 'Montserrat', system-ui, sans-serif;
+        background: #f8f1e2;
+        color: #2d1f13;
+        margin: 0;
+        padding: 32px;
+        line-height: 1.6;
+      }
+      header {
+        border-bottom: 2px solid #c9a03a;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 26px;
+      }
+      h2 {
+        font-size: 20px;
+        margin-top: 0;
+        color: #8a6426;
+      }
+      .summary {
+        margin: 0 0 12px;
+      }
+      .day {
+        border: 1px solid rgba(138, 100, 38, 0.25);
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        background: rgba(255, 255, 255, 0.8);
+      }
+      .note {
+        font-style: italic;
+        color: #5f4d30;
+      }
+      footer {
+        margin-top: 24px;
+        font-size: 12px;
+        color: #5f4d30;
+        text-align: center;
+      }
+      @media print {
+        body {
+          padding: 12px;
+        }
+        .day {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Grounded Through Faith • 7-Day Devotional</h1>
+      <p class="summary"><strong>Focus:</strong> ${safeFocus}</p>
+      <p class="summary"><strong>Virtue emphasis:</strong> ${safeVirtue}</p>
+      <p class="summary"><strong>Spiritual companion:</strong> ${safeCompanion}</p>
+      <p class="summary">${safeEncouragement}</p>
+    </header>
+    ${daySections}
+    <footer>Carry this guide with you in prayer. Visit groundedthroughfaith.org for more resources.</footer>
+  </body>
+</html>`;
+          }
+
+          function openPrintView(planOverride) {
+            const plan = planOverride || currentPlan;
+            if (!plan) {
+              alert('Generate a devotional before printing.');
+              return;
+            }
+
+            const printable = createPrintableHtml(plan);
+            const printWindow = window.open('', '_blank', 'noopener');
+            if (!printWindow) {
+              alert('Please allow pop-ups so we can open a printable devotional.');
+              return;
+            }
+
+            printWindow.document.open();
+            printWindow.document.write(printable);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+          }
+
+          function sharePlanByEmail(planOverride) {
+            const plan = planOverride || currentPlan;
+            if (!plan) {
+              alert('Generate a devotional before emailing it.');
+              return;
+            }
+
+            const subjectFocus = truncateText(sanitizePlainText(plan.focus || 'my devotional'), 60);
+            const subject = encodeURIComponent(`7-Day Devotional: ${subjectFocus}`);
+            const body = encodeURIComponent(planToPlainText(plan));
+
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
           }
         })();
 
