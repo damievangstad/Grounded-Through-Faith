@@ -152,6 +152,83 @@
     </header>
 
     <main class="relative z-10 space-y-28 pb-32">
+      <section id="custom-devotional" class="mx-auto max-w-6xl px-6">
+        <div class="relative overflow-hidden rounded-3xl border border-white/60 bg-white/90 p-8 shadow-2xl shadow-[var(--color-mist)]/70">
+          <div
+            class="pointer-events-none absolute -right-24 top-10 hidden h-56 w-56 rounded-full bg-[var(--color-cerulean)]/20 blur-3xl md:block"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="pointer-events-none absolute -left-20 bottom-10 hidden h-56 w-56 rounded-full bg-[var(--color-honey)]/20 blur-3xl md:block"
+            aria-hidden="true"
+          ></div>
+          <div class="relative grid gap-10 lg:grid-cols-[1.15fr_1fr]">
+            <div class="space-y-6">
+              <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)]/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">
+                New Spiritual Companion
+              </span>
+              <h2 class="section-title text-3xl font-semibold text-slate-900 md:text-4xl">
+                Craft a custom 7-day devotional in seconds
+              </h2>
+              <p class="text-sm leading-relaxed text-slate-600">
+                Share a focus, longing, or intention and our on-page guide will prayerfully assemble a week of Scripture, reflection prompts, and spiritual practices to help you stay rooted. Every plan honors Catholic teaching while giving you room to listen to the Holy Spirit.
+              </p>
+              <form id="devotional-form" class="space-y-4 rounded-3xl bg-white/80 p-6 shadow-inner shadow-[var(--color-mist)]/50">
+                <div class="space-y-2">
+                  <label for="devotional-focus" class="text-sm font-semibold text-slate-700">Share your focus or intention</label>
+                  <textarea
+                    id="devotional-focus"
+                    name="devotional-focus"
+                    class="h-28 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30"
+                    placeholder="Example: Help my family pray together each evening or Grow in trust during a stressful season"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-sky-500"
+                >
+                  Generate my devotional
+                </button>
+                <p id="devotional-feedback" class="hidden text-sm text-slate-600" aria-live="polite"></p>
+              </form>
+            </div>
+            <div class="space-y-6">
+              <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/80 p-6 text-sm text-slate-600 shadow-lg">
+                <h3 class="text-lg font-semibold text-slate-900">How the custom agent helps you</h3>
+                <ul class="mt-4 space-y-3">
+                  <li class="flex gap-3">
+                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-cerulean)]/10 text-[var(--color-cerulean)]">1</span>
+                    <div>
+                      <p class="font-semibold text-slate-800">Listens to your prompt</p>
+                      <p>We gather keywords from your focus to highlight a virtue, saintly companion, and encouragement for the week.</p>
+                    </div>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-cerulean)]/10 text-[var(--color-cerulean)]">2</span>
+                    <div>
+                      <p class="font-semibold text-slate-800">Builds a seven-day rhythm</p>
+                      <p>Each day blends Scripture, a guided reflection, a concrete spiritual practice, and a short prayer to keep you moving.</p>
+                    </div>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-cerulean)]/10 text-[var(--color-cerulean)]">3</span>
+                    <div>
+                      <p class="font-semibold text-slate-800">Offers gentle accountability</p>
+                      <p>Save or print the plan, revisit it anytime, and refresh the prompt when the Lord invites you into something new.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/30 p-6 text-sm text-slate-600">
+                <p class="font-semibold text-slate-800">Tip for group leaders</p>
+                <p class="mt-2">Ask everyone in your circle to enter the same intention and compare how the prompts inspire different concrete actions. It is a beautiful way to discern together.</p>
+              </div>
+            </div>
+          </div>
+          <div id="devotional-results" class="relative mt-10 hidden space-y-8" aria-live="polite"></div>
+        </div>
+      </section>
       <section id="study-plans" class="mx-auto max-w-6xl px-6">
         <div class="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -560,6 +637,458 @@
           </div>
         </div>
       </div>
+      <script>
+        (function () {
+          const form = document.getElementById('devotional-form');
+          if (!form) return;
+
+          const focusInput = document.getElementById('devotional-focus');
+          const feedback = document.getElementById('devotional-feedback');
+          const results = document.getElementById('devotional-results');
+          const submitButton = form.querySelector('button[type="submit"]');
+
+          const focusThemes = [
+            {
+              pattern: /(family|marriage|spouse|parent|mother|father|children|home|household)/i,
+              virtue: 'steadfast unity',
+              companion: 'St. Joseph and the Holy Family',
+              encouragement: 'Invite the Holy Family to guard your household each night.',
+              invitation: 'nurture your family life',
+            },
+            {
+              pattern: /(anx|worry|fear|peace|calm|rest|stress|trust)/i,
+              virtue: 'trust-filled peace',
+              companion: 'St. Thérèse of Lisieux',
+              encouragement: "Practice the little way by surrendering each concern with a simple 'Jesus, I trust in You.'",
+              invitation: "rest in the Father's care",
+            },
+            {
+              pattern: /(discern|vocation|work|career|mission|ministry|serve|service|lead)/i,
+              virtue: 'courageous obedience',
+              companion: 'St. John Paul II',
+              encouragement: 'Ask the Holy Spirit to inflame your gifts for the sake of the Gospel.',
+              invitation: 'step boldly into your call',
+            },
+            {
+              pattern: /(healing|grief|sorrow|loss|hurt|mercy|forgive|forgiveness|reconcile)/i,
+              virtue: 'compassionate mercy',
+              companion: 'St. Faustina Kowalska',
+              encouragement: 'Picture the Divine Mercy chaplet embracing the situation that needs healing.',
+              invitation: "welcome Christ's healing",
+            },
+            {
+              pattern: /(youth|teen|student|study|school|learning|children's ministry|kids)/i,
+              virtue: 'joyful discipleship',
+              companion: 'Blessed Carlo Acutis',
+              encouragement: 'Offer technology and creativity to the Lord so young hearts encounter Jesus.',
+              invitation: 'ignite young disciples',
+            },
+          ];
+
+          const scriptureLibrary = {
+            prepare: [
+              {
+                ref: 'Psalm 37:3-5',
+                note: 'Entrust your desires to the Lord who acts on your behalf.',
+              },
+              {
+                ref: 'Proverbs 16:3',
+                note: 'Commit your work to the Lord and your plans will be established.',
+              },
+              {
+                ref: 'Isaiah 43:19',
+                note: 'God is doing something new even in the wilderness.',
+              },
+            ],
+            scripture: [
+              {
+                ref: 'Luke 8:15',
+                note: 'Hold fast to the Word with a generous heart and bear fruit with perseverance.',
+              },
+              {
+                ref: 'Colossians 3:16',
+                note: 'Let the word of Christ dwell in you richly as you teach and encourage one another.',
+              },
+              {
+                ref: 'Romans 12:2',
+                note: "Be transformed by the renewal of your mind to discern God's will.",
+              },
+            ],
+            trust: [
+              {
+                ref: 'Jeremiah 17:7-8',
+                note: 'Those who trust in the Lord are like trees planted by water.',
+              },
+              {
+                ref: 'Philippians 4:6-7',
+                note: 'In everything, by prayer and supplication, let your requests be made known.',
+              },
+              {
+                ref: 'Matthew 6:33-34',
+                note: 'Seek first the Kingdom and let tomorrow worry about itself.',
+              },
+            ],
+            mercy: [
+              {
+                ref: 'Ephesians 4:32',
+                note: 'Be kind, tenderhearted, forgiving one another as God forgave you.',
+              },
+              {
+                ref: 'Psalm 147:3',
+                note: 'He heals the brokenhearted and binds up their wounds.',
+              },
+              {
+                ref: 'Micah 6:8',
+                note: 'Act justly, love mercy, and walk humbly with your God.',
+              },
+            ],
+            gratitude: [
+              {
+                ref: '1 Thessalonians 5:16-18',
+                note: 'Rejoice always, pray constantly, give thanks in all circumstances.',
+              },
+              {
+                ref: 'Psalm 103:1-5',
+                note: 'Bless the Lord and do not forget all His benefits.',
+              },
+              {
+                ref: 'James 1:17',
+                note: 'Every good and perfect gift is from above.',
+              },
+            ],
+            sacrament: [
+              {
+                ref: 'John 15:4-5',
+                note: 'Remain in Christ, for apart from Him you can do nothing.',
+              },
+              {
+                ref: 'Acts 2:42',
+                note: 'They devoted themselves to the apostles’ teaching, fellowship, the breaking of bread, and prayers.',
+              },
+              {
+                ref: 'Hebrews 10:24-25',
+                note: 'Stir up love and good works, not neglecting to meet together.',
+              },
+            ],
+            mission: [
+              {
+                ref: 'Matthew 5:14-16',
+                note: 'You are the light of the world—let your light shine before others.',
+              },
+              {
+                ref: '1 Peter 3:15',
+                note: 'Always be ready to give a reason for the hope that is in you.',
+              },
+              {
+                ref: 'Mark 16:15',
+                note: 'Go into all the world and proclaim the Gospel to the whole creation.',
+              },
+            ],
+          };
+
+          const reflectionTemplates = {
+            prepare: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Begin this journey by naming before the Lord why ${focus} matters right now. ${scriptureNote} Allow ${analysis.virtue} to settle into your heart as you ${analysis.invitation}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Quiet your heart and invite Jesus to see the places where you long to ${analysis.invitation}. ${scriptureNote} Trust that He already holds ${focus} in His care.`,
+            ],
+            scripture: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Slowly read today’s verse aloud. ${scriptureNote} Ask the Spirit to highlight a word that speaks to how you will ${analysis.invitation} through ${focus}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Journal how this passage guides your next faithful step. ${scriptureNote} Notice any resistance and invite Christ to shape ${focus} according to His heart.`,
+            ],
+            trust: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Offer your anxieties to Jesus one by one. ${scriptureNote} As you breathe deeply, welcome ${analysis.virtue} to steady you within ${focus}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Imagine planting your intention beside living water. ${scriptureNote} Picture the roots of ${focus} stretching into God’s faithfulness.`,
+            ],
+            mercy: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Bring any wounds or strained relationships connected to ${focus} into prayer. ${scriptureNote} Ask the Lord where He longs to pour ${analysis.virtue}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Let the image of Divine Mercy wash over this situation. ${scriptureNote} Pray for the grace to see everyone involved in ${focus} through Christ’s compassion.`,
+            ],
+            gratitude: [
+              ({ focus, scriptureNote, analysis }) =>
+                `List three moments of grace you have already received while you ${analysis.invitation}. ${scriptureNote} Give thanks for the seeds God has planted in ${focus}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Pause midday to bless the Lord for a hidden gift. ${scriptureNote} Let gratitude reshape how you carry ${focus}.`,
+            ],
+            sacrament: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Plan one sacramental encounter to anchor this journey—Mass, confession, or adoration. ${scriptureNote} Offer it for ${focus}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Consider who can accompany you in this intention. ${scriptureNote} Invite them to intercede so ${analysis.virtue} continues to grow.`,
+            ],
+            mission: [
+              ({ focus, scriptureNote, analysis }) =>
+                `Ask the Lord who needs to hear the hope you are receiving. ${scriptureNote} Pray for courage to share a testimony from ${focus}.`,
+              ({ focus, scriptureNote, analysis }) =>
+                `Discern one concrete way to bless another person today. ${scriptureNote} Let ${analysis.virtue} overflow into loving action.`,
+            ],
+          };
+
+          const practicePrompts = {
+            journaling: [
+              ({ analysis }) =>
+                `Journal about three fruits you hope to see as you ${analysis.invitation}. Offer each desire to Jesus by name.`,
+              ({ focus }) =>
+                `Write a short letter to the Lord describing why ${focus} matters this week. End by surrendering every outcome to Him.`,
+            ],
+            lectio: [
+              ({ focus }) =>
+                `Pray Lectio Divina with today’s Scripture. Listen for a word or phrase that encourages ${focus}.`,
+              ({ analysis }) =>
+                `During your prayer, pause after each verse to ask, “How does this guide me to ${analysis.invitation}?”`,
+            ],
+            breath: [
+              ({ analysis }) =>
+                `Practice a breath prayer. Inhale “Jesus, be my strength,” exhale “as I ${analysis.invitation}.” Repeat for five minutes.`,
+              ({ focus }) =>
+                `Each time anxiety rises about ${focus}, breathe slowly and trace the Sign of the Cross over your heart.`,
+            ],
+            service: [
+              ({ analysis }) =>
+                `Choose a simple work of mercy that aligns with your intention—send a note, offer forgiveness, or meet a need quietly.`,
+              ({ focus }) =>
+                `Offer today’s chores or acts of service for someone impacted by ${focus}.`,
+            ],
+            gratitude: [
+              ({ analysis }) =>
+                `Create a gratitude list at the end of the day, naming how you glimpsed ${analysis.virtue}.`,
+              ({ focus }) =>
+                `Share one grace connected to ${focus} with a friend or family member and thank God together.`,
+            ],
+            sacramental: [
+              ({ focus }) =>
+                `Schedule time for the Sacrament of Reconciliation or Eucharistic adoration, offering it specifically for ${focus}.`,
+              ({ analysis }) =>
+                `Light a candle before a sacred image at home or church and renew your commitment to ${analysis.invitation}.`,
+            ],
+            share: [
+              ({ focus }) =>
+                `Tell a trusted friend what God has been doing through ${focus} and invite them to pray for you.`,
+              ({ analysis }) =>
+                `Discern a small act of evangelization—send a Scripture, share a quote, or offer to pray with someone—as you ${analysis.invitation}.`,
+            ],
+          };
+
+          const prayerPrompts = {
+            surrender: [
+              ({ focus }) =>
+                `Jesus, I give You ${focus}. Shape it according to Your heart and let nothing be outside of Your mercy.`,
+              ({ analysis }) =>
+                `Sacred Heart of Jesus, I entrust my desire to ${analysis.invitation} to Your perfect love.`,
+            ],
+            listening: [
+              ({ focus }) =>
+                `Holy Spirit, speak Your wisdom into ${focus}. Help me hear and obey Your gentle voice.`,
+              ({ analysis }) =>
+                `Come, Holy Spirit, quiet every distraction so I can notice how You invite me to ${analysis.invitation}.`,
+            ],
+            trust: [
+              ({ focus }) =>
+                `Lord, increase my trust. May every worry about ${focus} become an opportunity to lean on You.`,
+              ({ analysis }) =>
+                `Jesus, teach my heart to rest in ${analysis.virtue} and to depend on Your providence.`,
+            ],
+            mercy: [
+              ({ focus }) =>
+                `Jesus, Divine Mercy, enter every wound connected to ${focus} and make me an instrument of reconciliation.`,
+              ({ analysis }) =>
+                `Lord, wrap me in ${analysis.virtue} so that I can extend forgiveness freely.`,
+            ],
+            gratitude: [
+              ({ focus }) =>
+                `Father, thank You for the hidden ways You are already moving within ${focus}.`,
+              ({ analysis }) =>
+                `God of abundance, awaken ${analysis.virtue} in me so that I praise You in all things.`,
+            ],
+            strength: [
+              ({ focus }) =>
+                `Lord Jesus, feed me with Your grace in the sacraments so I have strength for ${focus}.`,
+              ({ analysis }) =>
+                `Come, Bread of Life, fortify me with ${analysis.virtue} as I stay close to You.`,
+            ],
+            mission: [
+              ({ focus }) =>
+                `Holy Spirit, send me where You will. Let the fruit of ${focus} bless everyone I meet.`,
+              ({ analysis }) =>
+                `Lord, set my heart on fire with ${analysis.virtue} so that my life proclaims Your love.`,
+            ],
+          };
+
+          const dayBlueprints = [
+            { title: 'Day 1 • Awaken Desire', tag: 'prepare', practice: 'journaling', prayer: 'surrender' },
+            { title: 'Day 2 • Receive the Word', tag: 'scripture', practice: 'lectio', prayer: 'listening' },
+            { title: 'Day 3 • Walk in Trust', tag: 'trust', practice: 'breath', prayer: 'trust' },
+            { title: 'Day 4 • Mercy in Motion', tag: 'mercy', practice: 'service', prayer: 'mercy' },
+            { title: 'Day 5 • Gratitude Rising', tag: 'gratitude', practice: 'gratitude', prayer: 'gratitude' },
+            { title: 'Day 6 • Strengthened in Sacrament', tag: 'sacrament', practice: 'sacramental', prayer: 'strength' },
+            { title: 'Day 7 • Commissioned to Shine', tag: 'mission', practice: 'share', prayer: 'mission' },
+          ];
+
+          form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!focusInput) return;
+
+            const rawFocus = focusInput.value.trim();
+            if (!rawFocus) {
+              feedback.textContent = 'Please share a focus or intention so we can craft your devotional.';
+              feedback.classList.remove('hidden');
+              feedback.classList.add('text-rose-600');
+              feedback.classList.remove('text-emerald-600');
+              feedback.classList.remove('text-slate-600');
+              results.classList.add('hidden');
+              results.innerHTML = '';
+              return;
+            }
+
+            feedback.textContent = 'Prayerfully crafting your devotional...';
+            feedback.classList.remove('hidden', 'text-rose-600', 'text-emerald-600');
+            feedback.classList.add('text-slate-600');
+            if (submitButton) {
+              submitButton.disabled = true;
+              submitButton.classList.add('opacity-70');
+            }
+
+            window.requestAnimationFrame(() => {
+              const plan = buildDevotional(rawFocus);
+              renderPlan(plan);
+              feedback.textContent = 'Your custom devotional is ready! Scroll to explore each day.';
+              feedback.classList.remove('text-rose-600', 'text-slate-600');
+              feedback.classList.add('text-emerald-600');
+              if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-70');
+              }
+              results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+
+          function buildDevotional(rawFocus) {
+            const analysis = analyzeFocus(rawFocus);
+            const focus = rawFocus || 'your intention';
+            const seed = createSeed(focus + analysis.virtue + analysis.companion);
+
+            const days = dayBlueprints.map((blueprint, index) => {
+              const scriptureOptions = scriptureLibrary[blueprint.tag] || scriptureLibrary.prepare;
+              const reflections = reflectionTemplates[blueprint.tag] || reflectionTemplates.prepare;
+              const practices = practicePrompts[blueprint.practice] || practicePrompts.journaling;
+              const prayers = prayerPrompts[blueprint.prayer] || prayerPrompts.surrender;
+
+              const scripture = pickFrom(scriptureOptions, seed + index);
+              const reflection = pickFrom(reflections, seed + index * 2)({
+                focus,
+                scriptureNote: scripture.note,
+                analysis,
+              });
+              const practice = pickFrom(practices, seed + index * 3)({ focus, analysis });
+              const prayer = pickFrom(prayers, seed + index * 4)({ focus, analysis });
+
+              return {
+                title: blueprint.title,
+                scripture: scripture.ref,
+                scriptureNote: scripture.note,
+                reflection,
+                practice,
+                prayer,
+              };
+            });
+
+            return {
+              focus,
+              analysis,
+              days,
+            };
+          }
+
+          function renderPlan(plan) {
+            const safeFocus = escapeHtml(plan.focus);
+            const safeVirtue = escapeHtml(plan.analysis.virtue || 'renewed hope');
+            const safeCompanion = escapeHtml(plan.analysis.companion || 'a saintly friend');
+            const safeEncouragement = escapeHtml(plan.analysis.encouragement || 'Invite the Holy Spirit to guide each step.');
+
+            const daysHtml = plan.days
+              .map((day) => {
+                const safeTitle = escapeHtml(day.title);
+                const safeScripture = escapeHtml(day.scripture);
+                const safeScriptureNote = escapeHtml(day.scriptureNote);
+                const safeReflection = escapeHtml(day.reflection);
+                const safePractice = escapeHtml(day.practice);
+                const safePrayer = escapeHtml(day.prayer);
+
+                return `
+                  <article class="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl shadow-[var(--color-mist)]/60">
+                    <h4 class="text-base font-semibold text-slate-900">${safeTitle}</h4>
+                    <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture • ${safeScripture}</p>
+                    <p class="mt-2 text-sm text-slate-600">${safeScriptureNote}</p>
+                    <p class="mt-4 text-sm text-slate-700"><span class="font-semibold text-slate-900">Reflect:</span> ${safeReflection}</p>
+                    <p class="mt-3 text-sm text-slate-700"><span class="font-semibold text-slate-900">Practice:</span> ${safePractice}</p>
+                    <p class="mt-3 text-sm text-slate-700"><span class="font-semibold text-slate-900">Pray:</span> ${safePrayer}</p>
+                  </article>
+                `;
+              })
+              .join('');
+
+            results.innerHTML = `
+              <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/85 p-6 shadow-lg">
+                <h3 class="text-lg font-semibold text-slate-900">Your intention</h3>
+                <p class="mt-2 text-sm text-slate-600">Focus: <span class="font-semibold text-slate-900">${safeFocus}</span></p>
+                <p class="mt-2 text-sm text-slate-600">Virtue emphasis: <span class="font-semibold text-slate-900">${safeVirtue}</span></p>
+                <p class="mt-2 text-sm text-slate-600">Spiritual companion: <span class="font-semibold text-slate-900">${safeCompanion}</span></p>
+                <p class="mt-4 text-sm text-slate-600">${safeEncouragement}</p>
+              </div>
+              <div class="grid gap-6 lg:grid-cols-2">
+                ${daysHtml}
+              </div>
+            `;
+
+            results.classList.remove('hidden');
+          }
+
+          function analyzeFocus(text) {
+            for (const theme of focusThemes) {
+              if (theme.pattern.test(text)) {
+                return theme;
+              }
+            }
+
+            return {
+              virtue: 'renewed hope',
+              companion: 'St. John the Apostle',
+              encouragement: "Let the words ‘Remain in my love’ echo whenever you feel uncertain.",
+              invitation: 'walk closely with Christ',
+            };
+          }
+
+          function createSeed(text) {
+            let seed = 0;
+            for (let i = 0; i < text.length; i += 1) {
+              seed += text.charCodeAt(i);
+            }
+            return seed || 7;
+          }
+
+          function pickFrom(items, index) {
+            if (!Array.isArray(items) || items.length === 0) return '';
+            const position = Math.abs(index) % items.length;
+            return items[position];
+          }
+
+          function escapeHtml(value) {
+            return String(value || '')
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+          }
+        })();
+      </script>
       <script>
         document.getElementById('year').textContent = new Date().getFullYear();
       </script>
