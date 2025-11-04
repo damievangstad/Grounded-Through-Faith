@@ -647,6 +647,11 @@
           const results = document.getElementById('devotional-results');
           const submitButton = form.querySelector('button[type="submit"]');
 
+          if (!feedback || !results) {
+            console.warn('Custom devotional UI elements are missing.');
+            return;
+          }
+
           const focusThemes = [
             {
               pattern: /(family|marriage|spouse|parent|mother|father|children|home|household)/i,
@@ -921,6 +926,22 @@
             ],
           };
 
+          const defaultScripture = {
+            ref: 'Psalm 23:1-3',
+            note: 'The Lord is my shepherd; He restores my soul.',
+          };
+
+          const fallbackReflection = ({ focus, analysis }) => {
+            const invitation = (analysis && analysis.invitation) || 'walk closely with Him';
+            return `Bring ${focus} to Jesus and ask for the grace to ${invitation}.`;
+          };
+
+          const fallbackPractice = ({ focus }) =>
+            `Write a short prayer entrusting ${focus} to God and keep it where you will see it daily.`;
+
+          const fallbackPrayer = ({ focus }) =>
+            `Lord, stay near as I carry ${focus}. May Your Spirit guide every step.`;
+
           const dayBlueprints = [
             { title: 'Day 1 • Awaken Desire', tag: 'prepare', practice: 'journaling', prayer: 'surrender' },
             { title: 'Day 2 • Receive the Word', tag: 'scripture', practice: 'lectio', prayer: 'listening' },
@@ -980,14 +1001,33 @@
               const practices = practicePrompts[blueprint.practice] || practicePrompts.journaling;
               const prayers = prayerPrompts[blueprint.prayer] || prayerPrompts.surrender;
 
-              const scripture = pickFrom(scriptureOptions, seed + index);
-              const reflection = pickFrom(reflections, seed + index * 2)({
-                focus,
-                scriptureNote: scripture.note,
-                analysis,
-              });
-              const practice = pickFrom(practices, seed + index * 3)({ focus, analysis });
-              const prayer = pickFrom(prayers, seed + index * 4)({ focus, analysis });
+              const scriptureEntry = pickFrom(scriptureOptions, seed + index);
+              const scripture =
+                scriptureEntry && typeof scriptureEntry === 'object'
+                  ? scriptureEntry
+                  : defaultScripture;
+
+              const reflectionTemplate = pickFrom(reflections, seed + index * 2);
+              const reflection =
+                typeof reflectionTemplate === 'function'
+                  ? reflectionTemplate({
+                      focus,
+                      scriptureNote: scripture.note,
+                      analysis,
+                    })
+                  : fallbackReflection({ focus, analysis });
+
+              const practiceTemplate = pickFrom(practices, seed + index * 3);
+              const practice =
+                typeof practiceTemplate === 'function'
+                  ? practiceTemplate({ focus, analysis })
+                  : fallbackPractice({ focus, analysis });
+
+              const prayerTemplate = pickFrom(prayers, seed + index * 4);
+              const prayer =
+                typeof prayerTemplate === 'function'
+                  ? prayerTemplate({ focus, analysis })
+                  : fallbackPrayer({ focus, analysis });
 
               return {
                 title: blueprint.title,
@@ -1035,7 +1075,7 @@
               .join('');
 
             results.innerHTML = `
-              <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/85 p-6 shadow-lg">
+              <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/80 p-6 shadow-lg">
                 <h3 class="text-lg font-semibold text-slate-900">Your intention</h3>
                 <p class="mt-2 text-sm text-slate-600">Focus: <span class="font-semibold text-slate-900">${safeFocus}</span></p>
                 <p class="mt-2 text-sm text-slate-600">Virtue emphasis: <span class="font-semibold text-slate-900">${safeVirtue}</span></p>
