@@ -470,21 +470,18 @@
               Be the first to know as new study plans, parish partnerships, and events roll out. We email sparingly and share only what will bless your walk with Jesus.
             </p>
           </div>
-          <form class="rounded-3xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/30 p-6 shadow-xl backdrop-blur">
-            <label class="text-sm font-semibold" for="email">Email Address</label>
+          <form
+            id="journey-form"
+            class="rounded-3xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/30 p-6 shadow-xl backdrop-blur"
+          >
+            <label class="text-sm font-semibold" for="journey-email">Email Address</label>
             <input
-              id="email"
+              id="journey-email"
+              name="email"
               type="email"
               placeholder="you@example.com"
               class="mt-3 w-full rounded-2xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/90 px-4 py-3 text-sm text-stone-800 placeholder:text-stone-500 focus:border-[var(--color-honey)] focus:outline-none"
               required
-            />
-            <label class="mt-6 block text-sm font-semibold" for="location">Your City &amp; Parish</label>
-            <input
-              id="location"
-              type="text"
-              placeholder="City, Parish"
-              class="mt-3 w-full rounded-2xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/90 px-4 py-3 text-sm text-stone-800 placeholder:text-stone-500 focus:border-[var(--color-honey)] focus:outline-none"
             />
             <button
               type="submit"
@@ -495,6 +492,7 @@
             <p class="mt-4 text-xs text-white/80">
               We respect your inbox. Unsubscribe any time.
             </p>
+            <p class="mt-4 hidden text-xs text-white/90" data-journey-feedback></p>
           </form>
         </div>
         <div class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-mist)]/40 pt-6 text-xs text-white/80 md:flex-row">
@@ -1205,6 +1203,47 @@
             const body = encodeURIComponent(planToPlainText(plan));
 
             window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          }
+
+          const journeyForm = document.getElementById('journey-form');
+          if (journeyForm) {
+            const emailInput = journeyForm.querySelector('#journey-email');
+            const feedback = journeyForm.querySelector('[data-journey-feedback]');
+
+            if (emailInput && feedback) {
+              emailInput.addEventListener('input', () => {
+                feedback.classList.add('hidden');
+                feedback.textContent = '';
+              });
+            }
+
+            journeyForm.addEventListener('submit', (event) => {
+              event.preventDefault();
+
+              const emailValue = (emailInput && typeof emailInput.value === 'string' ? emailInput.value : '').trim();
+              if (!emailValue) {
+                if (feedback) {
+                  feedback.textContent = 'Please enter your email address so we can reach out.';
+                  feedback.classList.remove('hidden');
+                }
+                if (emailInput) {
+                  emailInput.focus();
+                }
+                return;
+              }
+
+              const subject = encodeURIComponent('Grounded Through Faith Journey signup');
+              const body = encodeURIComponent(
+                `Please add this person to the Journey contacts list.\n\nEmail: ${emailValue}`
+              );
+
+              window.location.href = `mailto:themissioneffect@gmail.com?subject=${subject}&body=${body}`;
+
+              if (feedback) {
+                feedback.textContent = 'Opening your email app so you can confirm your Journey request.';
+                feedback.classList.remove('hidden');
+              }
+            });
           }
         })();
 
