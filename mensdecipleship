@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Men's Discipleship • 52-Week Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --color-parchment: #f8f1e2;
+        --color-honey: #c9a03a;
+        --color-amber: #b5862d;
+        --color-ink: #2d1f13;
+        --color-stone: #5f4d30;
+      }
+      body {
+        font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: radial-gradient(circle at top, rgba(201, 160, 58, 0.1), transparent 55%), var(--color-parchment);
+        color: var(--color-ink);
+      }
+      .section-title {
+        font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      }
+      @media print {
+        header nav,
+        footer,
+        #print-plan,
+        #share-hint {
+          display: none !important;
+        }
+        main {
+          padding-top: 0;
+        }
+        body {
+          background: #fffef7;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <header class="relative border-b border-[var(--color-honey)]/30 bg-[var(--color-parchment)]/95">
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-[var(--color-honey)]/15" aria-hidden="true"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between">
+        <div>
+          <a href="index.html" class="inline-flex items-center gap-3 rounded-full border border-[var(--color-honey)]/30 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-stone)] transition hover:-translate-y-0.5 hover:bg-white">
+            ← Back to Grounded Through Faith
+          </a>
+          <h1 class="section-title mt-6 text-4xl font-semibold text-[var(--color-ink)] md:text-5xl">
+            Men's Discipleship • 52-Week Journey
+          </h1>
+          <p class="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--color-stone)]">
+            Equip young men to become godly leaders, husbands, fathers, and protectors. This yearlong study walks through identity in Christ, integrity, work, leadership, marriage, fatherhood, purity, discipline, trials, and legacy. Each week provides context, extended Scripture, a journaling prompt, and a prayer to launch men into mission.
+          </p>
+        </div>
+        <div class="flex flex-col items-start gap-4 rounded-3xl border border-[var(--color-honey)]/40 bg-white/80 p-6 text-sm text-[var(--color-stone)] shadow-lg">
+          <p class="font-semibold text-[var(--color-ink)]">How to use this guide</p>
+          <ul class="space-y-2">
+            <li>• Gather a small band of brothers or mentor one-on-one.</li>
+            <li>• Read the passage aloud, share insights, and journal the reflection.</li>
+            <li>• Close each session with the provided prayer and a tangible commitment.</li>
+          </ul>
+          <button
+            id="print-plan"
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)] px-5 py-2 text-xs font-semibold text-[var(--color-ink)] shadow-md shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[var(--color-amber)]"
+          >
+            Print full journey
+          </button>
+          <p id="share-hint" class="text-xs text-[var(--color-stone)]/80">Tip: Use the print option to create binders or email the PDF to your group.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative z-10 mx-auto max-w-6xl space-y-12 px-6 py-16">
+      <section class="space-y-6">
+        <div class="rounded-3xl border border-[var(--color-honey)]/30 bg-white/80 p-6 shadow-xl">
+          <h2 class="section-title text-2xl font-semibold text-[var(--color-ink)]">Weekly Overview</h2>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--color-stone)]">
+            The plan is organized to build from firm identity toward outward mission. Encourage participants to memorize the weekly theme and revisit the Scripture passages throughout the week. Use the reflection questions for journaling or group discussion, and keep the prayers handy for daily repetition.
+          </p>
+        </div>
+        <div id="plan-container" class="grid gap-6 lg:grid-cols-2"></div>
+      </section>
+    </main>
+
+    <footer class="border-t border-[var(--color-honey)]/30 bg-[var(--color-parchment)]/90 py-8">
+      <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-xs text-[var(--color-stone)] md:flex-row">
+        <p>© <span id="year"></span> Grounded Through Faith. All rights reserved.</p>
+        <a href="mailto:hello@groundedthroughfaith.org" class="hover:text-[var(--color-ink)]">Contact the team</a>
+      </div>
+    </footer>
+
+    <script>
+      const weeks = [
+        {
+          week: 1,
+          theme: 'Identity in Christ',
+          title: 'Created with Purpose',
+          setStage: 'God crafted men in His image to steward creation with intimacy and responsibility.',
+          reading: 'Genesis 1:26-31; 2:7',
+          reflection: 'Where do you forget that you bear God’s image, and how would embracing that truth reshape your week?',
+          prayer: 'Creator God, breathe Your life in me again so I live today as a son who reflects Your goodness.',
+        },
+        {
+          week: 2,
+          theme: 'Identity in Christ',
+          title: 'Adopted Sons',
+          setStage: 'Through the Spirit we are welcomed into the household of God and cry out “Abba!” with confidence.',
+          reading: 'Romans 8:14-17; Galatians 4:4-7',
+          reflection: 'What keeps you from approaching the Father with the boldness of a beloved son?',
+          prayer: 'Abba Father, remove every orphan mindset and anchor me in Your faithful love.',
+        },
+        {
+          week: 3,
+          theme: 'Identity in Christ',
+          title: 'Called to Follow',
+          setStage: 'Jesus calls ordinary men to leave lesser nets behind and become fishers of people.',
+          reading: 'Matthew 4:18-22; Luke 5:1-11',
+          reflection: 'Which “nets” is Jesus inviting you to drop so you can follow Him more wholeheartedly?',
+          prayer: 'Lord Jesus, give me courage to leave behind what is comfortable and to follow You wherever You lead.',
+        },
+        {
+          week: 4,
+          theme: 'Identity in Christ',
+          title: 'Temple of the Spirit',
+          setStage: 'Our bodies and choices matter because the Holy Spirit dwells within us as in a sacred temple.',
+          reading: '1 Corinthians 6:15-20',
+          reflection: 'How will honoring God with your body transform your habits this week?',
+          prayer: 'Holy Spirit, cleanse and fill me so every part of my life gives You glory.',
+        },
+        {
+          week: 5,
+          theme: 'Identity in Christ',
+          title: 'Armored for Battle',
+          setStage: 'Spiritual warfare is real, and God equips His sons with armor to stand firm.',
+          reading: 'Ephesians 6:10-18',
+          reflection: 'Which piece of the armor of God do you need to strengthen right now?',
+          prayer: 'Lord of Hosts, clothe me in Your armor so I can resist the enemy and protect those entrusted to me.',
+        },
+        {
+          week: 6,
+          theme: 'Identity in Christ',
+          title: 'Kingdom Attitudes',
+          setStage: 'The Beatitudes unveil the character of Christ and the blessed life of His disciples.',
+          reading: 'Matthew 5:1-12',
+          reflection: 'Which Beatitude challenges your usual mindset, and how will you practice it?',
+          prayer: 'Jesus, form my heart to rejoice in Your Kingdom even when the world does not understand.',
+        },
+        {
+          week: 7,
+          theme: 'Integrity',
+          title: 'Truth-Tellers',
+          setStage: 'Integrity begins with truthful speech that reflects God’s character.',
+          reading: 'Proverbs 12:17-22; Ephesians 4:25',
+          reflection: 'Where are you tempted to shade the truth, and what would courageous honesty cost?',
+          prayer: 'Spirit of Truth, purify my words so they bring life and light to everyone I meet.',
+        },
+        {
+          week: 8,
+          theme: 'Integrity',
+          title: 'Walking Blamelessly',
+          setStage: 'Those who dwell with God walk with integrity, keep their promises, and reject corruption.',
+          reading: 'Psalm 15',
+          reflection: 'What promise do you need to fulfill or repent of in order to walk blamelessly?',
+          prayer: 'Father, steady my steps so my private life honors You as much as my public witness.',
+        },
+        {
+          week: 9,
+          theme: 'Integrity',
+          title: 'Courage Under Fire',
+          setStage: 'Shadrach, Meshach, and Abednego held to God’s commands despite pressure from kings.',
+          reading: 'Daniel 3:8-30',
+          reflection: 'Where is peer pressure or cultural expectation drawing you away from obedience?',
+          prayer: 'Faithful God, grant me courage to stand firm when obedience is costly.',
+        },
+        {
+          week: 10,
+          theme: 'Integrity',
+          title: 'Faithful in Small Things',
+          setStage: 'Kingdom leadership grows in the soil of everyday faithfulness.',
+          reading: 'Luke 16:10-13',
+          reflection: 'Which small responsibilities need greater attention so your integrity can deepen?',
+          prayer: 'Lord, help me steward little things with excellence so You can trust me with much.',
+        },
+        {
+          week: 11,
+          theme: 'Work & Vocation',
+          title: 'Cultivating the Garden',
+          setStage: 'Men are called to cultivate creation and partner with God in meaningful work.',
+          reading: 'Genesis 2:15; Proverbs 12:11',
+          reflection: 'How can your daily work become an altar where you serve the Lord?',
+          prayer: 'Gardener of my soul, bless the labor of my hands and make it fruitful for Your glory.',
+        },
+        {
+          week: 12,
+          theme: 'Work & Vocation',
+          title: 'Working for the Lord',
+          setStage: 'We serve Christ Himself when we labor with sincerity and diligence.',
+          reading: 'Colossians 3:22-24; 1 Thessalonians 4:9-12',
+          reflection: 'Where do you need to renew your motivation so your work is worship?',
+          prayer: 'Jesus, be the Lord of my workplace and teach me to work with Your joy.',
+        },
+        {
+          week: 13,
+          theme: 'Work & Vocation',
+          title: 'Resting in God',
+          setStage: 'Holy rest reminds us we are sons before we are workers and protects us from idolatry.',
+          reading: 'Exodus 20:8-11; Mark 2:23-28',
+          reflection: 'What Sabbath rhythms do you need to guard in this season?',
+          prayer: 'Lord of the Sabbath, teach me to rest in You and lead my family into holy rhythms.',
+        },
+        {
+          week: 14,
+          theme: 'Work & Vocation',
+          title: 'Serving with Skill',
+          setStage: 'The Spirit empowers craftsmen and leaders to serve God with excellence for the good of His people.',
+          reading: 'Exodus 31:1-11; Mark 10:42-45',
+          reflection: 'How can you use your skills to build up the Body of Christ this week?',
+          prayer: 'Holy Spirit, anoint my gifts so I can serve humbly and point others to Jesus.',
+        },
+        {
+          week: 15,
+          theme: 'Leadership',
+          title: 'Servant Leadership',
+          setStage: 'Jesus washes feet and redefines greatness as humble service.',
+          reading: 'John 13:1-15',
+          reflection: 'Who needs you to kneel in humble service this week?',
+          prayer: 'Jesus, make me a leader who stoops low so others can encounter Your love.',
+        },
+        {
+          week: 16,
+          theme: 'Leadership',
+          title: 'Shepherding Hearts',
+          setStage: 'Pastoral leadership protects, guides, and models Christlike care.',
+          reading: '1 Peter 5:1-4; Psalm 78:70-72',
+          reflection: 'Whose heart has God entrusted to your care, and how will you shepherd them?',
+          prayer: 'Chief Shepherd, teach me to lead willingly, not domineering but eager to serve.',
+        },
+        {
+          week: 17,
+          theme: 'Leadership',
+          title: 'Justice and Mercy',
+          setStage: 'God requires leaders to act justly, love mercy, and walk humbly with Him.',
+          reading: 'Micah 6:6-8; Proverbs 21:3',
+          reflection: 'Where is God calling you to defend the vulnerable or correct an injustice?',
+          prayer: 'Lord, align my heart with Yours so justice and mercy flow from my leadership.',
+        },
+        {
+          week: 18,
+          theme: 'Leadership',
+          title: 'Strong and Courageous',
+          setStage: 'Joshua receives courage from God’s presence to lead Israel into promise.',
+          reading: 'Joshua 1:6-9; Deuteronomy 31:6-8',
+          reflection: 'Which leadership challenge requires you to meditate on God’s Word day and night?',
+          prayer: 'God of Joshua, strengthen me to obey without fear because You are with me.',
+        },
+        {
+          week: 19,
+          theme: 'Leadership',
+          title: 'Building Together',
+          setStage: 'Nehemiah rallies men to rebuild with prayerful focus amid opposition.',
+          reading: 'Nehemiah 2:11-20; 4:1-23',
+          reflection: 'Who do you need to invite into the mission so the work can continue?',
+          prayer: 'Lord, help me lead teams with vision, perseverance, and intercession.',
+        },
+        {
+          week: 20,
+          theme: 'Marriage',
+          title: 'Covenant Love',
+          setStage: 'Husbands are called to love their wives as Christ loves the Church.',
+          reading: 'Ephesians 5:25-33; Colossians 3:12-19',
+          reflection: 'How can you lay down your life in a concrete way for your wife (or future spouse)?',
+          prayer: 'Jesus, form me into a husband who mirrors Your sacrificial love.',
+        },
+        {
+          week: 21,
+          theme: 'Marriage',
+          title: 'Love That Endures',
+          setStage: 'St. Paul describes love that perseveres through every season.',
+          reading: '1 Corinthians 13:4-13',
+          reflection: 'Which description of love needs to be strengthened in your relationship?',
+          prayer: 'God of love, pour charity into my heart so I can love patiently and kindly.',
+        },
+        {
+          week: 22,
+          theme: 'Marriage',
+          title: 'Quick to Listen',
+          setStage: 'Listening well and bridling the tongue builds trust and intimacy.',
+          reading: 'James 1:19-27; Proverbs 18:13',
+          reflection: 'Where do you need to slow down, listen, and respond with gentleness?',
+          prayer: 'Holy Spirit, tame my tongue and attune my ears to the heart of my spouse.',
+        },
+        {
+          week: 23,
+          theme: 'Marriage',
+          title: 'One Flesh Unity',
+          setStage: 'Marriage is a divine partnership that reflects God’s creative love.',
+          reading: 'Genesis 2:18-24; Matthew 19:3-6',
+          reflection: 'How can you cultivate unity of mind, body, and spirit in your marriage?',
+          prayer: 'Lord, knit us together so we become a living sign of Your covenant.',
+        },
+        {
+          week: 24,
+          theme: 'Marriage',
+          title: 'Praying Together',
+          setStage: 'Tobiah and Sarah begin their marriage rooted in prayer and purity.',
+          reading: 'Tobit 8:4-8',
+          reflection: 'What rhythm of prayer will you establish with your spouse this week?',
+          prayer: 'God of Abraham, bless our marriage bed and keep our covenant holy.',
+        },
+        {
+          week: 25,
+          theme: 'Fatherhood',
+          title: 'Blessing the Home',
+          setStage: 'The fear of the Lord and faithful labor lead to a flourishing household.',
+          reading: 'Psalm 128',
+          reflection: 'How can you speak blessing over your family in a personal way?',
+          prayer: 'Heavenly Father, let Your favor rest on our home and generations.',
+        },
+        {
+          week: 26,
+          theme: 'Fatherhood',
+          title: 'Teach Diligently',
+          setStage: 'Fathers impress God’s commands on their children through daily life.',
+          reading: 'Deuteronomy 6:4-9; Psalm 78:1-7',
+          reflection: 'What simple practice will help you teach the faith at home this week?',
+          prayer: 'Lord, give me creativity and zeal to pass on the faith to the next generation.',
+        },
+        {
+          week: 27,
+          theme: 'Fatherhood',
+          title: 'Merciful Father',
+          setStage: 'The prodigal’s father runs with compassion and restores identity.',
+          reading: 'Luke 15:11-32',
+          reflection: 'Where do you need to extend mercy or welcome someone home?',
+          prayer: 'Father of mercies, help me mirror Your heart when repentance arrives at my door.',
+        },
+        {
+          week: 28,
+          theme: 'Fatherhood',
+          title: 'Discipline in Love',
+          setStage: 'God disciplines sons in love so they may share His holiness.',
+          reading: 'Hebrews 12:4-11; Proverbs 3:11-12',
+          reflection: 'How can your discipline be both firm and tender this week?',
+          prayer: 'Abba, teach me to correct with compassion and to encourage with hope.',
+        },
+        {
+          week: 29,
+          theme: 'Fatherhood',
+          title: 'Fan into Flame',
+          setStage: 'Spiritual fathers call forth gifts and courage in the next generation.',
+          reading: '2 Timothy 1:3-7',
+          reflection: 'Who needs you to speak courage and blessing into their calling?',
+          prayer: 'Holy Spirit, stir up the gifts You have placed in me and those I mentor.',
+        },
+        {
+          week: 30,
+          theme: 'Purity',
+          title: 'Guarding the Eyes',
+          setStage: 'Job made a covenant with his eyes to live with purity and integrity.',
+          reading: 'Job 31:1-12',
+          reflection: 'What boundaries will you set to guard your eyes and imagination?',
+          prayer: 'Lord, purify my vision so I see others with reverence and honor.',
+        },
+        {
+          week: 31,
+          theme: 'Purity',
+          title: 'Guarding the Heart',
+          setStage: 'Guarding the heart shapes the course of life and decisions.',
+          reading: 'Proverbs 4:20-27',
+          reflection: 'Which influences do you need to remove to keep your heart vigilant?',
+          prayer: 'Heavenly Father, watch over my heart and keep my steps straight.',
+        },
+        {
+          week: 32,
+          theme: 'Purity',
+          title: 'Life in the Spirit',
+          setStage: 'Walking in the Spirit bears fruit and crucifies the flesh.',
+          reading: 'Galatians 5:16-25',
+          reflection: 'Which fruit of the Spirit do you need to cultivate more intentionally?',
+          prayer: 'Holy Spirit, fill me so Your fruit overflows and my desires are purified.',
+        },
+        {
+          week: 33,
+          theme: 'Purity',
+          title: 'Repentant Worship',
+          setStage: 'David models humble repentance that leads to renewed joy.',
+          reading: 'Psalm 51:1-12',
+          reflection: 'What sin do you need to confess so joy can be restored?',
+          prayer: 'Merciful God, create in me a clean heart and renew a steadfast spirit.',
+        },
+        {
+          week: 34,
+          theme: 'Purity',
+          title: 'Freedom in Christ',
+          setStage: 'Jesus proclaims freedom from slavery to sin for those who abide in His word.',
+          reading: 'John 8:31-36; Romans 6:11-14',
+          reflection: 'Where do you still live like a slave rather than a free son?',
+          prayer: 'Deliverer, teach me to abide in Your truth and walk in lasting freedom.',
+        },
+        {
+          week: 35,
+          theme: 'Discipline',
+          title: 'Prayerful Rhythm',
+          setStage: 'Jesus rises early to commune with the Father before serving others.',
+          reading: 'Mark 1:32-39; Psalm 63:1-8',
+          reflection: 'How will you prioritize time alone with God this week?',
+          prayer: 'Father, draw me into consistent prayer so ministry flows from intimacy.',
+        },
+        {
+          week: 36,
+          theme: 'Discipline',
+          title: 'Fasting with Joy',
+          setStage: 'Jesus teaches hidden disciplines that align our hearts with heaven.',
+          reading: 'Matthew 6:16-24',
+          reflection: 'What fast is the Lord inviting you to undertake for greater freedom?',
+          prayer: 'Jesus, purify my motives as I fast so I treasure You above all.',
+        },
+        {
+          week: 37,
+          theme: 'Discipline',
+          title: 'Run to Win',
+          setStage: 'Paul compares discipleship to rigorous athletic training.',
+          reading: '1 Corinthians 9:24-27; 2 Timothy 2:1-5',
+          reflection: 'Which spiritual habit requires renewed discipline in this season?',
+          prayer: 'Lord, strengthen my self-control so I can finish the race You set before me.',
+        },
+        {
+          week: 38,
+          theme: 'Discipline',
+          title: 'Content and Steadfast',
+          setStage: 'Paul learns contentment and resilience through every circumstance.',
+          reading: 'Philippians 4:4-13',
+          reflection: 'Where do you need to practice gratitude instead of grumbling?',
+          prayer: 'God of peace, teach me to be content as I rely on Christ for strength.',
+        },
+        {
+          week: 39,
+          theme: 'Trials',
+          title: 'Joy in Testing',
+          setStage: 'Trials refine faith and produce perseverance and maturity.',
+          reading: 'James 1:2-8',
+          reflection: 'How can you choose joy and wisdom in the trial you currently face?',
+          prayer: 'Lord, help me see my trials through Your eyes and grow in steadfastness.',
+        },
+        {
+          week: 40,
+          theme: 'Trials',
+          title: 'Hope That Does Not Disappoint',
+          setStage: 'Suffering produces character and hope through the Holy Spirit.',
+          reading: 'Romans 5:1-5',
+          reflection: 'Where has suffering revealed God’s love more deeply to you?',
+          prayer: 'Father, pour Your love into my heart so hope anchors me in hardship.',
+        },
+        {
+          week: 41,
+          theme: 'Trials',
+          title: 'Refined Faith',
+          setStage: 'Peter reminds persecuted believers that trials refine faith like gold.',
+          reading: '1 Peter 1:3-9',
+          reflection: 'How is God refining your faith for the sake of others?',
+          prayer: 'God of hope, guard my faith and make it praise-worthy at the revelation of Jesus.',
+        },
+        {
+          week: 42,
+          theme: 'Trials',
+          title: 'Praying the Lament',
+          setStage: 'Honest lament opens the heart to God’s rescue and praise.',
+          reading: 'Psalm 13; Psalm 34:15-19',
+          reflection: 'What grief or frustration do you need to voice honestly before God?',
+          prayer: 'Lord, hear my lament and transform it into trust in Your unfailing love.',
+        },
+        {
+          week: 43,
+          theme: 'Trials',
+          title: 'Grace in Weakness',
+          setStage: 'Paul boasts in weakness because Christ’s power is perfected there.',
+          reading: '2 Corinthians 12:7-10',
+          reflection: 'Where do you need to embrace weakness so Christ’s strength can shine?',
+          prayer: 'Jesus, let Your grace be enough for me, and make my weakness a doorway for Your power.',
+        },
+        {
+          week: 44,
+          theme: 'Legacy',
+          title: 'Multiplying Disciples',
+          setStage: 'Paul exhorts Timothy to entrust the gospel to reliable men who will teach others.',
+          reading: '2 Timothy 2:1-7',
+          reflection: 'Who are you discipling, and who will they disciple next?',
+          prayer: 'Lord, help me invest in faithful men who will carry the mission forward.',
+        },
+        {
+          week: 45,
+          theme: 'Legacy',
+          title: 'Generous Hearts',
+          setStage: 'Generosity overflows from God’s abundant grace toward us.',
+          reading: '2 Corinthians 9:6-11',
+          reflection: 'How can you sow generously in finances, time, or encouragement this week?',
+          prayer: 'Father, make me a cheerful giver who trusts in Your provision.',
+        },
+        {
+          week: 46,
+          theme: 'Legacy',
+          title: 'Repairers of the Breach',
+          setStage: 'Isaiah calls God’s people to fasting that heals injustice and rebuilds ruins.',
+          reading: 'Isaiah 58:6-12',
+          reflection: 'Where is God inviting you to rebuild what is broken in your community?',
+          prayer: 'Lord, use me to repair the breach and restore paths of righteousness.',
+        },
+        {
+          week: 47,
+          theme: 'Legacy',
+          title: 'Commissioned to Go',
+          setStage: 'Jesus sends His disciples to make disciples of all nations.',
+          reading: 'Matthew 28:16-20; Acts 1:6-11',
+          reflection: 'How will you participate in the Great Commission locally and globally?',
+          prayer: 'Risen Lord, send me out with Your authority and presence to make disciples.',
+        },
+        {
+          week: 48,
+          theme: 'Legacy',
+          title: 'Finishing the Race',
+          setStage: 'Paul reflects on a life poured out in faithful service to Christ.',
+          reading: '2 Timothy 4:6-8',
+          reflection: 'What does finishing well look like for you in this season?',
+          prayer: 'Lord, keep my eyes on the crown of righteousness You promise to those who love You.',
+        },
+        {
+          week: 49,
+          theme: 'Family on Mission',
+          title: 'Household of Peace',
+          setStage: 'Families become domestic churches that witness to Christ’s peace.',
+          reading: 'Colossians 3:12-21',
+          reflection: 'How can your household become a place of peace, forgiveness, and mission?',
+          prayer: 'Prince of Peace, reign in our home so we become a lighthouse for others.',
+        },
+        {
+          week: 50,
+          theme: 'Integrity',
+          title: 'Guarded Pathways',
+          setStage: 'David commits to walk with integrity in his house and guard against wicked influences.',
+          reading: 'Psalm 101:1-7; Philippians 4:8-9',
+          reflection: 'What media or influences must you remove to guard holiness?',
+          prayer: 'Lord, establish my steps in Your ways and keep my home pure.',
+        },
+        {
+          week: 51,
+          theme: 'Leadership',
+          title: 'Guarding the Flock',
+          setStage: 'Paul charges the Ephesian elders to shepherd the church and watch over themselves.',
+          reading: 'Acts 20:17-35',
+          reflection: 'Who needs your vigilant care and encouragement in the faith?',
+          prayer: 'Holy Spirit, help me watch over the flock with tears, truth, and generosity.',
+        },
+        {
+          week: 52,
+          theme: 'Legacy',
+          title: 'Hope of the New Creation',
+          setStage: 'John’s vision of the new heaven and earth fuels perseverance and holy living.',
+          reading: 'Revelation 21:1-7; Revelation 22:1-5',
+          reflection: 'How does the promise of new creation motivate you to live faithfully today?',
+          prayer: 'Alpha and Omega, keep my eyes on Your coming Kingdom as I lead my family and community.',
+        },
+      ];
+
+      const planContainer = document.getElementById('plan-container');
+      if (planContainer) {
+        planContainer.innerHTML = weeks
+          .map(
+            (week) => `
+              <article class="rounded-3xl border border-[var(--color-honey)]/30 bg-white/80 p-6 shadow-lg shadow-[var(--color-honey)]/30">
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-honey)]">Week ${week.week} • ${week.theme}</p>
+                <h3 class="mt-3 text-xl font-semibold text-[var(--color-ink)]">${week.title}</h3>
+                <p class="mt-3 text-sm text-[var(--color-stone)]"><span class="font-semibold text-[var(--color-ink)]">Set the Stage:</span> ${week.setStage}</p>
+                <p class="mt-3 text-sm text-[var(--color-stone)]"><span class="font-semibold text-[var(--color-ink)]">Reading:</span> ${week.reading}</p>
+                <p class="mt-3 text-sm text-[var(--color-stone)]"><span class="font-semibold text-[var(--color-ink)]">Reflection:</span> ${week.reflection}</p>
+                <p class="mt-3 text-sm text-[var(--color-stone)]"><span class="font-semibold text-[var(--color-ink)]">Prayer:</span> ${week.prayer}</p>
+              </article>
+            `
+          )
+          .join('');
+      }
+
+      const printPlanButton = document.getElementById('print-plan');
+      if (printPlanButton) {
+        printPlanButton.addEventListener('click', () => {
+          window.print();
+        });
+      }
+
+      const yearSpan = document.getElementById('year');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+    </script>
+  </body>
+</html>
