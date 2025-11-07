@@ -1,0 +1,41 @@
+# Binary image assets are hosted externally to keep the repository text-only
+*.png
+*.PNG
+*.jpg
+*.JPG
+*.jpeg
+*.JPEG
+*.gif
+*.GIF
+*.webp
+*.WEBP
+*.bmp
+*.BMP
+*.ico
+*.ICO
+*.tif
+*.TIF
+*.tiff
+*.TIFF
+# Common design exports that should also live outside of git history
+*.psd
+*.PSD
+*.ai
+*.AI
+*.heic
+*.HEIC
+*.raw
+*.RAW
+*.pdf
+*.PDF
+*.zip
+*.ZIP
+*.tar
+*.gz
+*.tgz
+*.7z
+*.rar
+# If a text-based SVG is needed it can be added explicitly, but binaries are skipped by default
+# Explicitly ignored logo asset that deploys outside of the repository
+assets/treelogo.png
+!assets/.gitkeep
