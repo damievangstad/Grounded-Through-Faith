@@ -37,5 +37,5 @@
 *.rar
 # If a text-based SVG is needed it can be added explicitly, but binaries are skipped by default
 # Explicitly ignored logo asset that deploys outside of the repository
-images/treelogo.png
-!images/.gitkeep
+assets/treelogo.png
+!assets/.gitkeep
