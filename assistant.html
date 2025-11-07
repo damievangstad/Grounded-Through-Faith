@@ -231,6 +231,23 @@
         </div>
     </footer>
     <script>
+        async function askAI(prompt) {
+            const response = await fetch('/api/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            });
+
+            if (!response.ok) {
+                const message = await response.text().catch(() => '');
+                throw new Error(message || 'Assistant request failed');
+            }
+
+            return response.json().catch(() => ({}));
+        }
+
         (function () {
             const form = document.getElementById('assistant-form');
             if (!form) return;
@@ -238,525 +255,272 @@
             const promptInput = document.getElementById('assistant-prompt');
             const feedback = document.getElementById('assistant-feedback');
             const results = document.getElementById('assistant-results');
+            const submitButton = form.querySelector('button[type="submit"]');
             const modeInputs = Array.from(form.querySelectorAll('input[name="assistant-mode"]'));
+            let currentMode = modeInputs.find((input) => input.checked)?.value || 'devotional';
             let currentResponse = null;
-            let currentMode = 'devotional';
 
             modeInputs.forEach((input) => {
                 input.addEventListener('change', () => {
-                    currentMode = input.value;
+                    if (input.checked) {
+                        currentMode = input.value;
+                    }
                 });
             });
 
-            const focusThemes = [
-                {
-                    pattern: /(family|marriage|spouse|parent|mother|father|children|home|household)/i,
-                    virtue: 'steadfast unity',
-                    companion: 'the Holy Family',
-                    encouragement: 'Welcome Jesus, Mary, and Joseph into the heart of your home every day.',
-                    invitation: 'nurture your family life',
-                },
-                {
-                    pattern: /(anx|worry|fear|peace|calm|rest|stress|trust|waiting)/i,
-                    virtue: 'trust-filled peace',
-                    companion: 'St. Thérèse of Lisieux',
-                    encouragement: "Whisper, ‘Jesus, I trust in You,’ whenever you feel unsettled.",
-                    invitation: "rest in the Father's care",
-                },
-                {
-                    pattern: /(discern|vocation|work|career|mission|ministry|serve|service|lead|purpose)/i,
-                    virtue: 'courageous obedience',
-                    companion: 'St. John Paul II',
-                    encouragement: 'Ask the Holy Spirit to inflame your gifts for the Gospel.',
-                    invitation: 'step boldly into your call',
-                },
-                {
-                    pattern: /(healing|grief|sorrow|loss|hurt|mercy|forgive|forgiveness|reconcile)/i,
-                    virtue: 'compassionate mercy',
-                    companion: 'St. Faustina',
-                    encouragement: 'Entrust every wound to the Divine Mercy of Jesus.',
-                    invitation: "welcome Christ's healing",
-                },
-                {
-                    pattern: /(youth|teen|student|study|school|learning|young|kids)/i,
-                    virtue: 'joyful discipleship',
-                    companion: 'Blessed Carlo Acutis',
-                    encouragement: 'Offer creativity and technology to lead young hearts to Jesus.',
-                    invitation: 'ignite young disciples',
-                },
-            ];
-
-            const scriptureLibrary = {
-                devotional: [
-                    { ref: 'Psalm 37:3-5', note: 'Entrust your desires to the Lord who acts on your behalf.' },
-                    { ref: 'Isaiah 43:19', note: 'God is doing something new even in the wilderness.' },
-                    { ref: 'Colossians 3:16', note: 'Let the word of Christ dwell in you richly as you teach and encourage one another.' },
-                    { ref: 'John 15:4-5', note: 'Remain in Christ, for apart from Him you can do nothing.' },
-                ],
-                study: [
-                    { ref: 'Luke 24:32', note: 'Did not our hearts burn within us while He opened to us the Scriptures?' },
-                    { ref: 'Romans 12:11-12', note: 'Be fervent in spirit, serve the Lord, rejoice in hope, be patient in tribulation.' },
-                    { ref: 'Ephesians 4:12-13', note: 'Equip the saints for the work of ministry and grow into the fullness of Christ.' },
-                    { ref: 'Philippians 1:9-10', note: 'Abound in love with knowledge and all discernment.' },
-                ],
-                answers: [
-                    { ref: 'James 1:5', note: 'If any of you lacks wisdom, ask God, who gives generously to all.' },
-                    { ref: '2 Timothy 3:16-17', note: 'All Scripture is breathed out by God and profitable for teaching and training in righteousness.' },
-                    { ref: 'Matthew 28:20', note: 'Behold, I am with you always, to the end of the age.' },
-                ],
-            };
-
-            const dayBlueprints = [
-                { title: 'Day 1 • Offer Your Desire', practice: 'Journal how this focus is stirring your heart today.' },
-                { title: 'Day 2 • Receive the Word', practice: 'Pray with the highlighted Scripture and notice what phrase stands out.' },
-                { title: 'Day 3 • Surrender Control', practice: 'List every worry and hand it to Jesus through a breath prayer.' },
-                { title: 'Day 4 • Live Mercy', practice: 'Extend compassion to someone connected to this intention.' },
-                { title: 'Day 5 • Give Thanks', practice: 'Name three graces you have seen so far and praise God.' },
-                { title: 'Day 6 • Draw Strength', practice: 'Schedule time for the sacraments or adoration this week.' },
-                { title: 'Day 7 • Share the Fruit', practice: 'Tell a friend how God has moved and invite them to pray with you.' },
-            ];
-
-            const studyFramework = [
-                { title: 'Week 1 • Anchor in Christ', focus: 'Identity & Belovedness' },
-                { title: 'Week 2 • Align Your Purpose', focus: 'Surrendered Mission' },
-                { title: 'Week 3 • Walk in Virtue', focus: 'Integrity & Discipline' },
-                { title: 'Week 4 • Strengthen Community', focus: 'Family & Fellowship' },
-                { title: 'Week 5 • Persevere in Trials', focus: 'Resilience in Waiting' },
-                { title: 'Week 6 • Witness with Joy', focus: 'Evangelization & Service' },
-            ];
-
-            const catechismReferences = [
-                { ref: 'CCC 2565', note: 'Prayer is the living relationship of the children of God with their Father.' },
-                { ref: 'CCC 1691', note: 'Christian, recognize your dignity and live accordingly.' },
-                { ref: 'CCC 1803', note: 'Virtue is a habitual and firm disposition to do the good.' },
-                { ref: 'CCC 2712', note: 'Contemplative prayer is a gaze of faith fixed on Jesus.' },
-            ];
-
-            form.addEventListener('submit', (event) => {
+            form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const prompt = (promptInput && promptInput.value.trim()) || '';
                 if (!prompt) {
                     setFeedback('Please share a focus, need, or question so the assistant can respond.', 'error');
-                    results.classList.add('hidden');
-                    results.innerHTML = '';
+                    if (results) {
+                        results.classList.add('hidden');
+                        results.innerHTML = '';
+                    }
                     return;
                 }
 
                 setFeedback('Praying with your request...', 'info');
+                toggleSubmitting(true);
 
-                window.requestAnimationFrame(() => {
-                    const analysis = analyzePrompt(prompt);
-                    let response;
-
-                    if (currentMode === 'study') {
-                        response = buildStudyPlan(prompt, analysis);
-                    } else if (currentMode === 'question') {
-                        response = buildAnswer(prompt, analysis);
-                    } else {
-                        response = buildDevotional(prompt, analysis);
+                try {
+                    const requestPrompt = buildRequestPrompt(prompt, currentMode);
+                    const data = await askAI(requestPrompt);
+                    const text = extractAnswerText(data);
+                    if (!text) {
+                        throw new Error('The assistant returned an empty response.');
                     }
 
-                    currentResponse = response;
-                    renderResponse(response, currentMode);
-                    if (currentMode === 'question') {
-                        setFeedback('Here is encouragement to reflect on and pray with.', 'success');
-                    } else if (currentMode === 'study') {
-                        setFeedback('Your study plan is ready. Print or email it to share with others.', 'success');
+                    currentResponse = { prompt, mode: currentMode, text };
+                    renderResponse(currentResponse);
+
+                    if (currentMode === 'study') {
+                        setFeedback('Your study plan is ready. Print, email, or copy it to share.', 'success');
+                    } else if (currentMode === 'question') {
+                        setFeedback('Here is a prayerful response to reflect on and share.', 'success');
                     } else {
                         setFeedback('Your seven-day devotional is ready. Take it into prayer.', 'success');
                     }
+
                     results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
+                } catch (error) {
+                    console.error('Assistant error:', error);
+                    setFeedback('We could not load a response right now. Please try again soon.', 'error');
+                    if (results) {
+                        results.classList.add('hidden');
+                        results.innerHTML = '';
+                    }
+                } finally {
+                    toggleSubmitting(false);
+                }
             });
 
-            function analyzePrompt(text) {
-                for (const theme of focusThemes) {
-                    if (theme.pattern.test(text)) {
-                        return theme;
-                    }
+            function buildRequestPrompt(prompt, mode) {
+                const baseInstruction =
+                    'You are the Grounded Through Faith Assistant, a Catholic spiritual companion. Provide hopeful guidance rooted in Scripture and the Catechism. Use clear headings and bullet points where it helps disciples pray and act.';
+
+                if (mode === 'study') {
+                    return `${baseInstruction}\n\nDesign a multi-week Catholic study plan that keeps believers centered on Jesus. Include Scripture anchors, themes, and practical next steps.\n\nFocus: ${prompt}`;
                 }
-                return {
-                    virtue: 'renewed hope',
-                    companion: 'St. John the Beloved',
-                    encouragement: 'Stay near to the Heart of Jesus and listen for His whisper.',
-                    invitation: 'walk closely with Christ',
-                };
+
+                if (mode === 'question') {
+                    return `${baseInstruction}\n\nOffer a pastoral response to this faith-related question. Reference Scripture and the Catechism when appropriate, and close with concrete prayer invitations.\n\nQuestion: ${prompt}`;
+                }
+
+                return `${baseInstruction}\n\nCreate a seven-day devotional journey. Each day should highlight Scripture, reflection, a practical action, and a short prayer.\n\nIntention: ${prompt}`;
             }
 
-            function buildDevotional(prompt, analysis) {
-                const seed = createSeed(prompt + analysis.virtue);
-                const scripture = pickFrom(scriptureLibrary.devotional, seed);
-                const days = dayBlueprints.map((blueprint, index) => {
-                    const reflection = createReflection(prompt, analysis, index);
-                    const prayer = createPrayer(prompt, analysis, index);
-                    const scriptureNote = scripture.note;
-                    return {
-                        title: blueprint.title,
-                        scripture: scripture.ref,
-                        scriptureNote,
-                        reflection,
-                        practice: blueprint.practice,
-                        prayer,
-                    };
-                });
-                return {
-                    type: 'devotional',
-                    prompt,
-                    analysis,
-                    days,
-                    scripture,
-                };
+            function extractAnswerText(data) {
+                if (!data || typeof data !== 'object') {
+                    return '';
+                }
+
+                if (typeof data.answer === 'string') return data.answer.trim();
+                if (typeof data.response === 'string') return data.response.trim();
+                if (typeof data.result === 'string') return data.result.trim();
+                if (typeof data.content === 'string') return data.content.trim();
+                if (typeof data.message === 'string') return data.message.trim();
+
+                if (Array.isArray(data.messages)) {
+                    const combined = data.messages.filter((item) => typeof item === 'string').join('\n\n');
+                    return combined.trim();
+                }
+
+                return '';
             }
 
-            function createReflection(prompt, analysis, index) {
-                const ideas = [
-                    `Invite Jesus into ${prompt} and notice where ${analysis.virtue} is already present.`,
-                    `Ask the Holy Spirit which step will help you ${analysis.invitation} this week.`,
-                    `Journal about how ${analysis.companion} might accompany you through this season.`,
-                    `Name one obstacle keeping you from surrendering ${prompt} to the Lord.`,
-                ];
-                return pickFrom(ideas, index + createSeed(prompt));
-            }
-
-            function createPrayer(prompt, analysis, index) {
-                const lines = [
-                    `Jesus, I entrust ${prompt} to You. Strengthen me with ${analysis.virtue}.`,
-                    `Holy Spirit, guide me as I ${analysis.invitation}.`,
-                    `Lord, through the intercession of ${analysis.companion}, lead me deeper into Your will.`,
-                    `Father, let Your mercy surround every part of ${prompt}.`,
-                ];
-                return pickFrom(lines, index + createSeed(analysis.virtue));
-            }
-
-            function buildStudyPlan(prompt, analysis) {
-                const seed = createSeed(prompt + analysis.invitation);
-                const scripture = pickFrom(scriptureLibrary.study, seed);
-                const sessions = studyFramework.map((week, index) => {
-                    const practiceIdeas = [
-                        'Gather with a companion to discuss the Scripture and hold one another accountable.',
-                        'Choose a concrete act of service that embodies the theme.',
-                        'Memorize the featured verse and pray it morning and evening.',
-                        'Journal three insights and share one with your community.',
-                        'Plan a sacramental encounter—Mass, confession, or adoration—connected to the week.',
-                        'Identify one person to encourage with what you are learning.',
-                    ];
-                    const conversationPrompts = [
-                        'Where is Jesus inviting conversion this week?',
-                        'Which virtue stands out and why?',
-                        'How can your community support this intention?',
-                        'What obstacles surfaced and how did you meet them in prayer?',
-                        'Where did you witness God’s faithfulness?',
-                    ];
-                    return {
-                        week: week.title,
-                        focus: week.focus,
-                        scripture: scripture.ref,
-                        scriptureNote: scripture.note,
-                        practice: pickFrom(practiceIdeas, seed + index),
-                        conversation: pickFrom(conversationPrompts, seed + index * 2),
-                    };
-                });
-                return {
-                    type: 'study',
-                    prompt,
-                    analysis,
-                    sessions,
-                    scripture,
-                };
-            }
-
-            function buildAnswer(prompt, analysis) {
-                const scripture = pickFrom(scriptureLibrary.answers, createSeed(prompt));
-                const catechism = pickFrom(catechismReferences, createSeed(analysis.virtue));
-                const nextSteps = [
-                    'Spend ten quiet minutes with Jesus, repeating the Scripture aloud and waiting on His response.',
-                    'Reach out to a trusted spiritual director or mentor to process what surfaced in prayer.',
-                    'Offer a simple fast this week, uniting your hunger with Christ’s longing in this situation.',
-                    'Visit a nearby parish for adoration and place your question before the Eucharistic Lord.',
-                    'Invite your community or small group to pray with you and share any confirmations you receive.',
-                ];
-                return {
-                    type: 'question',
-                    prompt,
-                    analysis,
-                    scripture,
-                    catechism,
-                    encouragement: analysis.encouragement,
-                    nextStep: pickFrom(nextSteps, createSeed(prompt + analysis.virtue)),
-                };
-            }
-
-            function renderResponse(response, mode) {
+            function renderResponse(payload) {
                 if (!results) return;
-                const safePrompt = escapeHtml(response.prompt);
-                const safeVirtue = escapeHtml(response.analysis.virtue || 'renewed hope');
-                const safeCompanion = escapeHtml(response.analysis.companion || 'a saintly friend');
-                const headerHtml = `
+                const modeLabels = {
+                    devotional: 'Seven-Day Devotional',
+                    study: 'Study Plan',
+                    question: 'Faith Guidance',
+                };
+                const safePrompt = escapeHtml(payload.prompt);
+                const bodyHtml = formatTextToHtml(payload.text);
+                const heading = modeLabels[payload.mode] || 'Response';
+
+                results.innerHTML = `
                     <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-lg">
                         <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                             <div>
-                                <h3 class="text-lg font-semibold text-stone-900">Your intention</h3>
-                                <p class="mt-2 text-sm text-stone-600">Focus: <span class="font-semibold text-stone-900">${safePrompt}</span></p>
-                                <p class="mt-2 text-sm text-stone-600">Virtue emphasis: <span class="font-semibold text-stone-900">${safeVirtue}</span></p>
-                                <p class="mt-2 text-sm text-stone-600">Spiritual companion: <span class="font-semibold text-stone-900">${safeCompanion}</span></p>
-                                <p class="mt-4 text-sm text-stone-600">${escapeHtml(response.analysis.encouragement || 'Invite the Holy Spirit to guide each step.')}</p>
+                                <h3 class="text-lg font-semibold text-stone-900">${heading}</h3>
+                                <p class="mt-2 text-sm text-stone-600">Prompt: <span class="font-semibold text-stone-900">${safePrompt}</span></p>
+                                <p class="mt-3 text-xs text-stone-500">Responses are generated with prayerful Catholic guidance. Review and adapt before sharing.</p>
                             </div>
-                            ${renderActions(mode)}
+                            ${renderActions()}
                         </div>
+                        <div class="mt-6 space-y-4 text-sm leading-relaxed text-stone-700">${bodyHtml}</div>
                     </div>
                 `;
-
-                if (mode === 'devotional') {
-                    const daysHtml = response.days
-                        .map((day) => {
-                            return `
-                                <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl shadow-[var(--color-mist)]/60">
-                                    <h4 class="text-base font-semibold text-stone-900">${escapeHtml(day.title)}</h4>
-                                    <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture • ${escapeHtml(day.scripture)}</p>
-                                    <p class="mt-2 text-sm text-stone-600">${escapeHtml(day.scriptureNote)}</p>
-                                    <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Reflect:</span> ${escapeHtml(day.reflection)}</p>
-                                    <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Practice:</span> ${escapeHtml(day.practice)}</p>
-                                    <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Pray:</span> ${escapeHtml(day.prayer)}</p>
-                                </article>
-                            `;
-                        })
-                        .join('');
-                    results.innerHTML = `${headerHtml}<div class="grid gap-6 lg:grid-cols-2">${daysHtml}</div>`;
-                } else if (mode === 'study') {
-                    const sessionsHtml = response.sessions
-                        .map((session) => {
-                            return `
-                                <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl shadow-[var(--color-mist)]/60">
-                                    <h4 class="text-base font-semibold text-stone-900">${escapeHtml(session.week)}</h4>
-                                    <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Focus • ${escapeHtml(session.focus)}</p>
-                                    <p class="mt-2 text-sm text-stone-600">Anchor Scripture: ${escapeHtml(session.scripture)}</p>
-                                    <p class="mt-1 text-xs text-stone-500">${escapeHtml(session.scriptureNote)}</p>
-                                    <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Spiritual practice:</span> ${escapeHtml(session.practice)}</p>
-                                    <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Conversation starter:</span> ${escapeHtml(session.conversation)}</p>
-                                </article>
-                            `;
-                        })
-                        .join('');
-                    results.innerHTML = `${headerHtml}<div class="grid gap-6 md:grid-cols-2">${sessionsHtml}</div>`;
-                } else {
-                    const answerHtml = `
-                        ${headerHtml}
-                        <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl shadow-[var(--color-mist)]/60">
-                            <h4 class="text-base font-semibold text-stone-900">Pray with this guidance</h4>
-                            <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture • ${escapeHtml(response.scripture.ref)}</p>
-                            <p class="mt-2 text-sm text-stone-600">${escapeHtml(response.scripture.note)}</p>
-                            <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Catechism:</span> ${escapeHtml(response.catechism.ref)} — ${escapeHtml(response.catechism.note)}</p>
-                            <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Encouragement:</span> ${escapeHtml(response.encouragement || '')}</p>
-                            <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Next faithful step:</span> ${escapeHtml(response.nextStep)}</p>
-                        </article>
-                    `;
-                    results.innerHTML = answerHtml;
-                }
 
                 results.classList.remove('hidden');
-                attachActions(mode);
+                attachActions();
             }
 
-            function renderActions(mode) {
-                if (mode === 'question') {
-                    return `
-                        <div class="flex flex-wrap gap-3">
-                            <button id="copy-answer" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-5 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Copy encouragement</button>
-                        </div>
-                    `;
-                }
+            function renderActions() {
                 return `
                     <div class="flex flex-wrap gap-3">
-                        <button id="print-response" type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Print</button>
-                        <button id="email-response" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-5 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Email</button>
+                        <button id="assistant-copy" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
+                            Copy
+                        </button>
+                        <button id="assistant-email" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
+                            Email
+                        </button>
+                        <button id="assistant-print" type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
+                            Print
+                        </button>
                     </div>
                 `;
             }
 
-            function attachActions(mode) {
-                if (mode === 'question') {
-                    const copyButton = document.getElementById('copy-answer');
-                    if (copyButton) {
-                        copyButton.addEventListener('click', () => {
-                            if (!currentResponse) return;
-                            const text = buildAnswerText(currentResponse);
-                            navigator.clipboard.writeText(text).then(() => {
-                                setFeedback('Copied encouragement to your clipboard.', 'success');
-                            }).catch(() => {
-                                setFeedback('Unable to copy automatically. Please select the text manually.', 'error');
-                            });
-                        });
-                    }
-                    return;
-                }
+            function attachActions() {
+                if (!currentResponse) return;
+                const copyButton = document.getElementById('assistant-copy');
+                const emailButton = document.getElementById('assistant-email');
+                const printButton = document.getElementById('assistant-print');
 
-                const printButton = document.getElementById('print-response');
-                const emailButton = document.getElementById('email-response');
-
-                if (printButton) {
-                    printButton.addEventListener('click', () => {
-                        if (!currentResponse) return;
-                        const html = buildPrintableHtml(currentResponse, mode);
-                        const printWindow = window.open('', '_blank', 'noopener');
-                        if (!printWindow) {
-                            alert('Please allow pop-ups so we can open a printable copy.');
-                            return;
+                if (copyButton) {
+                    copyButton.addEventListener('click', async () => {
+                        try {
+                            await navigator.clipboard.writeText(buildPlainText(currentResponse));
+                            setFeedback('Copied to your clipboard. Share it freely!', 'success');
+                        } catch (error) {
+                            console.error('Copy failed:', error);
+                            setFeedback('Unable to copy automatically. Please select and copy the text.', 'error');
                         }
-                        printWindow.document.open();
-                        printWindow.document.write(html);
-                        printWindow.document.close();
-                        printWindow.focus();
-                        printWindow.print();
                     });
                 }
 
                 if (emailButton) {
                     emailButton.addEventListener('click', () => {
-                        if (!currentResponse) return;
-                        const subject = encodeURIComponent(mode === 'study' ? 'Custom Study Plan' : '7-Day Devotional');
-                        const body = encodeURIComponent(mode === 'study' ? buildStudyText(currentResponse) : buildDevotionalText(currentResponse));
+                        const subjectLabel =
+                            currentResponse.mode === 'study'
+                                ? 'Study Plan'
+                                : currentResponse.mode === 'question'
+                                ? 'Faith Guidance'
+                                : 'Devotional';
+                        const subject = encodeURIComponent(`Grounded Through Faith ${subjectLabel}`);
+                        const body = encodeURIComponent(buildPlainText(currentResponse));
                         window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                    });
+                }
+
+                if (printButton) {
+                    printButton.addEventListener('click', () => {
+                        const printable = buildPrintableHtml(currentResponse);
+                        const printWindow = window.open('', '_blank', 'noopener');
+                        if (!printWindow) {
+                            setFeedback('Please allow pop-ups to open a printable copy.', 'error');
+                            return;
+                        }
+                        printWindow.document.open();
+                        printWindow.document.write(printable);
+                        printWindow.document.close();
+                        printWindow.focus();
+                        printWindow.print();
                     });
                 }
             }
 
-            function buildAnswerText(response) {
+            function buildPlainText(payload) {
                 const lines = [];
-                lines.push('Grounded Through Faith Assistant - Encouragement');
-                lines.push(`Focus: ${response.prompt}`);
-                lines.push(`Virtue emphasis: ${response.analysis.virtue}`);
-                lines.push(`Companion: ${response.analysis.companion}`);
+                lines.push('Grounded Through Faith Assistant');
+                lines.push(`Mode: ${payload.mode}`);
+                lines.push(`Prompt: ${payload.prompt}`);
                 lines.push('');
-                lines.push(`Scripture: ${response.scripture.ref} — ${response.scripture.note}`);
-                lines.push(`Catechism: ${response.catechism.ref} — ${response.catechism.note}`);
-                lines.push(`Encouragement: ${response.encouragement}`);
-                lines.push(`Next step: ${response.nextStep}`);
+                lines.push(payload.text);
+                lines.push('');
+                lines.push('Visit groundedthroughfaith.org for more resources.');
                 return lines.join('\n');
             }
 
-            function buildDevotionalText(response) {
-                const lines = [];
-                lines.push('Grounded Through Faith Assistant - 7-Day Devotional');
-                lines.push(`Focus: ${response.prompt}`);
-                lines.push(`Virtue emphasis: ${response.analysis.virtue}`);
-                lines.push(`Companion: ${response.analysis.companion}`);
-                lines.push('');
-                response.days.forEach((day) => {
-                    lines.push(day.title);
-                    lines.push(`  Scripture: ${day.scripture} — ${day.scriptureNote}`);
-                    lines.push(`  Reflect: ${day.reflection}`);
-                    lines.push(`  Practice: ${day.practice}`);
-                    lines.push(`  Pray: ${day.prayer}`);
-                    lines.push('');
-                });
-                return lines.join('\n');
-            }
-
-            function buildStudyText(response) {
-                const lines = [];
-                lines.push('Grounded Through Faith Assistant - Study Plan');
-                lines.push(`Focus: ${response.prompt}`);
-                lines.push(`Virtue emphasis: ${response.analysis.virtue}`);
-                lines.push(`Companion: ${response.analysis.companion}`);
-                lines.push('');
-                response.sessions.forEach((session) => {
-                    lines.push(session.week);
-                    lines.push(`  Focus: ${session.focus}`);
-                    lines.push(`  Anchor Scripture: ${session.scripture} — ${session.scriptureNote}`);
-                    lines.push(`  Practice: ${session.practice}`);
-                    lines.push(`  Conversation Starter: ${session.conversation}`);
-                    lines.push('');
-                });
-                return lines.join('\n');
-            }
-
-            function buildPrintableHtml(response, mode) {
-                const safePrompt = escapeHtml(response.prompt);
-                const safeVirtue = escapeHtml(response.analysis.virtue || 'renewed hope');
-                const safeCompanion = escapeHtml(response.analysis.companion || 'a saintly friend');
-                const summary = `
-                    <header>
-                        <h1>Grounded Through Faith Assistant</h1>
-                        <p><strong>Focus:</strong> ${safePrompt}</p>
-                        <p><strong>Virtue emphasis:</strong> ${safeVirtue}</p>
-                        <p><strong>Spiritual companion:</strong> ${safeCompanion}</p>
-                    </header>
-                `;
-
-                let bodyContent = '';
-                if (mode === 'study') {
-                    const sections = response.sessions
-                        .map((session) => {
-                            return `
-                                <section class="entry">
-                                    <h2>${escapeHtml(session.week)}</h2>
-                                    <p><strong>Focus:</strong> ${escapeHtml(session.focus)}</p>
-                                    <p><strong>Anchor Scripture:</strong> ${escapeHtml(session.scripture)} — ${escapeHtml(session.scriptureNote)}</p>
-                                    <p><strong>Spiritual practice:</strong> ${escapeHtml(session.practice)}</p>
-                                    <p><strong>Conversation starter:</strong> ${escapeHtml(session.conversation)}</p>
-                                </section>
-                            `;
-                        })
-                        .join('');
-                    bodyContent = sections;
-                } else {
-                    const sections = response.days
-                        .map((day) => {
-                            return `
-                                <section class="entry">
-                                    <h2>${escapeHtml(day.title)}</h2>
-                                    <p><strong>Scripture:</strong> ${escapeHtml(day.scripture)}</p>
-                                    <p class="note">${escapeHtml(day.scriptureNote)}</p>
-                                    <p><strong>Reflect:</strong> ${escapeHtml(day.reflection)}</p>
-                                    <p><strong>Practice:</strong> ${escapeHtml(day.practice)}</p>
-                                    <p><strong>Pray:</strong> ${escapeHtml(day.prayer)}</p>
-                                </section>
-                            `;
-                        })
-                        .join('');
-                    bodyContent = sections;
-                }
-
+            function buildPrintableHtml(payload) {
+                const safePrompt = escapeHtml(payload.prompt);
+                const bodyHtml = formatTextToHtml(payload.text);
                 return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Printable Guidance</title>
+    <title>Grounded Through Faith Assistant</title>
     <style>
         body { font-family: 'Montserrat', system-ui, sans-serif; background: #f8f1e2; color: #2d1f13; margin: 0; padding: 32px; line-height: 1.6; }
         header { border-bottom: 2px solid #c9a03a; margin-bottom: 24px; padding-bottom: 16px; }
         h1 { margin: 0 0 8px; font-size: 26px; }
-        h2 { font-size: 20px; margin-top: 0; color: #8a6426; }
-        .entry { border: 1px solid rgba(138, 100, 38, 0.25); border-radius: 16px; padding: 16px 20px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.85); }
-        .note { font-style: italic; color: #5f4d30; }
+        .content { font-size: 14px; }
+        .content p { margin: 0 0 12px; }
+        .content ul { margin: 0 0 12px 20px; padding: 0; }
+        .content ol { margin: 0 0 12px 20px; padding: 0; }
         footer { margin-top: 24px; font-size: 12px; color: #5f4d30; text-align: center; }
-        @media print {
-            body { padding: 12px; }
-            .entry { page-break-inside: avoid; }
-        }
+        @media print { body { padding: 12px; } }
     </style>
 </head>
 <body>
-    ${summary}
-    ${bodyContent}
-    <footer>Carry this plan with you in prayer. Visit groundedthroughfaith.org for more resources.</footer>
+    <header>
+        <h1>Grounded Through Faith Assistant</h1>
+        <p><strong>Mode:</strong> ${escapeHtml(payload.mode)}</p>
+        <p><strong>Prompt:</strong> ${safePrompt}</p>
+    </header>
+    <div class="content">${bodyHtml}</div>
+    <footer>Carry this guidance with you in prayer. Visit groundedthroughfaith.org for more resources.</footer>
 </body>
 </html>`;
             }
 
-            function createSeed(text) {
-                let seed = 0;
-                const value = String(text || '');
-                for (let i = 0; i < value.length; i += 1) {
-                    seed += value.charCodeAt(i);
-                }
-                return seed || 7;
-            }
+            function formatTextToHtml(text) {
+                const sections = String(text || '')
+                    .trim()
+                    .split(/\n{2,}/)
+                    .filter((section) => section.trim().length > 0);
 
-            function pickFrom(items, index) {
-                if (!Array.isArray(items) || items.length === 0) return items[0] || '';
-                const position = Math.abs(index) % items.length;
-                return items[position];
+                if (sections.length === 0) {
+                    return `<p>${escapeHtml(String(text || ''))}</p>`;
+                }
+
+                return sections
+                    .map((section) => {
+                        const lines = section.split('\n').map((line) => line.trim());
+                        const isBulleted = lines.every((line) => /^[-*]\s+/.test(line));
+                        const isNumbered = lines.every((line) => /^\d+\.\s+/.test(line));
+
+                        if (isBulleted) {
+                            const items = lines
+                                .map((line) => `<li>${escapeHtml(line.replace(/^[-*]\s+/, ''))}</li>`)
+                                .join('');
+                            return `<ul class="list-disc space-y-2 pl-6">${items}</ul>`;
+                        }
+
+                        if (isNumbered) {
+                            const items = lines
+                                .map((line) => `<li>${escapeHtml(line.replace(/^\d+\.\s+/, ''))}</li>`)
+                                .join('');
+                            return `<ol class="list-decimal space-y-2 pl-6">${items}</ol>`;
+                        }
+
+                        const paragraph = lines.map((line) => escapeHtml(line)).join('<br />');
+                        return `<p>${paragraph}</p>`;
+                    })
+                    .join('');
             }
 
             function escapeHtml(value) {
@@ -780,9 +544,18 @@
                     feedback.classList.add('text-stone-600');
                 }
             }
+
+            function toggleSubmitting(isSubmitting) {
+                if (!submitButton) return;
+                submitButton.disabled = isSubmitting;
+                submitButton.classList.toggle('opacity-70', isSubmitting);
+            }
         })();
 
-        document.getElementById('assistant-year').textContent = new Date().getFullYear();
+        const assistantYearEl = document.getElementById('assistant-year');
+        if (assistantYearEl) {
+            assistantYearEl.textContent = new Date().getFullYear();
+        }
     </script>
 </body>
 </html>
