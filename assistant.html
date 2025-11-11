@@ -132,21 +132,93 @@
         </div>
     </footer>
     <script>
-        async function askAI(prompt) {
-            const response = await fetch('/api/ask', {
+        async function streamAssistant(messages, handlers = {}) {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ prompt }),
+                body: JSON.stringify({ messages }),
             });
 
-            if (!response.ok) {
+            if (!response.ok || !response.body) {
                 const message = await response.text().catch(() => '');
                 throw new Error(message || 'Assistant request failed');
             }
 
-            return response.json().catch(() => ({}));
+            const { onStart, onToken, onError, onComplete } = handlers;
+            if (typeof onStart === 'function') {
+                onStart();
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+            let aggregated = '';
+            let finished = false;
+
+            while (!finished) {
+                const { value, done } = await reader.read();
+
+                if (value) {
+                    buffer += decoder.decode(value, { stream: true });
+                }
+                if (done) {
+                    buffer += decoder.decode();
+                }
+
+                let boundary = buffer.indexOf('\n\n');
+                while (boundary !== -1) {
+                    const rawEvent = buffer.slice(0, boundary);
+                    buffer = buffer.slice(boundary + 2);
+
+                    const dataLines = rawEvent
+                        .split('\n')
+                        .filter((line) => line.startsWith('data:'))
+                        .map((line) => line.slice(5).trim());
+
+                    if (dataLines.length > 0) {
+                        const payloadText = dataLines.join('');
+                        if (payloadText) {
+                            try {
+                                const payload = JSON.parse(payloadText);
+                                if (payload.type === 'text') {
+                                    const delta = payload.delta || '';
+                                    if (delta) {
+                                        aggregated += delta;
+                                        if (typeof onToken === 'function') {
+                                            onToken(aggregated);
+                                        }
+                                    }
+                                } else if (payload.type === 'error') {
+                                    const errorMessage = payload.message || 'Assistant stream error';
+                                    if (typeof onError === 'function') {
+                                        onError(errorMessage);
+                                    }
+                                    throw new Error(errorMessage);
+                                } else if (payload.type === 'done') {
+                                    finished = true;
+                                    break;
+                                }
+                            } catch (error) {
+                                console.error('Assistant stream parse error:', error);
+                            }
+                        }
+                    }
+
+                    boundary = buffer.indexOf('\n\n');
+                }
+
+                if (finished || done) {
+                    break;
+                }
+            }
+
+            if (typeof onComplete === 'function') {
+                onComplete(aggregated);
+            }
+
+            return aggregated;
         }
 
         (function () {
@@ -157,6 +229,7 @@
             const feedback = document.getElementById('assistant-feedback');
             const results = document.getElementById('assistant-results');
             const submitButton = form.querySelector('button[type="submit"]');
+            const conversation = [];
             let currentResponse = null;
 
             form.addEventListener('submit', async (event) => {
@@ -171,28 +244,45 @@
                     return;
                 }
 
+                const requestPrompt = buildRequestPrompt(prompt);
+                conversation.push({ role: 'user', content: prompt, request: requestPrompt });
+
                 setFeedback('Praying with your request...', 'info');
                 toggleSubmitting(true);
+                currentResponse = { prompt, text: '' };
+                renderResponse(currentResponse, { isFinal: false });
 
                 try {
-                    const requestPrompt = buildRequestPrompt(prompt);
-                    const data = await askAI(requestPrompt);
-                    const text = extractAnswerText(data);
-                    if (!text) {
+                    const messages = buildMessages(conversation);
+                    const finalText = await streamAssistant(messages, {
+                        onToken: (partial) => {
+                            currentResponse = { prompt, text: partial };
+                            renderResponse(currentResponse, { isFinal: false });
+                        },
+                    });
+
+                    const trimmed = finalText.trim();
+                    if (!trimmed) {
                         throw new Error('The assistant returned an empty response.');
                     }
 
-                    currentResponse = { prompt, text };
-                    renderResponse(currentResponse);
+                    currentResponse = { prompt, text: trimmed };
+                    conversation.push({ role: 'assistant', content: trimmed });
+                    renderResponse(currentResponse, { isFinal: true });
+                    if (promptInput) {
+                        promptInput.value = '';
+                    }
                     setFeedback('Here is your Christ-centered guidance. Take it into prayer.', 'success');
                     results.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } catch (error) {
                     console.error('Assistant error:', error);
+                    conversation.pop();
                     setFeedback('We could not load a response right now. Please try again soon.', 'error');
                     if (results) {
                         results.classList.add('hidden');
                         results.innerHTML = '';
                     }
+                    currentResponse = null;
                 } finally {
                     toggleSubmitting(false);
                 }
@@ -205,29 +295,34 @@
                 return `${baseInstruction}\n\nRequest: ${prompt}`;
             }
 
-            function extractAnswerText(data) {
-                if (!data || typeof data !== 'object') {
-                    return '';
-                }
-
-                if (typeof data.answer === 'string') return data.answer.trim();
-                if (typeof data.response === 'string') return data.response.trim();
-                if (typeof data.result === 'string') return data.result.trim();
-                if (typeof data.content === 'string') return data.content.trim();
-                if (typeof data.message === 'string') return data.message.trim();
-
-                if (Array.isArray(data.messages)) {
-                    const combined = data.messages.filter((item) => typeof item === 'string').join('\n\n');
-                    return combined.trim();
-                }
-
-                return '';
+            function buildMessages(history) {
+                return history.map((entry) => {
+                    if (entry.role === 'user') {
+                        return {
+                            role: 'user',
+                            content: entry.request || entry.content || '',
+                        };
+                    }
+                    return {
+                        role: 'assistant',
+                        content: entry.content || '',
+                    };
+                });
             }
 
-            function renderResponse(payload) {
+            function renderResponse(payload, options = {}) {
                 if (!results) return;
                 const safePrompt = escapeHtml(payload.prompt);
-                const bodyHtml = formatTextToHtml(payload.text);
+                const bodyHtml = payload.text && payload.text.trim()
+                    ? formatTextToHtml(payload.text)
+                    : '<p class="italic text-stone-500">Receiving prayerful guidance...</p>';
+                const actionsHtml = options.isFinal ? renderActions() : '';
+                const assistantHeading = options.isFinal
+                    ? 'Grounded Through Faith Assistant'
+                    : 'Grounded Through Faith Assistant • listening...';
+                const noteText = options.isFinal
+                    ? 'Review prayerfully before sharing with others.'
+                    : 'The assistant is gathering a response rooted in Scripture.';
 
                 results.innerHTML = `
                     <div class="space-y-6">
@@ -240,11 +335,11 @@
                             <div class="w-full max-w-xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 text-sm text-stone-700 shadow-lg shadow-[var(--color-mist)]/60">
                                 <div class="flex flex-col gap-4">
                                     <div class="flex flex-wrap items-center justify-between gap-3">
-                                        <p class="text-base font-semibold text-stone-900">Grounded Through Faith Assistant</p>
-                                        ${renderActions()}
+                                        <p class="text-base font-semibold text-stone-900">${assistantHeading}</p>
+                                        ${actionsHtml}
                                     </div>
                                     <div class="space-y-4 leading-relaxed">${bodyHtml}</div>
-                                    <p class="text-xs text-stone-500">Review prayerfully before sharing with others.</p>
+                                    <p class="text-xs text-stone-500">${noteText}</p>
                                 </div>
                             </div>
                         </div>
@@ -252,7 +347,9 @@
                 `;
 
                 results.classList.remove('hidden');
-                attachActions();
+                if (options.isFinal) {
+                    attachActions();
+                }
             }
 
             function renderActions() {

@@ -39,3 +39,10 @@
 # Explicitly ignored logo asset that deploys outside of the repository
 assets/treelogo.png
 !assets/.gitkeep
+
+# Node and server artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
