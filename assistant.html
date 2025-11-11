@@ -59,174 +59,74 @@
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25" aria-hidden="true"></div>
         <div class="pointer-events-none absolute -left-20 top-10 h-60 w-60 rounded-full bg-[var(--color-honey)]/20 blur-3xl" aria-hidden="true"></div>
         <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl" aria-hidden="true"></div>
-        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl items-center justify-between gap-6 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-4 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur">
-            <div class="flex items-center gap-4">
-                <img src="assets/treelogo.png" alt="Grounded Through Faith newsletter logo" class="h-14 w-auto" />
-                <div>
-                    <p class="text-lg font-semibold tracking-wide text-stone-900">Grounded Through Faith</p>
-                    <p class="text-sm text-stone-500">Walk with Jesus.</p>
-                </div>
+        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
+            <div class="text-center md:text-left">
+                <p class="text-lg font-semibold tracking-wide text-stone-900">Grounded Through Faith</p>
+                <p class="text-sm text-stone-500">Walk with Jesus.</p>
             </div>
-            <a href="index.html#study-plans" class="hidden rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d] md:inline-flex">
-                Study Plans
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
+                <a href="assistant.html" class="transition hover:text-[var(--color-honey)]">Assistant</a>
+                <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
+            </div>
+            <a href="https://subscribe-forms.beehiiv.com/9070d55e-33e1-4694-a132-ed0effabd180"
+               class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]"
+               target="_blank"
+               rel="noreferrer">
+                Subscribe
             </a>
         </nav>
-        <section class="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center">
-            <div class="flex-1 space-y-8">
-                <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">
-                    Prayerful AI Companion
-                </span>
-                <h1 class="text-4xl font-bold text-stone-900 md:text-5xl lg:text-6xl">
-                    Invite the Grounded Through Faith Assistant into your discernment.
-                </h1>
-                <p class="max-w-2xl text-lg text-stone-600">
-                    Share your intention, formation goals, or questions about living the Gospel. The assistant will assemble a seven-day devotional, sketch a focused study plan, or surface Scripture and tradition-rooted insights to keep you walking closely with Jesus.
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#assistant-tool" class="rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
-                        Launch the Assistant
-                    </a>
-                    <a href="index.html#custom-devotional" class="rounded-full border border-stone-200 px-6 py-3 text-sm font-semibold text-stone-700 transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[var(--color-cerulean)]">
-                        Use the on-page devotional guide
-                    </a>
-                </div>
-            </div>
-            <div class="flex-1">
-                <div class="relative rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
-                    <div class="space-y-6 text-sm text-stone-600">
-                        <p class="text-base font-semibold text-stone-900">How it walks with you</p>
-                        <ul class="space-y-4">
-                            <li class="flex items-start gap-4">
-                                <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">1</span>
-                                <div>
-                                    <p class="font-semibold text-stone-900">Listens for the heart of your request</p>
-                                    <p>We prayerfully interpret keywords from your prompt to surface virtues, saintly guides, and Scripture.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-4">
-                                <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">2</span>
-                                <div>
-                                    <p class="font-semibold text-stone-900">Shapes a devotional or study rhythm</p>
-                                    <p>Receive a ready-to-use seven-day devotional or multi-week study path aligned with Catholic teaching.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-4">
-                                <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">3</span>
-                                <div>
-                                    <p class="font-semibold text-stone-900">Responds to faith questions</p>
-                                    <p>When you need clarity, the assistant highlights Scripture, Church guidance, and next prayer steps.</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
     </header>
-    <main id="assistant-tool" class="relative z-10 space-y-24 pb-32">
-        <section class="mx-auto max-w-6xl px-6">
-            <div class="relative overflow-hidden rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl shadow-[var(--color-mist)]/70">
-                <div class="pointer-events-none absolute -right-24 top-12 hidden h-56 w-56 rounded-full bg-[var(--color-honey)]/25 blur-3xl md:block" aria-hidden="true"></div>
-                <div class="pointer-events-none absolute -left-20 bottom-12 hidden h-56 w-56 rounded-full bg-[var(--color-honey)]/20 blur-3xl md:block" aria-hidden="true"></div>
-                <div class="relative grid gap-10 lg:grid-cols-[1.1fr_1fr]">
-                    <div class="space-y-6">
-                        <h2 class="section-title text-3xl font-semibold text-stone-900 md:text-4xl">Craft devotionals, study plans, or receive encouragement</h2>
-                        <p class="text-sm leading-relaxed text-stone-600">
-                            Choose the mode that best serves your next step. Each response is generated locally in your browser, blending Scripture, tradition, and spiritual practices curated by the Grounded Through Faith team.
-                        </p>
-                        <form id="assistant-form" class="space-y-5 rounded-3xl bg-[var(--color-morning-sky)]/90 p-6 shadow-inner shadow-[var(--color-mist)]/50">
-                            <div class="space-y-2">
-                                <span class="text-sm font-semibold text-stone-700">How can the assistant help?</span>
-                                <div class="grid gap-2 sm:grid-cols-3">
-                                    <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-stone-200 bg-white/70 px-3 py-2 text-xs font-semibold text-stone-600 shadow-sm transition hover:border-[var(--color-cerulean)] hover:text-[var(--color-cerulean)]">
-                                        <input type="radio" name="assistant-mode" value="devotional" class="text-[var(--color-cerulean)]" checked />
-                                        7-day devotional
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-stone-200 bg-white/70 px-3 py-2 text-xs font-semibold text-stone-600 shadow-sm transition hover:border-[var(--color-cerulean)] hover:text-[var(--color-cerulean)]">
-                                        <input type="radio" name="assistant-mode" value="study" class="text-[var(--color-cerulean)]" />
-                                        Study plan
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-stone-200 bg-white/70 px-3 py-2 text-xs font-semibold text-stone-600 shadow-sm transition hover:border-[var(--color-cerulean)] hover:text-[var(--color-cerulean)]">
-                                        <input type="radio" name="assistant-mode" value="question" class="text-[var(--color-cerulean)]" />
-                                        Faith question
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label for="assistant-prompt" class="text-sm font-semibold text-stone-700">Share your focus, need, or question</label>
-                                <textarea id="assistant-prompt" name="assistant-prompt" class="h-32 w-full rounded-2xl border border-stone-200 bg-[var(--color-morning-sky)] px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Example: Help our young adult group grow in prayer or How do I trust God while waiting for a new job?" required></textarea>
-                            </div>
-                            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
-                                Generate guidance
-                            </button>
-                            <p id="assistant-feedback" class="hidden text-sm text-stone-600" aria-live="polite"></p>
-                        </form>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/90 p-6 text-sm text-stone-600 shadow-lg">
-                            <h3 class="text-lg font-semibold text-stone-900">What you receive</h3>
-                            <ul class="mt-4 space-y-3">
-                                <li class="flex gap-3">
-                                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">A</span>
-                                    <div>
-                                        <p class="font-semibold text-stone-800">Prayerful structure</p>
-                                        <p>Devotionals include Scripture, reflections, practices, and prayers for each day.</p>
-                                    </div>
-                                </li>
-                                <li class="flex gap-3">
-                                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">B</span>
-                                    <div>
-                                        <p class="font-semibold text-stone-800">Mission-focused plans</p>
-                                        <p>Study journeys arrive with weekly themes, action steps, and community conversation prompts.</p>
-                                    </div>
-                                </li>
-                                <li class="flex gap-3">
-                                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">C</span>
-                                    <div>
-                                        <p class="font-semibold text-stone-800">Grounded answers</p>
-                                        <p>Faith questions surface Scripture, Catechism references, and next prayer invitations.</p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/30 p-6 text-sm text-stone-600">
-                            <p class="font-semibold text-stone-800">Privacy note</p>
-                            <p class="mt-2">Your prompts never leave this page. Everything is generated instantly in your browser so you can prayerfully iterate as often as needed.</p>
-                        </div>
-                    </div>
-                </div>
-                <div id="assistant-results" class="relative mt-10 hidden space-y-8" aria-live="polite"></div>
+    <main class="relative z-10 flex min-h-[calc(100vh-120px)] flex-col">
+        <section class="mx-auto w-full max-w-4xl flex-1 px-6 pb-24 pt-16">
+            <div class="text-center">
+                <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Prayerful AI Companion</span>
+                <h1 class="mt-6 text-4xl font-bold text-stone-900 md:text-5xl">Grounded Through Faith Assistant</h1>
+                <p class="mx-auto mt-4 max-w-2xl text-base text-stone-600">Ask for a devotional, outline a study plan, or seek clarity about walking with Jesus. The assistant listens to your prompt and responds with Scripture-rooted encouragement you can print, email, or share.</p>
             </div>
-        </section>
-        <section class="mx-auto max-w-6xl px-6">
-            <div class="grid gap-6 rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl lg:grid-cols-2">
-                <div class="space-y-4">
-                    <h2 class="section-title text-3xl font-semibold text-stone-900">Tips for receiving the most from the assistant</h2>
-                    <ul class="space-y-3 text-sm text-stone-600">
-                        <li><strong class="text-stone-900">Be specific:</strong> Include people, ministries, locations, or themes you are discerning.</li>
-                        <li><strong class="text-stone-900">Iterate:</strong> Generate multiple times with varied wording to explore how the Spirit might be leading.</li>
-                        <li><strong class="text-stone-900">Pray with it:</strong> Bring the results into quiet prayer, spiritual direction, or small group conversation.</li>
-                    </ul>
+            <div class="mt-10 grid gap-4 rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/80 p-6 text-sm text-stone-700 shadow-xl shadow-[var(--color-mist)]/60 sm:grid-cols-3">
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Devotional rhythms</p>
+                    <p class="mt-2 text-xs text-stone-600">Invite the Spirit to craft seven-day journeys with Scripture, reflection, and prayer.</p>
                 </div>
-                <div class="space-y-4 text-sm text-stone-600">
-                    <h3 class="text-lg font-semibold text-stone-900">Need a human guide?</h3>
-                    <p>Reach out to our team for deeper accompaniment or to share testimonies from your journey.</p>
-                    <a href="mailto:hello@groundedthroughfaith.org" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
-                        Email the ministry team
-                    </a>
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Formation plans</p>
+                    <p class="mt-2 text-xs text-stone-600">Outline multi-week studies that keep your purpose aligned with God’s will.</p>
+                </div>
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Faith questions</p>
+                    <p class="mt-2 text-xs text-stone-600">Receive pastoral answers anchored in Scripture and Church teaching.</p>
                 </div>
             </div>
+            <form id="assistant-form" class="mx-auto mt-12 max-w-3xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 shadow-2xl shadow-[var(--color-mist)]/70">
+                <label for="assistant-prompt" class="sr-only">Ask the assistant</label>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <input id="assistant-prompt" name="assistant-prompt" type="text" class="w-full flex-1 rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-base text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Ask for a devotional, study plan, or faith insight..." required />
+                    <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Send</button>
+                </div>
+                <p id="assistant-feedback" class="mt-3 hidden text-sm text-stone-600" aria-live="polite"></p>
+                <p class="mt-4 text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response.</p>
+            </form>
+            <div id="assistant-results" class="mx-auto mt-10 hidden max-w-3xl space-y-6" aria-live="polite"></div>
         </section>
     </main>
     <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
         <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
-        <div class="relative mx-auto flex max-w-6xl flex-col gap-6 px-6 py-12 text-sm text-white/80 md:flex-row md:items-center md:justify-between">
-            <p>© <span id="assistant-year"></span> Grounded Through Faith. Walk with Jesus every day.</p>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="mens-discipleship.html" class="hover:text-white">Men's Discipleship</a>
-                <a href="thirty-day-purpose.html" class="hover:text-white">30-Day Way of Jesus</a>
-                <a href="strength-in-waiting.html" class="hover:text-white">Strength in Waiting</a>
+        <div class="relative mx-auto max-w-6xl space-y-4 px-6 py-12 text-sm text-white/80">
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+                <p>© <span id="assistant-year"></span> Grounded Through Faith. Walk with Jesus every day.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="index.html" class="hover:text-white">Home</a>
+                    <a href="mens-discipleship.html" class="hover:text-white">Men's Discipleship</a>
+                    <a href="thirty-day-purpose.html" class="hover:text-white">30-Day Way of Jesus</a>
+                    <a href="strength-in-waiting.html" class="hover:text-white">Strength in Waiting</a>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
+                <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
+                <div class="flex items-center gap-4">
+                    <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -256,17 +156,7 @@
             const feedback = document.getElementById('assistant-feedback');
             const results = document.getElementById('assistant-results');
             const submitButton = form.querySelector('button[type="submit"]');
-            const modeInputs = Array.from(form.querySelectorAll('input[name="assistant-mode"]'));
-            let currentMode = modeInputs.find((input) => input.checked)?.value || 'devotional';
             let currentResponse = null;
-
-            modeInputs.forEach((input) => {
-                input.addEventListener('change', () => {
-                    if (input.checked) {
-                        currentMode = input.value;
-                    }
-                });
-            });
 
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -284,24 +174,16 @@
                 toggleSubmitting(true);
 
                 try {
-                    const requestPrompt = buildRequestPrompt(prompt, currentMode);
+                    const requestPrompt = buildRequestPrompt(prompt);
                     const data = await askAI(requestPrompt);
                     const text = extractAnswerText(data);
                     if (!text) {
                         throw new Error('The assistant returned an empty response.');
                     }
 
-                    currentResponse = { prompt, mode: currentMode, text };
+                    currentResponse = { prompt, text };
                     renderResponse(currentResponse);
-
-                    if (currentMode === 'study') {
-                        setFeedback('Your study plan is ready. Print, email, or copy it to share.', 'success');
-                    } else if (currentMode === 'question') {
-                        setFeedback('Here is a prayerful response to reflect on and share.', 'success');
-                    } else {
-                        setFeedback('Your seven-day devotional is ready. Take it into prayer.', 'success');
-                    }
-
+                    setFeedback('Here is your Christ-centered guidance. Take it into prayer.', 'success');
                     results.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } catch (error) {
                     console.error('Assistant error:', error);
@@ -315,19 +197,11 @@
                 }
             });
 
-            function buildRequestPrompt(prompt, mode) {
+            function buildRequestPrompt(prompt) {
                 const baseInstruction =
-                    'You are the Grounded Through Faith Assistant, a Catholic spiritual companion. Provide hopeful guidance rooted in Scripture and the Catechism. Use clear headings and bullet points where it helps disciples pray and act.';
+                    'You are the Grounded Through Faith Assistant, a Catholic spiritual companion. Provide hopeful guidance rooted in Scripture and the Catechism. Choose the best structure for the request—such as a seven-day devotional, a multi-week study plan, or pastoral counsel—and format the response with clear headings and bullet points where helpful.';
 
-                if (mode === 'study') {
-                    return `${baseInstruction}\n\nDesign a multi-week Catholic study plan that keeps believers centered on Jesus. Include Scripture anchors, themes, and practical next steps.\n\nFocus: ${prompt}`;
-                }
-
-                if (mode === 'question') {
-                    return `${baseInstruction}\n\nOffer a pastoral response to this faith-related question. Reference Scripture and the Catechism when appropriate, and close with concrete prayer invitations.\n\nQuestion: ${prompt}`;
-                }
-
-                return `${baseInstruction}\n\nCreate a seven-day devotional journey. Each day should highlight Scripture, reflection, a practical action, and a short prayer.\n\nIntention: ${prompt}`;
+                return `${baseInstruction}\n\nRequest: ${prompt}`;
             }
 
             function extractAnswerText(data) {
@@ -351,26 +225,28 @@
 
             function renderResponse(payload) {
                 if (!results) return;
-                const modeLabels = {
-                    devotional: 'Seven-Day Devotional',
-                    study: 'Study Plan',
-                    question: 'Faith Guidance',
-                };
                 const safePrompt = escapeHtml(payload.prompt);
                 const bodyHtml = formatTextToHtml(payload.text);
-                const heading = modeLabels[payload.mode] || 'Response';
 
                 results.innerHTML = `
-                    <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-lg">
-                        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-stone-900">${heading}</h3>
-                                <p class="mt-2 text-sm text-stone-600">Prompt: <span class="font-semibold text-stone-900">${safePrompt}</span></p>
-                                <p class="mt-3 text-xs text-stone-500">Responses are generated with prayerful Catholic guidance. Review and adapt before sharing.</p>
+                    <div class="space-y-6">
+                        <div class="flex justify-end">
+                            <div class="max-w-xl rounded-3xl bg-white/80 px-4 py-3 text-sm text-stone-700 shadow-sm ring-1 ring-stone-200">
+                                ${safePrompt}
                             </div>
-                            ${renderActions()}
                         </div>
-                        <div class="mt-6 space-y-4 text-sm leading-relaxed text-stone-700">${bodyHtml}</div>
+                        <div class="flex justify-start">
+                            <div class="w-full max-w-xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 text-sm text-stone-700 shadow-lg shadow-[var(--color-mist)]/60">
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <p class="text-base font-semibold text-stone-900">Grounded Through Faith Assistant</p>
+                                        ${renderActions()}
+                                    </div>
+                                    <div class="space-y-4 leading-relaxed">${bodyHtml}</div>
+                                    <p class="text-xs text-stone-500">Review prayerfully before sharing with others.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
 
@@ -380,7 +256,7 @@
 
             function renderActions() {
                 return `
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex flex-wrap gap-2">
                         <button id="assistant-copy" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
                             Copy
                         </button>
@@ -414,13 +290,7 @@
 
                 if (emailButton) {
                     emailButton.addEventListener('click', () => {
-                        const subjectLabel =
-                            currentResponse.mode === 'study'
-                                ? 'Study Plan'
-                                : currentResponse.mode === 'question'
-                                ? 'Faith Guidance'
-                                : 'Devotional';
-                        const subject = encodeURIComponent(`Grounded Through Faith ${subjectLabel}`);
+                        const subject = encodeURIComponent('Grounded Through Faith Guidance');
                         const body = encodeURIComponent(buildPlainText(currentResponse));
                         window.location.href = `mailto:?subject=${subject}&body=${body}`;
                     });
@@ -446,7 +316,6 @@
             function buildPlainText(payload) {
                 const lines = [];
                 lines.push('Grounded Through Faith Assistant');
-                lines.push(`Mode: ${payload.mode}`);
                 lines.push(`Prompt: ${payload.prompt}`);
                 lines.push('');
                 lines.push(payload.text);
@@ -478,7 +347,6 @@
 <body>
     <header>
         <h1>Grounded Through Faith Assistant</h1>
-        <p><strong>Mode:</strong> ${escapeHtml(payload.mode)}</p>
         <p><strong>Prompt:</strong> ${safePrompt}</p>
     </header>
     <div class="content">${bodyHtml}</div>
