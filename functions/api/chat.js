@@ -34,28 +34,30 @@ export async function onRequestPost(context) {
 
     const { messages = [] } = await request.json().catch(() => ({ messages: [] }));
 
+    const history = [
+      {
+        role: "system",
+        content: [
+          {
+            type: "input_text",
+            text: SYSTEM_PROMPT,
+          },
+        ],
+      },
+      ...messages.map((message) => ({
+        role: message.role,
+        content: [
+          {
+            type: message.role === "assistant" ? "output_text" : "input_text",
+            text: message.content,
+          },
+        ],
+      })),
+    ];
+
     const payload = {
       model: "gpt-4.1",
-      input: [
-        {
-          role: "system",
-          content: [
-            {
-              type: "text",
-              text: SYSTEM_PROMPT,
-            },
-          ],
-        },
-        ...messages.map((message) => ({
-          role: message.role,
-          content: [
-            {
-              type: "text",
-              text: message.content,
-            },
-          ],
-        })),
-      ],
+      input: history,
       stream: true,
     };
 
