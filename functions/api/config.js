@@ -11,8 +11,12 @@ export function onRequestOptions() {
 
 export async function onRequestGet({ env }) {
   const membershipLink = (env.STRIPE_PAYMENT_LINK || '').trim();
+  const checkoutReady = Boolean(
+    (env.STRIPE_SECRET_KEY || '').trim() && (env.STRIPE_PRICE_ID_MONTHLY || '').trim()
+  );
+
   const payload = {
-    checkoutReady: Boolean(membershipLink),
+    checkoutReady,
     membershipLink: membershipLink || null,
   };
 
