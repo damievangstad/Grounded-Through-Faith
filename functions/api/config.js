@@ -12,10 +12,9 @@ export function onRequestOptions() {
 }
 
 export async function onRequestGet({ env }) {
-  const membershipUrl = (env.Membership || '').trim();
   const payload = {
-    membershipUrl,
     priceLabel: DEFAULT_PRICE,
+    checkoutReady: Boolean((env.Membership || '').trim() && (env.STRIPE_SECRET_KEY || '').trim()),
   };
 
   return new Response(JSON.stringify(payload), {
