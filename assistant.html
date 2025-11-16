@@ -145,7 +145,7 @@
             <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
                 <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
                 <div class="flex items-center gap-4">
-                    <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
+                    <a href="https://www.facebook.com/share/g/1AX2qC8kpb/" target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
                     <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
                 </div>
             </div>
@@ -415,9 +415,6 @@
                         <button id="assistant-copy" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
                             Copy
                         </button>
-                        <button id="assistant-email" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
-                            Email
-                        </button>
                         <button id="assistant-print" type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
                             Print
                         </button>
@@ -428,7 +425,6 @@
             function attachActions() {
                 if (!currentResponse) return;
                 const copyButton = document.getElementById('assistant-copy');
-                const emailButton = document.getElementById('assistant-email');
                 const printButton = document.getElementById('assistant-print');
 
                 if (copyButton) {
@@ -440,14 +436,6 @@
                             console.error('Copy failed:', error);
                             setFeedback('Unable to copy automatically. Please select and copy the text.', 'error');
                         }
-                    });
-                }
-
-                if (emailButton) {
-                    emailButton.addEventListener('click', () => {
-                        const subject = encodeURIComponent('Grounded Through Faith Guidance');
-                        const body = encodeURIComponent(buildPlainText(currentResponse));
-                        window.location.href = `mailto:?subject=${subject}&body=${body}`;
                     });
                 }
 
