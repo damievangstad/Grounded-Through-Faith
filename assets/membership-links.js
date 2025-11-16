@@ -1,6 +1,6 @@
 (function () {
   const FALLBACK_DETAILS = 'membership.html#join';
-  const DEFAULT_PAYMENT_LINK = 'https://buy.stripe.com/dRmbITcDo3DY9JA5JvfIs00';
+  const DEFAULT_PAYMENT_LINK = '';
 
   const state = {
     membershipLink: DEFAULT_PAYMENT_LINK,
