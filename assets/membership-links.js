@@ -1,20 +1,23 @@
 (function () {
   const FALLBACK_DETAILS = 'membership.html#join';
+  const DEFAULT_PAYMENT_LINK = 'https://buy.stripe.com/dRmbITcDo3DY9JA5JvfIs00';
+
   const state = {
-    checkoutReady: false,
+    membershipLink: DEFAULT_PAYMENT_LINK,
   };
 
   function applyState() {
+    const ready = Boolean(state.membershipLink);
     document.querySelectorAll('[data-membership-link]').forEach((anchor) => {
       if (!(anchor instanceof HTMLAnchorElement)) return;
       const intent = anchor.dataset.membershipLink || 'details';
       const isCheckout = intent === 'checkout';
 
       if (isCheckout) {
-        anchor.href = FALLBACK_DETAILS;
-        anchor.dataset.checkoutReady = state.checkoutReady ? 'true' : 'false';
-        anchor.setAttribute('aria-disabled', state.checkoutReady ? 'false' : 'true');
-        anchor.classList.toggle('opacity-60', !state.checkoutReady);
+        anchor.href = ready ? state.membershipLink : FALLBACK_DETAILS;
+        anchor.dataset.checkoutReady = ready ? 'true' : 'false';
+        anchor.setAttribute('aria-disabled', ready ? 'false' : 'true');
+        anchor.classList.toggle('opacity-60', !ready);
         if (!anchor.dataset.checkoutBound) {
           anchor.addEventListener('click', handleCheckoutClick);
           anchor.dataset.checkoutBound = 'true';
@@ -25,63 +28,17 @@
     });
   }
 
-  function setBusy(button, isBusy) {
-    if (!button) return;
-    if (isBusy) {
-      button.dataset.previousText = button.textContent;
-      button.textContent = 'Connecting…';
-      button.classList.add('opacity-70');
-      button.disabled = true;
-    } else {
-      if (button.dataset.previousText) {
-        button.textContent = button.dataset.previousText;
-        delete button.dataset.previousText;
-      }
-      button.classList.remove('opacity-70');
-      button.disabled = false;
+  function handleCheckoutClick(event) {
+    const ready = Boolean(state.membershipLink);
+    if (!ready) {
+      event.preventDefault();
+      alert('Membership checkout is still being set up. Please contact TheMissionEffect@gmail.com if you need help.');
+      window.location.href = FALLBACK_DETAILS;
+      return;
     }
-  }
 
-  async function handleCheckoutClick(event) {
-    const trigger = event.currentTarget;
     event.preventDefault();
-
-    try {
-      if (!state.checkoutReady) {
-        throw new Error('checkout-not-ready');
-      }
-      setBusy(trigger, true);
-      const successUrl = `${window.location.origin}/member-portal.html`;
-      const cancelUrl = `${window.location.origin}/membership.html`;
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ successUrl, cancelUrl }),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || 'Checkout request failed');
-      }
-
-      const data = await response.json();
-      if (data && data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      throw new Error('Missing checkout URL.');
-    } catch (error) {
-      console.error('Membership checkout failed:', error);
-      if (error && error.message === 'checkout-not-ready') {
-        alert('Stripe checkout is getting set up. Please check back shortly or contact TheMissionEffect@gmail.com.');
-        window.location.href = FALLBACK_DETAILS;
-      } else {
-        alert('We could not reach Stripe right now. Please try again in a moment.');
-      }
-    } finally {
-      setBusy(trigger, false);
-    }
+    window.location.href = state.membershipLink;
   }
 
   async function loadConfig() {
@@ -92,8 +49,8 @@
       });
       if (!response.ok) throw new Error('Config request failed');
       const data = await response.json();
-      if (typeof data.checkoutReady === 'boolean') {
-        state.checkoutReady = data.checkoutReady;
+      if (data && typeof data.membershipLink === 'string' && data.membershipLink.trim()) {
+        state.membershipLink = data.membershipLink.trim();
       }
     } catch (error) {
       console.warn('Membership config unavailable:', error);
@@ -105,6 +62,7 @@
   const ready = loadConfig();
   window.gtfMembership = {
     ready,
-    canCheckout: () => state.checkoutReady,
+    getLink: () => state.membershipLink,
+    canCheckout: () => Boolean(state.membershipLink),
   };
 })();

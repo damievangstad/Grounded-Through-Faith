@@ -10,10 +10,10 @@ export function onRequestOptions() {
 }
 
 export async function onRequestGet({ env }) {
+  const membershipLink = (env.STRIPE_PAYMENT_LINK || '').trim();
   const payload = {
-    checkoutReady:
-      Boolean((env.STRIPE_SECRET_KEY || '').trim()) &&
-      Boolean((env.STRIPE_PRICE_ID_MONTHLY || '').trim()),
+    checkoutReady: Boolean(membershipLink),
+    membershipLink: membershipLink || null,
   };
 
   return new Response(JSON.stringify(payload), {
