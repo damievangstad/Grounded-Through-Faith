@@ -45,8 +45,9 @@
                 <a href="assistant.html" class="transition hover:text-[var(--color-honey)]">Assistant</a>
                 <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="font-semibold text-[var(--color-cerulean)]">Membership</a>
+                <a href="#signin" class="transition hover:text-[var(--color-honey)]">Sign In</a>
             </div>
-            <a href="https://subscribe-forms.beehiiv.com/9070d55e-33e1-4694-a132-ed0effabd180" target="_blank" rel="noreferrer" class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Subscribe</a>
+            <a href="#plans" class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Membership</a>
         </nav>
         <section class="relative z-10 mx-auto flex max-w-5xl flex-col gap-8 px-6 pb-24 pt-20 text-center">
             <span class="inline-flex items-center justify-center gap-2 self-center rounded-full bg-[var(--color-honey)]/25 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Support the Mission</span>
@@ -72,6 +73,7 @@
                 <article id="join" class="rounded-3xl border border-[var(--color-cerulean)]/50 bg-white/90 p-6 shadow-2xl">
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-600">Community Member</p>
                     <h2 class="mt-3 text-2xl font-semibold text-stone-900">Full Access + Private Community</h2>
+                    <p class="mt-1 text-sm font-semibold text-stone-900">Only <span data-membership-price>$5/month</span></p>
                     <p class="mt-3 text-sm text-stone-600">Unlock every current and future study plan, unlimited assistant guidance, and a moderated private Facebook group.</p>
                     <ul class="mt-5 space-y-3 text-sm text-stone-700">
                         <li>✔️ Unlimited AI assistant conversations</li>
@@ -79,7 +81,7 @@
                         <li>✔️ Private Facebook discipleship group</li>
                         <li>✔️ Early event invites &amp; coaching calls</li>
                     </ul>
-                    <a href="https://buy.stripe.com/test_communityAccess" target="_blank" rel="noreferrer" class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Join via Secure Stripe Checkout</a>
+                    <a data-membership-link="checkout" href="#join" class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Join via Secure Stripe Checkout</a>
                     <p class="mt-3 text-xs text-stone-500">Payments are processed by Stripe, the secure checkout trusted by ministries and small businesses worldwide.</p>
                 </article>
             </div>
@@ -135,6 +137,19 @@
                 </div>
             </div>
         </section>
+
+        <section id="signin" class="mx-auto max-w-5xl px-6">
+            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-xl">
+                <div class="space-y-4 text-sm text-stone-700">
+                    <h3 class="section-title text-3xl font-semibold text-stone-900">Already a Community Member?</h3>
+                    <p>Stripe emails your receipt and login instructions immediately after checkout. Use the sign-in button below to access the private Facebook group, premium study plans, and unlimited assistant guidance anytime.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="https://community.groundedthroughfaith.org/login" target="_blank" rel="noreferrer" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign in to the member portal</a>
+                        <a href="mailto:TheMissionEffect@gmail.com" class="inline-flex items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-5 py-3 text-sm font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Contact support</a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
@@ -150,6 +165,7 @@
             </div>
         </div>
     </footer>
+    <script src="assets/membership-links.js"></script>
     <script>
         const membershipYear = document.getElementById('membership-year');
         if (membershipYear) membershipYear.textContent = new Date().getFullYear();

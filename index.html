@@ -99,12 +99,11 @@
                 <a href="assistant.html" class="transition hover:text-[var(--color-honey)]">Assistant</a>
                 <a href="#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
+                <a href="membership.html#signin" class="transition hover:text-[var(--color-honey)]">Sign In</a>
             </div>
-            <a href="https://subscribe-forms.beehiiv.com/9070d55e-33e1-4694-a132-ed0effabd180"
-               class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]"
-               target="_blank"
-               rel="noreferrer">
-                Subscribe
+            <a href="membership.html"
+               class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
+                Membership
             </a>
         </nav>
 
@@ -196,10 +195,11 @@
                         <div class="rounded-2xl border border-[var(--color-cerulean)]/30 bg-white/90 p-4 shadow-sm">
                             <p class="font-semibold text-stone-900">Community Member</p>
                             <p class="mt-1 text-stone-600">Unlimited assistant, premium plans, Facebook community</p>
+                            <p class="text-xs font-semibold text-stone-900">Only <span data-membership-price>$5/month</span></p>
                         </div>
                         <div class="flex flex-wrap gap-3">
-                            <a href="membership.html" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">View details</a>
-                            <a href="https://buy.stripe.com/test_communityAccess" target="_blank" rel="noreferrer" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Join via Stripe</a>
+                            <a data-membership-link="details" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">View details</a>
+                            <a data-membership-link="checkout" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Join via Stripe</a>
                         </div>
                     </div>
                 </div>
@@ -549,6 +549,7 @@
                 </div>
             </div>
         </div>
+        <script src="assets/membership-links.js"></script>
         <script>
             (function () {
                 const form = document.getElementById('devotional-form');
