@@ -306,7 +306,7 @@
 
             function buildRequestPrompt(prompt) {
                 const baseInstruction =
-                    'You are the Grounded Through Faith Assistant, a Catholic spiritual companion. Provide hopeful guidance rooted in Scripture and the Catechism. Choose the best structure for the request—such as a seven-day devotional, a multi-week study plan, or pastoral counsel—and format the response with clear headings and bullet points where helpful.';
+                    'You are the Grounded Through Faith Assistant, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_';
 
                 return `${baseInstruction}\n\nRequest: ${prompt}`;
             }
@@ -474,59 +474,45 @@
 
                 let text = String(md).replace(/\r\n/g, '\n');
 
-                text = text.replace(
-                    /```([\s\S]*?)```/g,
-                    (_, code) => `<pre class="rounded-xl bg-stone-900/90 p-4 text-white overflow-auto"><code>${escapeHtml(code)}</code></pre>`,
-                );
+                text = text.replace(/```([\s\S]*?)```/g, (_, code) => code.trim());
+                text = text.replace(/^\s*---\s*$/gm, '');
+                text = text.replace(/^>\s?/gm, '');
+                text = text.replace(/^#{1,6}\s+/gm, '');
+                text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+                text = text.replace(/__(.*?)__/g, '$1');
+                text = text.replace(/\*(.*?)\*/g, '$1');
+                text = text.replace(/_(.*?)_/g, '$1');
+                text = text.replace(/`([^`]+)`/g, '$1');
 
-                text = text.replace(/^\s*---\s*$/gm, '<hr class="my-6 border-[var(--color-mist)]/60">');
-
-                text = text.replace(/^######\s+(.*)$/gm, '<h6 class="text-sm font-semibold mt-5 mb-2">$1</h6>');
-                text = text.replace(/^#####\s+(.*)$/gm, '<h5 class="text-base font-semibold mt-5 mb-2">$1</h5>');
-                text = text.replace(/^####\s+(.*)$/gm, '<h4 class="text-lg font-semibold mt-5 mb-2 text-stone-900">$1</h4>');
-                text = text.replace(/^###\s+(.*)$/gm, '<h3 class="text-xl font-semibold mt-6 mb-2 text-stone-900">$1</h3>');
-                text = text.replace(/^##\s+(.*)$/gm, '<h2 class="text-2xl font-bold mt-8 mb-3 text-stone-900">$1</h2>');
-                text = text.replace(/^#\s+(.*)$/gm, '<h1 class="text-3xl font-bold mt-8 mb-4 text-stone-900">$1</h1>');
-
-                text = text.replace(/^(>\s?.*)$/gm, (match) => {
-                    const inner = match.replace(/^>\s?/, '');
-                    return `<blockquote class="border-l-4 border-[var(--color-honey)]/70 pl-4 italic text-stone-700">${escapeHtml(inner)}</blockquote>`;
-                });
-
-                text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-
-                text = text.replace(/(^\d+\.\s+.*(?:\n\d+\.\s+.*)*)/gm, (block) => {
-                    const items = block
-                        .split('\n')
-                        .map((line) => line.replace(/^\d+\.\s+/, '').trim())
-                        .map((item) => `<li>${escapeHtml(item)}</li>`)
-                        .join('');
-                    return `<ol class="list-decimal space-y-2 pl-6 my-3">${items}</ol>`;
-                });
-
-                text = text.replace(/(^[-*]\s+.*(?:\n[-*]\s+.*)*)/gm, (block) => {
-                    const items = block
-                        .split('\n')
-                        .map((line) => line.replace(/^[-*]\s+/, '').trim())
-                        .map((item) => `<li>${escapeHtml(item)}</li>`)
-                        .join('');
-                    return `<ul class="list-disc space-y-2 pl-6 my-3">${items}</ul>`;
-                });
-
-                const lines = text
+                const blocks = text
                     .split(/\n{2,}/)
                     .map((section) => section.trim())
                     .filter(Boolean)
-                    .map((chunk) => {
-                        if (/^<(h\d|ul|ol|pre|blockquote|hr)/.test(chunk)) {
-                            return chunk;
+                    .map((section) => {
+                        const lines = section.split('\n').filter(Boolean);
+                        const isOrdered = lines.every((line) => /^\d+\.\s+/.test(line));
+                        const isUnordered = lines.every((line) => /^[-*]\s+/.test(line));
+
+                        if (isOrdered) {
+                            const items = lines
+                                .map((line) => line.replace(/^\d+\.\s+/, '').trim())
+                                .map((item) => `<li>${escapeHtml(item)}</li>`)
+                                .join('');
+                            return `<ol class="list-decimal space-y-1 pl-6">${items}</ol>`;
                         }
-                        const safeChunk = escapeHtml(chunk).replace(/\n/g, '<br>');
-                        return `<p>${restoreInlineFormatting(safeChunk)}</p>`;
+
+                        if (isUnordered) {
+                            const items = lines
+                                .map((line) => line.replace(/^[-*]\s+/, '').trim())
+                                .map((item) => `<li>${escapeHtml(item)}</li>`)
+                                .join('');
+                            return `<ul class="list-disc space-y-1 pl-6">${items}</ul>`;
+                        }
+
+                        return `<p>${escapeHtml(section).replace(/\n/g, '<br>')}</p>`;
                     });
 
-                return lines.join('\n');
+                return blocks.join('\n');
             }
 
             function escapeHtml(value) {
@@ -536,14 +522,6 @@
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#39;');
-            }
-
-            function restoreInlineFormatting(value) {
-                if (!value) return '';
-                return value
-                    .replace(/&lt;(\/?)strong&gt;/g, '<$1strong>')
-                    .replace(/&lt;(\/?)em&gt;/g, '<$1em>')
-                    .replace(/&lt;(\/?)code&gt;/g, '<$1code>');
             }
 
             function setFeedback(message, tone) {
