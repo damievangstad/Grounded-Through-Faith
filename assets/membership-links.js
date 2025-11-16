@@ -18,27 +18,10 @@
         anchor.dataset.checkoutReady = ready ? 'true' : 'false';
         anchor.setAttribute('aria-disabled', ready ? 'false' : 'true');
         anchor.classList.toggle('opacity-60', !ready);
-        if (!anchor.dataset.checkoutBound) {
-          anchor.addEventListener('click', handleCheckoutClick);
-          anchor.dataset.checkoutBound = 'true';
-        }
       } else {
         anchor.href = FALLBACK_DETAILS;
       }
     });
-  }
-
-  function handleCheckoutClick(event) {
-    const ready = Boolean(state.membershipLink);
-    if (!ready) {
-      event.preventDefault();
-      alert('Membership checkout is still being set up. Please contact TheMissionEffect@gmail.com if you need help.');
-      window.location.href = FALLBACK_DETAILS;
-      return;
-    }
-
-    event.preventDefault();
-    window.location.href = state.membershipLink;
   }
 
   async function loadConfig() {
