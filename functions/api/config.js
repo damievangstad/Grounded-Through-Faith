@@ -11,7 +11,9 @@ export function onRequestOptions() {
 
 export async function onRequestGet({ env }) {
   const payload = {
-    checkoutReady: Boolean((env.STRIPE_SECRET_KEY || '').trim()),
+    checkoutReady:
+      Boolean((env.STRIPE_SECRET_KEY || '').trim()) &&
+      Boolean((env.STRIPE_PRICE_ID_MONTHLY || '').trim()),
   };
 
   return new Response(JSON.stringify(payload), {

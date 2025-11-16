@@ -1,7 +1,7 @@
 (function () {
   const FALLBACK_DETAILS = 'membership.html#join';
   const state = {
-    checkoutReady: true,
+    checkoutReady: false,
   };
 
   function applyState() {
@@ -46,17 +46,14 @@
     const trigger = event.currentTarget;
     event.preventDefault();
 
-    if (!state.checkoutReady) {
-      alert('Stripe checkout is getting set up. Please check back shortly or contact TheMissionEffect@gmail.com.');
-      window.location.href = FALLBACK_DETAILS;
-      return;
-    }
-
     try {
+      if (!state.checkoutReady) {
+        throw new Error('checkout-not-ready');
+      }
       setBusy(trigger, true);
       const successUrl = `${window.location.origin}/member-portal.html`;
       const cancelUrl = `${window.location.origin}/membership.html`;
-      const response = await fetch('/api/checkout', {
+      const response = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ successUrl, cancelUrl }),
@@ -76,7 +73,12 @@
       throw new Error('Missing checkout URL.');
     } catch (error) {
       console.error('Membership checkout failed:', error);
-      alert('We could not reach Stripe right now. Please try again in a moment.');
+      if (error && error.message === 'checkout-not-ready') {
+        alert('Stripe checkout is getting set up. Please check back shortly or contact TheMissionEffect@gmail.com.');
+        window.location.href = FALLBACK_DETAILS;
+      } else {
+        alert('We could not reach Stripe right now. Please try again in a moment.');
+      }
     } finally {
       setBusy(trigger, false);
     }
