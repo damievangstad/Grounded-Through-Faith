@@ -14,10 +14,12 @@ export async function onRequestGet({ env }) {
   const checkoutReady = Boolean(
     (env.STRIPE_SECRET_KEY || '').trim() && (env.STRIPE_PRICE_ID_MONTHLY || '').trim()
   );
+  const facebookLink = (env.FACEBOOK_LINK || '').trim();
 
   const payload = {
     checkoutReady,
     membershipLink: membershipLink || null,
+    facebookLink: facebookLink || null,
   };
 
   return new Response(JSON.stringify(payload), {

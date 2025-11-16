@@ -5,6 +5,7 @@
   const state = {
     membershipLink: DEFAULT_PAYMENT_LINK,
     checkoutReady: false,
+    facebookLink: '',
   };
 
   function decorateCheckoutAnchors() {
@@ -53,6 +54,20 @@
     });
 
     decorateCheckoutAnchors();
+    applyFacebookLink();
+  }
+
+  function applyFacebookLink() {
+    document.querySelectorAll('[data-facebook-link]').forEach((anchor) => {
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const fallback = anchor.getAttribute('data-facebook-fallback') || '#';
+      const href = state.facebookLink || fallback || '#';
+      anchor.href = href;
+      if (state.facebookLink) {
+        anchor.removeAttribute('aria-disabled');
+        anchor.classList.remove('opacity-60');
+      }
+    });
   }
 
   async function startCheckout(anchor) {
@@ -93,6 +108,9 @@
         state.membershipLink = data.membershipLink.trim();
       }
       state.checkoutReady = Boolean(data && data.checkoutReady);
+      if (data && typeof data.facebookLink === 'string' && data.facebookLink.trim()) {
+        state.facebookLink = data.facebookLink.trim();
+      }
     } catch (error) {
       console.warn('Membership config unavailable:', error);
     } finally {
