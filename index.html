@@ -99,12 +99,15 @@
                 <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
                 <a href="#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
-                <a href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+                <a data-auth-link="signin" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
             </div>
-            <a data-membership-link="checkout" href="membership.html#join"
-               class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
-                Join Community
-            </a>
+            <div class="flex flex-wrap items-center gap-3">
+                <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
+                <a data-membership-link="checkout" href="membership.html#join"
+                   class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
+                    Join Community
+                </a>
+            </div>
         </nav>
 
         <section class="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center">
@@ -615,6 +618,7 @@
                 </div>
             </div>
         </div>
+        <script src="assets/auth-state.js"></script>
         <script src="assets/membership-links.js"></script>
         <script>
             (function () {
