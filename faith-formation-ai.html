@@ -326,7 +326,7 @@
                     return;
                 }
 
-                const requestPrompt = buildRequestPrompt(prompt);
+                const requestPrompt = buildRequestPrompt(prompt, conversation);
                 conversation.push({ role: 'user', content: prompt, request: requestPrompt });
 
                 setFeedback('Praying with your request...', 'info');
@@ -375,9 +375,14 @@
                 }
             });
 
-            function buildRequestPrompt(prompt) {
+            function buildRequestPrompt(prompt, history) {
                 const baseInstruction =
                     'You are the Faith Formation AI, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_';
+                const context = buildContextSnippet(history);
+
+                if (context) {
+                    return `${baseInstruction}\n\nRecent conversation (continue this thread, do not restart):\n${context}\n\nRequest: ${prompt}`;
+                }
 
                 return `${baseInstruction}\n\nRequest: ${prompt}`;
             }
@@ -395,6 +400,17 @@
                         content: entry.content || '',
                     };
                 });
+            }
+
+            function buildContextSnippet(history) {
+                if (!Array.isArray(history) || history.length === 0) return '';
+                const recent = history.slice(-6);
+                return recent
+                    .map((entry) => {
+                        const label = entry.role === 'assistant' ? 'Assistant' : 'User';
+                        return `${label}: ${truncateText(entry.content || '', 320)}`;
+                    })
+                    .join('\n');
             }
 
             function renderResponse(payload, options = {}) {
@@ -597,6 +613,12 @@
                     });
 
                 return blocks.join('\n');
+            }
+
+            function truncateText(value, maxLength) {
+                const text = String(value || '').trim();
+                if (text.length <= maxLength) return text;
+                return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
             }
 
             function escapeHtml(value) {
