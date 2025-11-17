@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In | Grounded Through Faith</title>
-    <meta name="description" content="Sign in to the Grounded Through Faith community to unlock the member portal, Facebook group, and unlimited Faith Builder AI access." />
+    <meta name="description" content="Sign in to the Grounded Through Faith community to unlock the member portal, Facebook group, and unlimited Faith Formation AI access." />
     <link rel="canonical" href="https://www.groundedthroughfaith.org/signin.html" />
     <meta property="og:title" content="Grounded Through Faith Sign In" />
     <meta property="og:description" content="Access the Grounded Through Faith member portal and community resources or upgrade your membership." />
@@ -44,7 +44,7 @@
             <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
                 <a href="index.html" class="transition hover:text-[var(--color-honey)]">Home</a>
                 <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
-                <a href="faith-builder-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Builder AI</a>
+                <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
                 <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
                 <a href="signin.html" class="transition text-[var(--color-cerulean)]">Sign In</a>
@@ -54,7 +54,7 @@
         <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-24 pt-20 text-center">
             <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Community Access</span>
             <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Sign in to the Grounded Through Faith family</h1>
-            <p class="mx-auto max-w-2xl text-base text-stone-600">Use this page to confirm your membership, reach the private Facebook group, and unlock the member portal with unlimited Faith Builder AI access. Not a member yet? Join the community below.</p>
+            <p class="mx-auto max-w-2xl text-base text-stone-600">Use this page to confirm your membership, reach the private Facebook group, and unlock the member portal with unlimited Faith Formation AI access. Not a member yet? Join the community below.</p>
         </section>
     </header>
     <main class="relative z-10 space-y-20 pb-24">
@@ -80,7 +80,7 @@
                         <h3 class="text-xl font-semibold text-stone-900">After you sign in</h3>
                         <ol class="list-decimal space-y-3 pl-5">
                             <li>We will redirect you to the secure member portal.</li>
-                            <li>Use the portal to reach the private Facebook group and unlimited Faith Builder AI.</li>
+                            <li>Use the portal to reach the private Facebook group and unlimited Faith Formation AI.</li>
                             <li>Bookmark the portal for quick access on future visits.</li>
                         </ol>
                         <div class="space-y-3 rounded-2xl bg-[var(--color-morning-sky)]/80 p-4 text-xs text-stone-600">
@@ -98,7 +98,7 @@
         <section class="mx-auto max-w-4xl px-6">
             <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/90 p-8 text-center shadow-xl">
                 <h2 class="section-title text-3xl font-semibold text-stone-900">Not a member yet?</h2>
-                <p class="mt-3 text-sm text-stone-600">You can always enjoy the free newsletter, curated resources, the parish finder, the custom 7-day devotional, and one complimentary Faith Builder AI response, but the Community Member tier unlocks everything else—exclusive study plans, private gatherings, and unlimited Faith Builder AI guidance.</p>
+                <p class="mt-3 text-sm text-stone-600">You can always enjoy the free newsletter, curated resources, the parish finder, the custom 7-day devotional, and one complimentary Faith Formation AI response, but the Community Member tier unlocks everything else—exclusive study plans, private gatherings, and unlimited Faith Formation AI guidance.</p>
                 <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
                     <a href="membership.html" class="inline-flex items-center rounded-2xl border border-[var(--color-cerulean)]/40 px-5 py-3 text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Learn about membership</a>
                     <a data-membership-link="checkout" href="membership.html#join" class="inline-flex items-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Join via Stripe</a>
@@ -154,7 +154,7 @@
 
                 setTimeout(() => {
                     setFeedback('Success! Redirecting you to the member portal.', 'success');
-                    const destination = redirectTarget === 'faith-builder-ai' ? 'faith-builder-ai.html' : 'member-portal.html';
+                    const destination = redirectTarget === 'faith-formation-ai' ? 'faith-formation-ai.html' : 'member-portal.html';
                     window.location.href = destination;
                 }, 200);
             });
