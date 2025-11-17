@@ -1,11 +1,14 @@
 (function () {
   const FALLBACK_DETAILS = 'membership.html#join';
   const DEFAULT_PAYMENT_LINK = '';
+  const DONATION_FALLBACK = 'membership.html#donate';
 
   const state = {
     membershipLink: DEFAULT_PAYMENT_LINK,
     checkoutReady: false,
     facebookLink: '',
+    donationLink: '',
+    donationPriceLink: '',
   };
 
   function decorateCheckoutAnchors() {
@@ -55,6 +58,7 @@
 
     decorateCheckoutAnchors();
     applyFacebookLink();
+    applyDonationLink();
   }
 
   function applyFacebookLink() {
@@ -67,6 +71,17 @@
         anchor.removeAttribute('aria-disabled');
         anchor.classList.remove('opacity-60');
       }
+    });
+  }
+
+  function applyDonationLink() {
+    document.querySelectorAll('[data-donation-link]').forEach((anchor) => {
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const donationHref = state.donationLink || state.donationPriceLink || DONATION_FALLBACK;
+      anchor.href = donationHref;
+      anchor.removeAttribute('aria-disabled');
+      anchor.classList.remove('opacity-60');
+      anchor.removeAttribute('tabindex');
     });
   }
 
@@ -110,6 +125,12 @@
       state.checkoutReady = Boolean(data && data.checkoutReady);
       if (data && typeof data.facebookLink === 'string' && data.facebookLink.trim()) {
         state.facebookLink = data.facebookLink.trim();
+      }
+      if (data && typeof data.donationLink === 'string' && data.donationLink.trim()) {
+        state.donationLink = data.donationLink.trim();
+      }
+      if (data && typeof data.donationPriceLink === 'string' && data.donationPriceLink.trim()) {
+        state.donationPriceLink = data.donationPriceLink.trim();
       }
     } catch (error) {
       console.warn('Membership config unavailable:', error);

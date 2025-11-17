@@ -15,11 +15,15 @@ export async function onRequestGet({ env }) {
     (env.STRIPE_SECRET_KEY || '').trim() && (env.STRIPE_PRICE_ID_MONTHLY || '').trim()
   );
   const facebookLink = (env.FACEBOOK_LINK || '').trim();
+  const donationLink = (env.DONATION_PAYMENT_LINK || '').trim();
+  const donationPriceLink = (env.DONATION_PRICE_LINK || '').trim();
 
   const payload = {
     checkoutReady,
     membershipLink: membershipLink || null,
     facebookLink: facebookLink || null,
+    donationLink: donationLink || null,
+    donationPriceLink: donationPriceLink || null,
   };
 
   return new Response(JSON.stringify(payload), {
