@@ -260,6 +260,20 @@
                     actions.className = 'ml-auto flex items-center gap-2';
 
                     if (isCustom) {
+                        const editButton = document.createElement('button');
+                        editButton.type = 'button';
+                        editButton.className = 'inline-flex items-center gap-1 rounded-full border border-stone-200 px-3 py-1 text-[11px] font-semibold text-stone-700 transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)]/40 hover:text-[var(--color-cerulean)]';
+                        editButton.textContent = 'Rename';
+                        editButton.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const nextTitle = window.prompt('Update study title', study.title || 'Custom study');
+                            if (!nextTitle) return;
+                            window.gtfPortalData.renameCustomStudy(state, study.id, nextTitle);
+                            renderStudies();
+                        });
+                        actions.appendChild(editButton);
+
                         const removeButton = document.createElement('button');
                         removeButton.type = 'button';
                         removeButton.className = 'inline-flex items-center gap-1 rounded-full border border-rose-200 px-3 py-1 text-[11px] font-semibold text-rose-600 transition hover:-translate-y-0.5 hover:border-rose-300 hover:bg-rose-50';

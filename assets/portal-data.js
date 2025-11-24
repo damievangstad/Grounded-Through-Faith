@@ -247,6 +247,19 @@
     return state;
   }
 
+  function renameCustomStudy(state, id, title) {
+    if (!id || !state.studies || !Array.isArray(state.studies.custom)) return state;
+    const target = state.studies.custom.find((entry) => entry && entry.id === id);
+    if (!target) return state;
+
+    const nextTitle = (title || '').trim();
+    if (!nextTitle) return state;
+
+    target.title = nextTitle;
+    saveState(state);
+    return state;
+  }
+
   function addCustomStudy(study) {
     const state = loadState();
     upsertCustomStudy(state, study);
@@ -275,6 +288,7 @@
     toggleStudyCompletion,
     toggleCustomStep,
     removeCustomStudy,
+    renameCustomStudy,
     addCustomStudy,
     getCustomStudy,
     exportState,
