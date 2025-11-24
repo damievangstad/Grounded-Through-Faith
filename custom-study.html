@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCRRS6ZND"></script>
+    <script src="assets/ga.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Study | Grounded Through Faith</title>
+    <meta name="description" content="Track your Faith Formation AI study with progress, notes, and a dedicated view." />
+    <link rel="canonical" href="https://www.groundedthroughfaith.org/custom-study.html" />
+    <meta property="og:title" content="Grounded Through Faith Custom Study" />
+    <meta property="og:description" content="Open your saved Faith Formation AI study and mark progress through each step." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.groundedthroughfaith.org/custom-study.html" />
+    <meta property="og:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Grounded Through Faith Custom Study" />
+    <meta name="twitter:description" content="Review your saved AI-generated study and track completion." />
+    <meta name="twitter:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+        body { font-family: 'Montserrat', system-ui, sans-serif; }
+        .section-title { font-family: 'Playfair Display', Georgia, serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/30 text-stone-800">
+    <header class="relative overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25" aria-hidden="true"></div>
+        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
+            <div class="text-center md:text-left">
+                <a href="index.html" class="text-lg font-semibold tracking-wide text-stone-900 transition hover:text-[var(--color-honey)]">Grounded Through Faith</a>
+                <p class="text-sm text-stone-500">Walk with Jesus.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
+                <a href="index.html" class="transition hover:text-[var(--color-honey)]">Home</a>
+                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
+                <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
+                <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
+                <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
+                <a data-auth-link="signin" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
+                <a data-donation-link class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]" href="#">Donate</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="relative z-10 mx-auto max-w-5xl px-6 pb-20 pt-14">
+        <div class="mb-10 flex flex-col gap-4 rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Saved Study</p>
+                    <h1 id="study-title" class="section-title mt-2 text-3xl font-semibold text-stone-900">Loading study...</h1>
+                    <p id="study-meta" class="text-sm text-stone-600"></p>
+                </div>
+                <div class="w-full rounded-2xl bg-white/70 p-4 shadow-sm md:w-64">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Progress</p>
+                    <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-stone-100">
+                        <div id="progress-bar" class="h-full w-0 rounded-full bg-[var(--color-cerulean)] transition-all"></div>
+                    </div>
+                    <p id="progress-label" class="mt-2 text-xs text-stone-700">0% complete</p>
+                </div>
+            </div>
+            <p id="study-description" class="text-sm text-stone-700"></p>
+        </div>
+
+        <div id="status-card" class="mb-8 hidden rounded-3xl border border-rose-200 bg-rose-50/70 p-6 text-sm text-rose-700 shadow-inner"></div>
+
+        <div id="steps-wrapper" class="space-y-4"></div>
+
+        <section class="mt-12 rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-xl">
+            <h2 class="section-title text-2xl font-semibold text-stone-900">Study Content</h2>
+            <div id="study-content" class="prose prose-sm mt-4 max-w-none text-stone-800"></div>
+        </section>
+    </main>
+
+    <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-6xl space-y-4 px-6 py-12 text-sm text-white/80">
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+                <p>© <span id="footer-year"></span> Grounded Through Faith. Walk with Jesus every day.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="index.html" class="hover:text-white">Home</a>
+                    <a href="membership.html" class="hover:text-white">Membership</a>
+                    <a href="faith-formation-ai.html" class="hover:text-white">Faith Formation AI</a>
+                    <a href="about.html" class="hover:text-white">About</a>
+                    <a data-donation-link class="hover:text-white" href="#">Donate</a>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
+                <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
+                <div class="flex items-center gap-4">
+                    <a data-facebook-link href="https://www.facebook.com/" target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
+                    <a data-donation-link class="hover:text-white" href="#">Donate</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/auth-state.js"></script>
+    <script src="assets/membership-links.js"></script>
+    <script src="assets/portal-data.js"></script>
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const studyId = params.get('id');
+            const statusCard = document.getElementById('status-card');
+            const titleEl = document.getElementById('study-title');
+            const metaEl = document.getElementById('study-meta');
+            const descEl = document.getElementById('study-description');
+            const stepsWrapper = document.getElementById('steps-wrapper');
+            const progressBar = document.getElementById('progress-bar');
+            const progressLabel = document.getElementById('progress-label');
+            const contentEl = document.getElementById('study-content');
+
+            const authed = window.gtfAuth && window.gtfAuth.isSignedIn();
+            const state = window.gtfPortalData && window.gtfPortalData.load ? window.gtfPortalData.load() : null;
+            const study = studyId && state ? state.studies.custom.find((entry) => entry.id === studyId) : null;
+
+            if (!studyId) {
+                showStatus('Study not found. Return to your member portal to open a saved plan.', 'error');
+                titleEl.textContent = 'Study not found';
+                return;
+            }
+
+            if (!authed) {
+                showStatus('Please sign in to view your saved studies. Once signed in, return here to track progress.', 'warning');
+                titleEl.textContent = 'Sign in required';
+                return;
+            }
+
+            if (!study) {
+                showStatus('We could not load that saved study. Try saving it again from Faith Formation AI.', 'error');
+                titleEl.textContent = 'Unavailable study';
+                descEl.textContent = 'Return to the member portal to reopen another saved plan or resave this study.';
+                return;
+            }
+
+            titleEl.textContent = study.title || 'Custom Study';
+            metaEl.textContent = study.createdAt ? `Saved on ${new Date(study.createdAt).toLocaleDateString()}` : '';
+            descEl.textContent = 'Mark each step below as you complete it. Your progress is saved to your account.';
+            contentEl.innerHTML = formatTextToHtml(study.content || 'No study content was saved.');
+
+            renderSteps(study);
+
+            function renderSteps(current) {
+                if (!stepsWrapper) return;
+                stepsWrapper.innerHTML = '';
+                const steps = Array.isArray(current.steps) ? current.steps : [];
+                const progress = current.stepsProgress || {};
+
+                if (steps.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'rounded-3xl border border-stone-200 bg-white/80 p-6 text-sm text-stone-700 shadow-sm';
+                    empty.textContent = 'No steps were provided for this study.';
+                    stepsWrapper.appendChild(empty);
+                    updateProgress(0, 0);
+                    return;
+                }
+
+                const completed = steps.filter((step) => progress[step.id]).length;
+                updateProgress(completed, steps.length);
+
+                steps.forEach((step) => {
+                    const card = document.createElement('div');
+                    card.className = 'flex items-start gap-3 rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/90 p-4 shadow-sm';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'mt-1 h-4 w-4 rounded border-stone-300 text-[var(--color-cerulean)] focus:ring-[var(--color-cerulean)]/60';
+                    checkbox.checked = Boolean(progress[step.id]);
+                    checkbox.addEventListener('change', (event) => {
+                        const state = window.gtfPortalData.load();
+                        window.gtfPortalData.toggleCustomStep(state, current.id, step.id, event.target.checked);
+                        const updated = window.gtfPortalData.getCustomStudy(current.id);
+                        renderSteps(updated || current);
+                    });
+
+                    const textBlock = document.createElement('div');
+                    const title = document.createElement('p');
+                    title.className = 'font-semibold text-stone-900';
+                    title.textContent = step.title || 'Study step';
+                    textBlock.appendChild(title);
+
+                    card.appendChild(checkbox);
+                    card.appendChild(textBlock);
+                    stepsWrapper.appendChild(card);
+                });
+            }
+
+            function updateProgress(completed, total) {
+                const percent = total > 0 ? (completed / total) * 100 : 0;
+                if (progressBar) progressBar.style.width = `${percent}%`;
+                if (progressLabel) progressLabel.textContent = `${completed} of ${total} steps complete`;
+            }
+
+            function showStatus(message, tone) {
+                if (!statusCard) return;
+                statusCard.textContent = message;
+                statusCard.classList.remove('hidden', 'border-rose-200', 'text-rose-700', 'bg-rose-50/70', 'border-amber-200', 'text-amber-700', 'bg-amber-50/70');
+                if (tone === 'warning') {
+                    statusCard.classList.add('border-amber-200', 'text-amber-700', 'bg-amber-50/70');
+                } else {
+                    statusCard.classList.add('border-rose-200', 'text-rose-700', 'bg-rose-50/70');
+                }
+            }
+
+            function formatTextToHtml(md) {
+                if (!md) return '';
+                const escaped = String(md).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const sections = escaped.split(/\n{2,}/).filter(Boolean);
+                return sections
+                    .map((section) => {
+                        const lines = section.split('\n');
+                        const isOrdered = lines.every((line) => /^\d+\.\s+/.test(line));
+                        const isUnordered = lines.every((line) => /^[-*]\s+/.test(line));
+                        if (isOrdered) {
+                            const items = lines.map((line) => line.replace(/^\d+\.\s+/, '').trim());
+                            return `<ol class="list-decimal space-y-1 pl-6">${items.map((item) => `<li>${item}</li>`).join('')}</ol>`;
+                        }
+                        if (isUnordered) {
+                            const items = lines.map((line) => line.replace(/^[-*]\s+/, '').trim());
+                            return `<ul class="list-disc space-y-1 pl-6">${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
+                        }
+                        return `<p>${section.replace(/\n/g, '<br>')}</p>`;
+                    })
+                    .join('\n');
+            }
+
+            const yearEl = document.getElementById('footer-year');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+        })();
+    </script>
+</body>
+</html>
