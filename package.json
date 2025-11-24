@@ -1,0 +1,16 @@
+{
+  "name": "gtf-faith-formation-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "openai": "^4.58.1",
+    "stripe": "^16.0.0"
+  }
+}
