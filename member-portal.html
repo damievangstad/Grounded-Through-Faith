@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCRRS6ZND"></script>
+    <script src="assets/ga.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Portal | Grounded Through Faith</title>
+    <meta name="description" content="Welcome to the Grounded Through Faith member portal. Access premium study plans, the private Facebook group, and unlimited Faith Formation AI guidance." />
+    <link rel="canonical" href="https://www.groundedthroughfaith.org/member-portal.html" />
+    <meta property="og:title" content="Grounded Through Faith Member Portal" />
+    <meta property="og:description" content="Access your member benefits, download study plans, and stay connected to the community." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.groundedthroughfaith.org/member-portal.html" />
+    <meta property="og:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Grounded Through Faith Member Portal" />
+    <meta name="twitter:description" content="Launch the member tools, Facebook group, and Faith Formation AI from one place." />
+    <meta name="twitter:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+        body { font-family: 'Montserrat', system-ui, sans-serif; }
+        .section-title { font-family: 'Playfair Display', Georgia, serif; }
+        .ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border-radius: 9999px;
+            background: conic-gradient(var(--color-cerulean) 0%, #e7e5e4 0%);
+            transition: background 0.4s ease;
+        }
+        .ring::after {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border-radius: 9999px;
+            background: white;
+        }
+        .ring-value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #2d1f13;
+            z-index: 1;
+        }
+        .chapter-dot {
+            height: 18px;
+            width: 18px;
+            border-radius: 6px;
+            background: #e7e5e4;
+            border: 1px solid #d6d3d1;
+            transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+        .chapter-dot:hover { transform: scale(1.05); }
+        .chapter-dot.is-complete {
+            background: linear-gradient(135deg, var(--color-cerulean), var(--color-honey));
+            border-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/35 to-[var(--color-honey)]/30 text-stone-800">
+    <script>
+        (function () {
+            try {
+                const signedIn = sessionStorage.getItem('gtfMemberSession') === 'true';
+                if (!signedIn) {
+                    const redirect = new URL('signin.html', window.location.href);
+                    redirect.searchParams.set('redirect', 'member-portal');
+                    window.location.replace(redirect.toString());
+                }
+            } catch (error) {
+                window.location.replace('signin.html?redirect=member-portal');
+            }
+        })();
+    </script>
+    <header class="relative overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -left-24 top-6 h-60 w-60 rounded-full bg-[var(--color-honey)]/25 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl" aria-hidden="true"></div>
+        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
+            <div class="text-center md:text-left">
+                <a href="index.html" class="text-lg font-semibold tracking-wide text-stone-900 transition hover:text-[var(--color-honey)]">Grounded Through Faith</a>
+                <p class="text-sm text-stone-500">Walk with Jesus.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
+                <a href="index.html" class="transition hover:text-[var(--color-honey)]">Home</a>
+                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
+                <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
+                <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
+                <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
+                <a href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+            </div>
+            <a data-donation-link href="membership.html#donate" class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Donate</a>
+        </nav>
+        <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-20 pt-16 text-center">
+            <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Member Portal</span>
+            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Welcome back, brother in Christ</h1>
+            <p class="mx-auto max-w-2xl text-base text-stone-600">Your membership fuels discipleship for men everywhere. Use the quick links below to access the resources, groups, and Faith Formation AI sessions included in your plan.</p>
+            <div class="mx-auto flex flex-wrap items-center justify-center gap-4 text-sm">
+                <p class="text-stone-600">Signed in as <span id="portal-email" class="font-semibold text-stone-900">member</span></p>
+                <button id="portal-signout" type="button" class="rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Sign out</button>
+            </div>
+        </section>
+    </header>
+    <main class="relative z-10 space-y-20 pb-28">
+        <section class="mx-auto max-w-5xl px-6">
+            <div class="grid gap-6 md:grid-cols-3">
+                <article class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-6 text-sm text-stone-700 shadow-xl">
+                    <h2 class="text-lg font-semibold text-stone-900">Unlimited Faith Formation AI</h2>
+                    <p class="mt-2">Open Faith Formation AI anytime for devotionals, study plans, or quick discernment help.</p>
+                    <a href="faith-formation-ai.html" class="mt-4 inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Launch Faith Formation AI</a>
+                </article>
+                <article class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-6 text-sm text-stone-700 shadow-xl">
+                    <h2 class="text-lg font-semibold text-stone-900">Facebook community</h2>
+                    <p class="mt-2">Share wins, ask for prayer, and get accountability with brothers pursuing holiness alongside you.</p>
+                    <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="mt-4 inline-flex items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Open group</a>
+                </article>
+                <article class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-6 text-sm text-stone-700 shadow-xl">
+                    <h2 class="text-lg font-semibold text-stone-900">Premium study plans</h2>
+                    <p class="mt-2">Download the latest discipleship journeys, facilitator notes, and leader checklists.</p>
+                    <div class="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
+                        <a href="mens-discipleship.html" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-3 py-2 text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Men's Discipleship</a>
+                        <a href="thirty-day-purpose.html" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-3 py-2 text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">30-Day Way</a>
+                        <a href="strength-in-waiting.html" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-3 py-2 text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Strength in Waiting</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+        <section class="mx-auto max-w-5xl space-y-8 px-6">
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+                <article class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/95 p-6 text-sm text-stone-700 shadow-2xl">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Bible Reading Tracker</p>
+                            <h2 class="section-title mt-2 text-2xl font-semibold text-stone-900">Measure your time in the Word</h2>
+                            <p class="mt-2 max-w-2xl">Update chapters, tap books to fill boxes, and watch your progress rings and milestones update instantly. Everything saves to your member profile.</p>
+                        </div>
+                        <div class="rounded-2xl bg-[var(--color-morning-sky)]/80 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)]">1189 chapters total</div>
+                    </div>
+
+                    <div class="mt-6 grid gap-4 md:grid-cols-3">
+                        <div class="flex items-center gap-4 rounded-2xl bg-[var(--color-morning-sky)]/60 p-4 shadow-inner">
+                            <div class="ring" data-ring="ot"><span class="ring-value" id="ring-ot-value">0%</span></div>
+                            <div class="space-y-1 text-sm">
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Old Testament</p>
+                                <p id="ring-ot-label" class="font-semibold text-stone-900">0% of 929</p>
+                                <p class="text-xs text-stone-600">Tap Genesis or enter chapters to grow the ring.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 rounded-2xl bg-[var(--color-morning-sky)]/60 p-4 shadow-inner">
+                            <div class="ring" data-ring="nt"><span class="ring-value" id="ring-nt-value">0%</span></div>
+                            <div class="space-y-1 text-sm">
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New Testament</p>
+                                <p id="ring-nt-label" class="font-semibold text-stone-900">0% of 260</p>
+                                <p class="text-xs text-stone-600">Mark chapters as you journey through the Gospels and Acts.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 rounded-2xl bg-[var(--color-morning-sky)]/60 p-4 shadow-inner">
+                            <div class="ring" data-ring="total"><span class="ring-value" id="ring-total-value">0%</span></div>
+                            <div class="space-y-1 text-sm">
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Whole Bible</p>
+                                <p id="ring-total-label" class="font-semibold text-stone-900">0% of 1189</p>
+                                <p class="text-xs text-stone-600">Watch for streak milestones and completion badges.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid gap-4 md:grid-cols-2">
+                        <label class="space-y-2">
+                            <span class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">Old Testament chapters</span>
+                            <input id="reading-ot" type="number" min="0" max="929" class="w-full rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-sm shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="e.g., 120" />
+                            <div class="overflow-hidden rounded-full bg-stone-100">
+                                <div id="reading-ot-bar" class="h-2 rounded-full bg-[var(--color-cerulean)]" style="width: 0%"></div>
+                            </div>
+                            <p id="reading-ot-label" class="text-xs text-stone-600">0% complete</p>
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">New Testament chapters</span>
+                            <input id="reading-nt" type="number" min="0" max="260" class="w-full rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-sm shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="e.g., 45" />
+                            <div class="overflow-hidden rounded-full bg-stone-100">
+                                <div id="reading-nt-bar" class="h-2 rounded-full bg-[var(--color-cerulean)]" style="width: 0%"></div>
+                            </div>
+                            <p id="reading-nt-label" class="text-xs text-stone-600">0% complete</p>
+                        </label>
+                    </div>
+                    <div class="mt-6 rounded-2xl bg-[var(--color-morning-sky)]/70 p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <p class="text-sm font-semibold text-stone-900">Whole Bible progress</p>
+                            <span id="reading-total-label" class="text-xs font-semibold text-[var(--color-cerulean)]">0% of 1189 chapters</span>
+                        </div>
+                        <div class="mt-3 overflow-hidden rounded-full bg-white/80">
+                            <div id="reading-total-bar" class="h-3 rounded-full bg-gradient-to-r from-[var(--color-cerulean)] to-[var(--color-honey)]" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-2xl border border-stone-200 bg-white/80 p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <p class="text-sm font-semibold text-stone-900">Milestones & streaks</p>
+                            <span id="reading-streak" class="text-xs font-semibold text-[var(--color-cerulean)]">Streak: 0 days</span>
+                        </div>
+                        <ul id="reading-milestones" class="mt-3 space-y-2 text-xs text-stone-700"></ul>
+                    </div>
+
+                    <div class="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+                        <div class="rounded-2xl border border-stone-200 bg-white/85 p-4 shadow-inner">
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Book explorer</p>
+                                    <h3 class="text-lg font-semibold text-stone-900">Tap a book to mark chapters</h3>
+                                    <p class="text-xs text-stone-600">Start with Genesis and watch the boxes fill. Your totals update automatically.</p>
+                                </div>
+                                <span class="rounded-full bg-[var(--color-morning-sky)]/80 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)]">New</span>
+                            </div>
+                            <div id="book-list" class="mt-4 space-y-3"></div>
+                        </div>
+                        <div class="rounded-2xl border border-stone-200 bg-white/85 p-4 shadow-inner">
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Story map</p>
+                            <h3 class="text-lg font-semibold text-stone-900">See where each era fits</h3>
+                            <p class="mt-1 text-xs text-stone-600">Follow the sweep of salvation history from Creation to the New Creation.</p>
+                            <div id="history-map" class="mt-4 grid gap-3 text-sm"></div>
+                        </div>
+                    </div>
+                </article>
+                <article class="rounded-3xl border border-[var(--color-mist)]/70 bg-white/95 p-6 text-sm text-stone-700 shadow-2xl">
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Study Progress</p>
+                    <h2 class="section-title mt-2 text-2xl font-semibold text-stone-900">Track every study you finish</h2>
+                    <p class="mt-2">Check off the journeys you have completed. Faith Formation AI studies you save will appear here automatically.</p>
+                    <div class="mt-4 rounded-2xl bg-[var(--color-morning-sky)]/70 p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <p id="study-progress-label" class="text-sm font-semibold text-stone-900">0 of 0 studies completed</p>
+                            <span class="text-xs font-semibold text-[var(--color-cerulean)]">Keep going!</span>
+                        </div>
+                        <div class="mt-3 overflow-hidden rounded-full bg-white/80">
+                            <div id="study-progress-bar" class="h-3 rounded-full bg-gradient-to-r from-[var(--color-cerulean)] to-[var(--color-honey)]" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div id="study-list" class="mt-5 space-y-3"></div>
+                </article>
+            </div>
+        </section>
+        <section class="mx-auto max-w-5xl px-6">
+            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
+                <div class="grid gap-6 md:grid-cols-2 text-sm text-stone-700">
+                    <div class="space-y-3">
+                        <h2 class="section-title text-3xl font-semibold text-stone-900">Keep your membership healthy</h2>
+                        <p>Stripe sends a receipt after every charge with a “Manage subscription” button. Use it to update cards, cancel, or download invoices anytime.</p>
+                        <p>If you ever have billing questions, email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a> and our team will respond promptly.</p>
+                    </div>
+                    <div class="space-y-3 rounded-2xl bg-white/85 p-5 shadow-inner">
+                        <h3 class="text-lg font-semibold text-stone-900">Quick links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="signin.html" class="text-[var(--color-cerulean)] underline-offset-2 hover:underline">Return to sign-in page</a></li>
+                            <li><a href="membership.html" class="text-[var(--color-cerulean)] underline-offset-2 hover:underline">Review membership details</a></li>
+                            <li><a href="mailto:TheMissionEffect@gmail.com" class="text-[var(--color-cerulean)] underline-offset-2 hover:underline">Contact support</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-6xl space-y-4 px-6 py-12 text-sm text-white/80">
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+                <p>© <span id="portal-year"></span> Grounded Through Faith. Thank you for fueling the mission.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="mailto:TheMissionEffect@gmail.com" class="hover:text-white">TheMissionEffect@gmail.com</a>
+                    <a href="membership.html#donate" data-donation-link class="hover:text-white">Donate</a>
+                    <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="assets/portal-data.js"></script>
+    <script src="assets/membership-links.js"></script>
+    <script>
+        (function () {
+            const portalYear = document.getElementById('portal-year');
+            if (portalYear) portalYear.textContent = new Date().getFullYear();
+
+            const emailEl = document.getElementById('portal-email');
+            let storedEmail = 'member@groundedthroughfaith.org';
+            try {
+                storedEmail = sessionStorage.getItem('gtfMemberEmail') || storedEmail;
+            } catch (error) {
+                console.warn('Session storage unavailable:', error);
+            }
+            if (emailEl) emailEl.textContent = storedEmail;
+
+            const signoutButton = document.getElementById('portal-signout');
+            if (signoutButton) {
+                signoutButton.addEventListener('click', () => {
+                    try {
+                        sessionStorage.removeItem('gtfMemberSession');
+                        sessionStorage.removeItem('gtfMemberEmail');
+                    } catch (error) {
+                        console.warn('Session storage unavailable:', error);
+                    }
+                    window.location.href = 'signin.html';
+                });
+            }
+
+            const state = (window.gtfPortalData && window.gtfPortalData.load()) || null;
+            if (!state) return;
+
+            const DEFAULT_STUDIES = [
+                { id: 'mens-discipleship', title: "Men's Discipleship (52 weeks)", link: 'mens-discipleship.html' },
+                { id: 'thirty-day-way', title: '30-Day Way of Jesus', link: 'thirty-day-purpose.html' },
+                { id: 'strength-waiting', title: 'Strength in the Waiting', link: 'strength-in-waiting.html' },
+            ];
+
+            const BOOKS = [
+                { id: 'genesis', name: 'Genesis', chapters: 50, testament: 'ot', era: 'Creation' },
+                { id: 'exodus', name: 'Exodus', chapters: 40, testament: 'ot', era: 'Exodus' },
+                { id: 'joshua', name: 'Joshua', chapters: 24, testament: 'ot', era: 'Judges' },
+                { id: 'samuel', name: '1-2 Samuel', chapters: 55, testament: 'ot', era: 'Kings' },
+                { id: 'kings', name: '1-2 Kings', chapters: 47, testament: 'ot', era: 'Kings' },
+                { id: 'psalms', name: 'Psalms', chapters: 150, testament: 'ot', era: 'Kings' },
+                { id: 'isaiah', name: 'Isaiah', chapters: 66, testament: 'ot', era: 'Exile' },
+                { id: 'matthew', name: 'Matthew', chapters: 28, testament: 'nt', era: 'Jesus' },
+                { id: 'john', name: 'John', chapters: 21, testament: 'nt', era: 'Jesus' },
+                { id: 'acts', name: 'Acts', chapters: 28, testament: 'nt', era: 'Early Church' },
+                { id: 'revelation', name: 'Revelation', chapters: 22, testament: 'nt', era: 'Revelation' },
+            ];
+
+            const HISTORY_ERAS = [
+                { title: 'Creation', books: ['Genesis'], note: 'Creation, fall, covenant beginnings' },
+                { title: 'Patriarchs', books: ['Genesis 12-50'], note: 'Abraham, Isaac, Jacob, Joseph' },
+                { title: 'Exodus', books: ['Exodus', 'Leviticus', 'Numbers', 'Deuteronomy'], note: 'Deliverance and covenant law' },
+                { title: 'Judges', books: ['Joshua', 'Judges', 'Ruth'], note: 'Settlement and cycles of rescue' },
+                { title: 'Kings', books: ['1-2 Samuel', '1-2 Kings', 'Psalms'], note: 'United and divided kingdom' },
+                { title: 'Exile', books: ['Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel'], note: 'Prophets call the people home' },
+                { title: 'Jesus', books: ['Matthew', 'Mark', 'Luke', 'John'], note: 'Incarnation and redemption' },
+                { title: 'Early Church', books: ['Acts', 'Epistles'], note: 'Gospel spreads in power' },
+                { title: 'Revelation', books: ['Revelation'], note: 'New creation hope' },
+            ];
+
+            let expandedBookId = 'genesis';
+
+            const readingInputs = {
+                ot: document.getElementById('reading-ot'),
+                nt: document.getElementById('reading-nt'),
+            };
+            const readingBars = {
+                ot: document.getElementById('reading-ot-bar'),
+                nt: document.getElementById('reading-nt-bar'),
+                total: document.getElementById('reading-total-bar'),
+            };
+            const readingLabels = {
+                ot: document.getElementById('reading-ot-label'),
+                nt: document.getElementById('reading-nt-label'),
+                total: document.getElementById('reading-total-label'),
+            };
+            const ringEls = {
+                ot: document.querySelector('[data-ring="ot"]'),
+                nt: document.querySelector('[data-ring="nt"]'),
+                total: document.querySelector('[data-ring="total"]'),
+            };
+            const ringValueEls = {
+                ot: document.getElementById('ring-ot-value'),
+                nt: document.getElementById('ring-nt-value'),
+                total: document.getElementById('ring-total-value'),
+            };
+            const ringLabelEls = {
+                ot: document.getElementById('ring-ot-label'),
+                nt: document.getElementById('ring-nt-label'),
+                total: document.getElementById('ring-total-label'),
+            };
+            const milestoneList = document.getElementById('reading-milestones');
+            const streakLabel = document.getElementById('reading-streak');
+            const bookList = document.getElementById('book-list');
+            const historyMap = document.getElementById('history-map');
+
+            function formatPercent(value) {
+                return `${Math.min(100, Math.max(0, Math.round(value)))}%`;
+            }
+
+            function updateReadingUI() {
+                const totals = window.gtfPortalData.totals;
+                const otChapters = state.reading.otChapters || 0;
+                const ntChapters = state.reading.ntChapters || 0;
+                const otPercent = (otChapters / totals.ot) * 100;
+                const ntPercent = (ntChapters / totals.nt) * 100;
+                const totalPercent = ((otChapters + ntChapters) / (totals.ot + totals.nt)) * 100;
+
+                if (readingInputs.ot) readingInputs.ot.value = otChapters;
+                if (readingInputs.nt) readingInputs.nt.value = ntChapters;
+                if (readingBars.ot) readingBars.ot.style.width = formatPercent(otPercent);
+                if (readingBars.nt) readingBars.nt.style.width = formatPercent(ntPercent);
+                if (readingBars.total) readingBars.total.style.width = formatPercent(totalPercent);
+                if (readingLabels.ot) readingLabels.ot.textContent = `${formatPercent(otPercent)} of 929 chapters`;
+                if (readingLabels.nt) readingLabels.nt.textContent = `${formatPercent(ntPercent)} of 260 chapters`;
+                if (readingLabels.total) readingLabels.total.textContent = `${formatPercent(totalPercent)} of 1189 chapters`;
+
+                setRing('ot', otPercent, `${formatPercent(otPercent)} of 929`);
+                setRing('nt', ntPercent, `${formatPercent(ntPercent)} of 260`);
+                setRing('total', totalPercent, `${formatPercent(totalPercent)} of 1189`);
+                renderMilestones(totalPercent, otPercent, ntPercent);
+            }
+
+            function setRing(key, percent, label) {
+                const el = ringEls[key];
+                const valueEl = ringValueEls[key];
+                const labelEl = ringLabelEls[key];
+                if (!el) return;
+                const safe = Math.min(100, Math.max(0, percent || 0));
+                el.style.background = `conic-gradient(var(--color-cerulean) ${safe}%, #e7e5e4 ${safe}% 100%)`;
+                if (valueEl) valueEl.textContent = formatPercent(safe);
+                if (labelEl) labelEl.textContent = label || formatPercent(safe);
+            }
+
+            function renderMilestones(totalPercent, otPercent, ntPercent) {
+                if (!milestoneList) return;
+                const messages = [];
+                const genesis = bookCompletion('genesis');
+                if (genesis.percent >= 100) messages.push('Completed Genesis!');
+                if (totalPercent >= 25) messages.push('Reached 25% of the Bible!');
+                if (totalPercent >= 50) messages.push('Halfway through the Bible—keep going!');
+                if (ntPercent >= 75) messages.push('Nearly finished the New Testament.');
+                const streak = state.reading.streakCount || 0;
+                if (streakLabel) streakLabel.textContent = `Streak: ${streak} day${streak === 1 ? '' : 's'}`;
+                if (streak >= 7) messages.push('7-day streak! Stay rooted.');
+
+                if (messages.length === 0) {
+                    milestoneList.innerHTML = '<li class="text-stone-600">Log chapters to unlock milestones.</li>';
+                } else {
+                    milestoneList.innerHTML = messages
+                        .map((msg) => `<li class="flex items-center gap-2"><span class="text-emerald-500">✔️</span><span>${msg}</span></li>`)
+                        .join('');
+                }
+            }
+
+            function bookCompletion(bookId) {
+                const book = BOOKS.find((entry) => entry.id === bookId);
+                if (!book) return { count: 0, percent: 0 };
+                const chapters = Array.isArray(state.reading.bookChapters?.[book.id])
+                    ? state.reading.bookChapters[book.id].filter(Boolean).length
+                    : 0;
+                return {
+                    count: chapters,
+                    percent: (chapters / book.chapters) * 100,
+                };
+            }
+
+            function renderBookList() {
+                if (!bookList) return;
+                bookList.innerHTML = '';
+
+                BOOKS.forEach((book) => {
+                    const stats = bookCompletion(book.id);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'rounded-2xl border border-stone-200 bg-white/80 p-3 shadow-sm';
+
+                    const header = document.createElement('button');
+                    header.type = 'button';
+                    header.className = 'flex w-full items-center justify-between gap-3';
+                    header.addEventListener('click', () => {
+                        expandedBookId = expandedBookId === book.id ? null : book.id;
+                        renderBookList();
+                    });
+
+                    const titleBlock = document.createElement('div');
+                    const title = document.createElement('p');
+                    title.className = 'font-semibold text-stone-900';
+                    title.textContent = `${book.name}`;
+                    const subtitle = document.createElement('p');
+                    subtitle.className = 'text-xs text-stone-600';
+                    subtitle.textContent = `${Math.round(stats.percent)}% • ${stats.count}/${book.chapters} chapters`;
+                    titleBlock.appendChild(title);
+                    titleBlock.appendChild(subtitle);
+
+                    const badge = document.createElement('span');
+                    badge.className = 'rounded-full bg-[var(--color-morning-sky)]/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-cerulean)]';
+                    badge.textContent = book.era;
+
+                    header.appendChild(titleBlock);
+                    header.appendChild(badge);
+
+                    const barWrap = document.createElement('div');
+                    barWrap.className = 'mt-3 overflow-hidden rounded-full bg-stone-100';
+                    const bar = document.createElement('div');
+                    bar.className = 'h-2 rounded-full bg-gradient-to-r from-[var(--color-cerulean)] to-[var(--color-honey)] transition-all';
+                    bar.style.width = formatPercent(stats.percent);
+                    barWrap.appendChild(bar);
+
+                    const grid = document.createElement('div');
+                    grid.className = expandedBookId === book.id ? 'mt-3 grid grid-cols-10 gap-1' : 'hidden';
+                    const completedChapters = Array.isArray(state.reading.bookChapters?.[book.id])
+                        ? state.reading.bookChapters[book.id]
+                        : [];
+                    for (let i = 0; i < book.chapters; i += 1) {
+                        const dot = document.createElement('button');
+                        dot.type = 'button';
+                        dot.title = `Mark chapter ${i + 1}`;
+                        dot.className = `chapter-dot${completedChapters[i] ? ' is-complete' : ''}`;
+                        dot.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            window.gtfPortalData.toggleBookChapter(state, book.id, i, book.testament);
+                            renderBookList();
+                            updateReadingUI();
+                        });
+                        grid.appendChild(dot);
+                    }
+
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(barWrap);
+                    wrapper.appendChild(grid);
+                    bookList.appendChild(wrapper);
+                });
+            }
+
+            function renderHistoryMap() {
+                if (!historyMap) return;
+                historyMap.innerHTML = '';
+                HISTORY_ERAS.forEach((era) => {
+                    const item = document.createElement('div');
+                    item.className = 'rounded-xl border border-stone-200 bg-[var(--color-morning-sky)]/80 p-3 shadow-sm';
+                    const title = document.createElement('p');
+                    title.className = 'text-sm font-semibold text-stone-900';
+                    title.textContent = era.title;
+                    const books = document.createElement('p');
+                    books.className = 'text-xs text-[var(--color-cerulean)]';
+                    books.textContent = era.books.join(', ');
+                    const note = document.createElement('p');
+                    note.className = 'text-xs text-stone-600';
+                    note.textContent = era.note;
+                    item.appendChild(title);
+                    item.appendChild(books);
+                    item.appendChild(note);
+                    historyMap.appendChild(item);
+                });
+            }
+
+            if (readingInputs.ot) {
+                readingInputs.ot.addEventListener('input', (event) => {
+                    const next = window.gtfPortalData.setReading(state, {
+                        otChapters: event.target.value,
+                        ntChapters: state.reading.ntChapters,
+                    });
+                    Object.assign(state.reading, next.reading);
+                    updateReadingUI();
+                });
+            }
+            if (readingInputs.nt) {
+                readingInputs.nt.addEventListener('input', (event) => {
+                    const next = window.gtfPortalData.setReading(state, {
+                        otChapters: state.reading.otChapters,
+                        ntChapters: event.target.value,
+                    });
+                    Object.assign(state.reading, next.reading);
+                    updateReadingUI();
+                });
+            }
+
+            const studyList = document.getElementById('study-list');
+            const studyProgressBar = document.getElementById('study-progress-bar');
+            const studyProgressLabel = document.getElementById('study-progress-label');
+
+            function renderStudies() {
+                if (!studyList) return;
+                studyList.innerHTML = '';
+                const studies = [...DEFAULT_STUDIES, ...(state.studies.custom || [])];
+                const completedCount = studies.filter((study) => state.studies.completed[study.id]).length;
+                const total = studies.length || 1;
+                const percent = (completedCount / total) * 100;
+
+                if (studyProgressBar) studyProgressBar.style.width = formatPercent(percent);
+                if (studyProgressLabel) {
+                    studyProgressLabel.textContent = `${completedCount} of ${total} studies completed`;
+                }
+
+                studies.forEach((study) => {
+                    const isCustom = !DEFAULT_STUDIES.some((base) => base.id === study.id);
+
+                    const wrapper = document.createElement('label');
+                    wrapper.className = 'flex items-start gap-3 rounded-2xl border border-stone-200 bg-[var(--color-morning-sky)]/70 p-4 shadow-sm';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'mt-1 h-4 w-4 rounded border-stone-300 text-[var(--color-cerulean)] focus:ring-[var(--color-cerulean)]/60';
+                    checkbox.checked = Boolean(state.studies.completed[study.id]);
+                    checkbox.addEventListener('change', (event) => {
+                        window.gtfPortalData.toggleStudyCompletion(state, study.id, event.target.checked);
+                        renderStudies();
+                    });
+
+                    const textBlock = document.createElement('div');
+                    const title = document.createElement('p');
+                    title.className = 'font-semibold text-stone-900';
+                    title.textContent = study.title || 'Bible study';
+                    textBlock.appendChild(title);
+
+                    if (study.link) {
+                        const link = document.createElement('a');
+                        link.href = study.link;
+                        link.className = 'text-xs font-semibold text-[var(--color-cerulean)] underline-offset-2 hover:underline';
+                        link.textContent = 'Open study';
+                        textBlock.appendChild(link);
+                    } else if (study.createdAt) {
+                        const meta = document.createElement('p');
+                        meta.className = 'text-xs text-stone-600';
+                        meta.textContent = `Added ${new Date(study.createdAt).toLocaleDateString()}`;
+                        textBlock.appendChild(meta);
+                    }
+
+                    const actions = document.createElement('div');
+                    actions.className = 'ml-auto flex items-center gap-2';
+
+                    if (isCustom) {
+                        const removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.className = 'inline-flex items-center gap-1 rounded-full border border-rose-200 px-3 py-1 text-[11px] font-semibold text-rose-600 transition hover:-translate-y-0.5 hover:border-rose-300 hover:bg-rose-50';
+                        removeButton.textContent = 'Remove';
+                        removeButton.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            window.gtfPortalData.removeCustomStudy(state, study.id);
+                            renderStudies();
+                        });
+                        actions.appendChild(removeButton);
+                    }
+
+                    wrapper.appendChild(checkbox);
+                    wrapper.appendChild(textBlock);
+                    if (actions.children.length > 0) {
+                        wrapper.appendChild(actions);
+                    }
+                    studyList.appendChild(wrapper);
+                });
+            }
+
+            updateReadingUI();
+            renderBookList();
+            renderHistoryMap();
+            renderStudies();
+        })();
+    </script>
+</body>
+</html>
