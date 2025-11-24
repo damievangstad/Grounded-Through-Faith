@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCRRS6ZND"></script>
+    <script src="assets/ga.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faith Formation AI | Grounded Through Faith</title>
+    <meta name="description" content="Faith Formation AI crafts Catholic devotionals, study plans, and pastoral guidance to help you walk with Jesus every day." />
+    <meta name="keywords" content="Faith Formation AI, Catholic AI, devotional generator, study plan builder" />
+    <link rel="canonical" href="https://www.groundedthroughfaith.org/faith-formation-ai.html" />
+    <meta property="og:title" content="Faith Formation AI" />
+    <meta property="og:description" content="Craft devotionals, map out study plans, and receive faith-centered encouragement with Faith Formation AI." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.groundedthroughfaith.org/faith-formation-ai.html" />
+    <meta property="og:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Faith Formation AI" />
+    <meta name="twitter:description" content="A prayerful AI companion to help you walk with Jesus through devotionals and study plans." />
+    <meta name="twitter:image" content="https://www.groundedthroughfaith.org/assets/treelogo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+
+        body {
+            font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        }
+    </style>
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Faith Formation AI",
+          "url": "https://www.groundedthroughfaith.org/faith-formation-ai.html",
+          "applicationCategory": "ReligiousApplication",
+          "operatingSystem": "All",
+          "description": "A prayerful artificial intelligence companion that helps Catholics craft devotionals, create study plans, and receive spiritual encouragement.",
+          "creator": {
+            "@type": "Organization",
+            "name": "Grounded Through Faith",
+            "url": "https://www.groundedthroughfaith.org/"
+          }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/25 text-stone-800">
+    <header class="relative overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -left-20 top-10 h-60 w-60 rounded-full bg-[var(--color-honey)]/20 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl" aria-hidden="true"></div>
+        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
+            <div class="text-center md:text-left">
+                <a href="index.html" class="text-lg font-semibold tracking-wide text-stone-900 transition hover:text-[var(--color-honey)]">Grounded Through Faith</a>
+                <p class="text-sm text-stone-500">Walk with Jesus.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
+                <a href="index.html" class="transition hover:text-[var(--color-honey)]">Home</a>
+                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
+                <a href="faith-formation-ai.html" class="transition text-[var(--color-cerulean)]">Faith Formation AI</a>
+                <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
+                <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
+                <a data-auth-link="signin" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
+                <a data-membership-link="checkout" href="membership.html#join"
+                   class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
+                    Join Community
+                </a>
+            </div>
+        </nav>
+    </header>
+    <main class="relative z-10 flex min-h-[calc(100vh-120px)] flex-col">
+        <section class="mx-auto w-full max-w-4xl flex-1 px-6 pb-24 pt-16">
+            <div class="text-center">
+                <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Prayerful AI Companion</span>
+                <h1 class="mt-6 text-4xl font-bold text-stone-900 md:text-5xl">Faith Formation AI</h1>
+                <p class="mx-auto mt-4 max-w-2xl text-base text-stone-600">Ask for a devotional, outline a study plan, or seek clarity about walking with Jesus. Faith Formation AI listens to your prompt and responds with Scripture-rooted encouragement you can keep, print, or share.</p>
+            </div>
+            <div class="mt-10 grid gap-4 rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/80 p-6 text-sm text-stone-700 shadow-xl shadow-[var(--color-mist)]/60 sm:grid-cols-3">
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Devotional rhythms</p>
+                    <p class="mt-2 text-xs text-stone-600">Invite the Spirit to craft seven-day journeys with Scripture, reflection, and prayer.</p>
+                </div>
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Formation plans</p>
+                    <p class="mt-2 text-xs text-stone-600">Outline multi-week studies that keep your purpose aligned with God’s will.</p>
+                </div>
+                <div class="rounded-2xl bg-white/70 p-4 shadow-sm">
+                    <p class="font-semibold text-stone-900">Faith questions</p>
+                    <p class="mt-2 text-xs text-stone-600">Receive pastoral answers anchored in Scripture and Church teaching.</p>
+                </div>
+            </div>
+            <form id="assistant-form" class="mx-auto mt-12 max-w-3xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 shadow-2xl shadow-[var(--color-mist)]/70">
+                <label for="assistant-prompt" class="sr-only">Ask Faith Formation AI</label>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <input id="assistant-prompt" name="assistant-prompt" type="text" class="w-full flex-1 rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-base text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Ask for a devotional, study plan, or faith insight..." required />
+                    <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Send</button>
+                </div>
+                <p id="assistant-feedback" class="mt-3 hidden text-sm text-stone-600" aria-live="polite"></p>
+                <p class="mt-4 text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response. Free visitors receive one prompt—join the community for unlimited access.</p>
+            </form>
+            <div id="assistant-results" class="mx-auto mt-10 hidden max-w-3xl space-y-6" aria-live="polite"></div>
+            <div id="assistant-paywall" class="mx-auto mt-8 hidden max-w-3xl rounded-3xl border border-[var(--color-cerulean)]/40 bg-white/95 p-6 text-sm text-stone-700 shadow-2xl">
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Community Member Access</p>
+                        <h3 class="mt-2 text-2xl font-semibold text-stone-900">Unlock unlimited guidance &amp; private community</h3>
+                    </div>
+                    <p>You've used your complimentary Faith Formation AI response. Become a Community Member to receive unlimited prompts, premium study plans, and access to our moderated Facebook group.</p>
+                    <ul class="space-y-2 text-sm">
+                        <li>✔️ Unlimited Faith Formation AI conversations</li>
+                        <li>✔️ Exclusive study plans &amp; leader resources</li>
+                        <li>✔️ Private Facebook accountability circle</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-3">
+                        <a data-membership-link="details" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">View membership plans</a>
+                        <a data-membership-link="checkout" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Join via Stripe</a>
+                    </div>
+                    <p class="text-xs text-stone-500">Already part of the community? <a href="signin.html?redirect=faith-formation-ai" class="underline-offset-2 hover:underline">Sign in for full access</a>. Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-6xl space-y-4 px-6 py-12 text-sm text-white/80">
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+                <p>© <span id="faith-formation-year"></span> Grounded Through Faith. Walk with Jesus every day.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="index.html" class="hover:text-white">Home</a>
+                    <a href="mens-discipleship.html" class="hover:text-white">Men's Discipleship</a>
+                    <a href="thirty-day-purpose.html" class="hover:text-white">30-Day Way of Jesus</a>
+                    <a href="strength-in-waiting.html" class="hover:text-white">Strength in Waiting</a>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
+                <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
+                <div class="flex items-center gap-4">
+                    <a href="membership.html#donate" data-donation-link class="hover:text-white">Donate</a>
+                    <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="assets/auth-state.js"></script>
+    <script src="assets/portal-data.js"></script>
+    <script src="assets/membership-links.js"></script>
+    <script>
+        const FREE_USAGE_LIMIT = 1;
+        const FAITH_FORMATION_USAGE_KEY = 'gtfFaithFormationFreeUses';
+        const MEMBER_SESSION_KEY = 'gtfMemberSession';
+        const CONVERSATION_STORAGE_KEY = 'gtfFaithFormationConversation';
+
+        function loadConversationHistory() {
+            try {
+                const stored = sessionStorage.getItem(CONVERSATION_STORAGE_KEY);
+                if (!stored) return [];
+                const parsed = JSON.parse(stored);
+                if (!Array.isArray(parsed)) return [];
+                return parsed.filter((entry) => entry && typeof entry.role === 'string' && typeof entry.content === 'string');
+            } catch (error) {
+                console.warn('Unable to load conversation history', error);
+                return [];
+            }
+        }
+
+        function saveConversationHistory(history) {
+            try {
+                sessionStorage.setItem(CONVERSATION_STORAGE_KEY, JSON.stringify(history));
+            } catch (error) {
+                console.warn('Unable to save conversation history', error);
+            }
+        }
+
+        async function streamAssistant(messages, handlers = {}) {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ messages }),
+            });
+
+            if (!response.ok || !response.body) {
+                const message = await response.text().catch(() => '');
+                throw new Error(message || 'Faith Formation AI request failed');
+            }
+
+            const { onStart, onToken, onError, onComplete } = handlers;
+            if (typeof onStart === 'function') {
+                onStart();
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+            let assistantText = '';
+            let finished = false;
+
+            try {
+                while (!finished) {
+                    const { value, done } = await reader.read();
+
+                    if (value) {
+                        buffer += decoder.decode(value, { stream: true });
+                    }
+                    if (done) {
+                        buffer += decoder.decode();
+                    }
+
+                    let boundary = buffer.indexOf('\n\n');
+                    while (boundary !== -1) {
+                        const rawEvent = buffer.slice(0, boundary);
+                        buffer = buffer.slice(boundary + 2);
+
+                        let eventName = null;
+                        const dataLines = [];
+
+                        rawEvent.split('\n').forEach((line) => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return;
+                            if (trimmed.startsWith('event:')) {
+                                eventName = trimmed.slice(6).trim();
+                            } else if (trimmed.startsWith('data:')) {
+                                dataLines.push(trimmed.slice(5).trim());
+                            }
+                        });
+
+                        if (!dataLines.length) {
+                            boundary = buffer.indexOf('\n\n');
+                            continue;
+                        }
+
+                        const payloadRaw = dataLines.join('');
+                        let payload;
+                        try {
+                            payload = JSON.parse(payloadRaw);
+                        } catch (error) {
+                            payload = payloadRaw;
+                        }
+
+                        if (eventName === 'response.output_text.delta') {
+                            const delta = typeof payload === 'string' ? payload : payload?.delta || '';
+                            if (delta) {
+                                assistantText += delta;
+                                if (typeof onToken === 'function') {
+                                    onToken(assistantText);
+                                }
+                            }
+                        } else if (eventName === 'response.completed') {
+                            finished = true;
+                            break;
+                        } else if (eventName === 'response.error') {
+                            const message = (payload && payload.message) || 'Faith Formation AI stream error';
+                            if (typeof onError === 'function') {
+                                onError(message);
+                            }
+                            throw new Error(message);
+                        }
+
+                        boundary = buffer.indexOf('\n\n');
+                    }
+
+                    if (finished || done) {
+                        break;
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+
+            if (typeof onComplete === 'function') {
+                onComplete(assistantText);
+            }
+
+            return assistantText;
+        }
+
+        (function () {
+            const form = document.getElementById('assistant-form');
+            if (!form) return;
+
+            const promptInput = document.getElementById('assistant-prompt');
+            const feedback = document.getElementById('assistant-feedback');
+            const results = document.getElementById('assistant-results');
+            const paywall = document.getElementById('assistant-paywall');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const conversation = loadConversationHistory();
+            const portalAvailable = Boolean(window.gtfPortalData && window.gtfPortalData.isSignedIn && window.gtfPortalData.isSignedIn());
+            let currentResponse = null;
+
+            rehydrateConversation(conversation);
+
+            if (!hasFreeQuota()) {
+                showPaywall(paywall);
+            }
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const prompt = (promptInput && promptInput.value.trim()) || '';
+                if (!prompt) {
+                    setFeedback('Please share a focus, need, or question so Faith Formation AI can respond.', 'error');
+                    if (results) {
+                        results.classList.add('hidden');
+                        results.innerHTML = '';
+                    }
+                    return;
+                }
+
+                if (!hasFreeQuota()) {
+                    showPaywall(paywall);
+                    setFeedback('Join the Grounded Through Faith community for unlimited Faith Formation AI access.', 'error');
+                    if (results) {
+                        results.classList.add('hidden');
+                    }
+                    return;
+                }
+
+                const requestPrompt = buildRequestPrompt(prompt, conversation);
+                conversation.push({ role: 'user', content: prompt, request: requestPrompt });
+
+                setFeedback('Praying with your request...', 'info');
+                toggleSubmitting(true);
+                currentResponse = { prompt, text: '' };
+                const showPortalSave = portalAvailable && wantsStudyPlan(prompt);
+                renderResponse(currentResponse, { isFinal: false, showPortalSave });
+
+                try {
+                    const messages = buildMessages(conversation);
+                    const finalText = await streamAssistant(messages, {
+                        onToken: (partial) => {
+                            currentResponse = { prompt, text: partial };
+                            renderResponse(currentResponse, { isFinal: false, showPortalSave });
+                        },
+                    });
+
+                    const trimmed = finalText.trim();
+                    if (!trimmed) {
+                        throw new Error('Faith Formation AI returned an empty response.');
+                    }
+
+                    currentResponse = { prompt, text: trimmed };
+                    conversation.push({ role: 'assistant', content: trimmed });
+                    saveConversationHistory(conversation);
+                    renderResponse(currentResponse, { isFinal: true, showPortalSave });
+                    recordUsage();
+                    if (!hasFreeQuota()) {
+                        showPaywall(paywall);
+                    }
+                    if (promptInput) {
+                        promptInput.value = '';
+                    }
+                    setFeedback('Here is your Christ-centered guidance. Take it into prayer.', 'success');
+                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } catch (error) {
+                    console.error('Faith Formation AI error:', error);
+                    conversation.pop();
+                    setFeedback('We could not load a response right now. Please try again soon.', 'error');
+                    if (results) {
+                        results.classList.add('hidden');
+                        results.innerHTML = '';
+                    }
+                    currentResponse = null;
+                } finally {
+                    toggleSubmitting(false);
+                }
+            });
+
+            function buildRequestPrompt(prompt, history) {
+                const baseInstruction =
+                    'You are the Faith Formation AI, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_';
+                const context = buildContextSnippet(history);
+
+                if (context) {
+                    return `${baseInstruction}\n\nRecent conversation (continue this thread, do not restart):\n${context}\n\nRequest: ${prompt}`;
+                }
+
+                return `${baseInstruction}\n\nRequest: ${prompt}`;
+            }
+
+            function wantsStudyPlan(prompt) {
+                return /study|plan|series|curriculum|course|lessons?/i.test(String(prompt || ''));
+            }
+
+            function buildMessages(history) {
+                return history.map((entry) => {
+                    if (entry.role === 'user') {
+                        return {
+                            role: 'user',
+                            content: entry.request || entry.content || '',
+                        };
+                    }
+                    return {
+                        role: 'assistant',
+                        content: entry.content || '',
+                    };
+                });
+            }
+
+            function buildContextSnippet(history) {
+                if (!Array.isArray(history) || history.length === 0) return '';
+                const recent = history.slice(-6);
+                return recent
+                    .map((entry) => {
+                        const label = entry.role === 'assistant' ? 'Assistant' : 'User';
+                        return `${label}: ${truncateText(entry.content || '', 320)}`;
+                    })
+                    .join('\n');
+            }
+
+            function renderResponse(payload, options = {}) {
+                if (!results) return;
+                const safePrompt = escapeHtml(payload.prompt);
+                const bodyHtml = payload.text && payload.text.trim()
+                    ? formatTextToHtml(payload.text)
+                    : '<p class="italic text-stone-500">Receiving prayerful guidance...</p>';
+                const actionsHtml = options.isFinal ? renderActions(Boolean(options.showPortalSave)) : '';
+                const assistantHeading = options.isFinal
+                    ? 'Faith Formation AI'
+                    : 'Faith Formation AI • listening...';
+                const noteText = options.isFinal
+                    ? 'Review prayerfully before sharing with others.'
+                    : 'Faith Formation AI is gathering a response rooted in Scripture.';
+                const portalNote = options.isFinal && options.showPortalSave
+                    ? '<p class="text-xs text-[var(--color-cerulean)]">Track this study in your member portal.</p>'
+                    : '';
+
+                results.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex justify-end">
+                            <div class="max-w-xl rounded-3xl bg-white/80 px-4 py-3 text-sm text-stone-700 shadow-sm ring-1 ring-stone-200">
+                                ${safePrompt}
+                            </div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="w-full max-w-xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 text-sm text-stone-700 shadow-lg shadow-[var(--color-mist)]/60">
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <p class="text-base font-semibold text-stone-900">${assistantHeading}</p>
+                                        ${actionsHtml}
+                                    </div>
+                                    <div class="space-y-4 leading-relaxed">${bodyHtml}</div>
+                                    ${portalNote}
+                                    <p class="text-xs text-stone-500">${noteText}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                results.classList.remove('hidden');
+                if (options.isFinal) {
+                    attachActions();
+                }
+            }
+
+            function renderActions(showPortalSave) {
+                const portalButton = showPortalSave
+                    ? `<button id="assistant-save" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
+                            Save to Member Portal
+                        </button>`
+                    : '';
+
+                return `
+                    <div class="flex flex-wrap gap-2">
+                        <button id="assistant-copy" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
+                            Copy
+                        </button>
+                        <button id="assistant-print" type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">
+                            Print
+                        </button>
+                        ${portalButton}
+                    </div>
+                `;
+            }
+
+            function attachActions() {
+                if (!currentResponse) return;
+                const copyButton = document.getElementById('assistant-copy');
+                const printButton = document.getElementById('assistant-print');
+                const saveButton = document.getElementById('assistant-save');
+
+                if (copyButton) {
+                    copyButton.addEventListener('click', async () => {
+                        try {
+                            await navigator.clipboard.writeText(buildPlainText(currentResponse));
+                            setFeedback('Copied to your clipboard. Share it freely!', 'success');
+                        } catch (error) {
+                            console.error('Copy failed:', error);
+                            setFeedback('Unable to copy automatically. Please select and copy the text.', 'error');
+                        }
+                    });
+                }
+
+                if (printButton) {
+                    printButton.addEventListener('click', () => {
+                        const printable = buildPrintableHtml(currentResponse);
+                        const printWindow = window.open('', '_blank', 'noopener');
+                        if (!printWindow) {
+                            setFeedback('Please allow pop-ups to open a printable copy.', 'error');
+                            return;
+                        }
+                        printWindow.document.open();
+                        printWindow.document.write(printable);
+                        printWindow.document.close();
+                        printWindow.focus();
+                        printWindow.print();
+                    });
+                }
+
+                if (saveButton && portalAvailable) {
+                    saveButton.addEventListener('click', () => {
+                        const title = buildStudyTitle(currentResponse.prompt);
+                        const studyId = 'faith-formation-custom';
+                        window.gtfPortalData.addCustomStudy({
+                            id: studyId,
+                            title,
+                            createdAt: new Date().toISOString(),
+                            content: currentResponse.text,
+                            steps: buildStudySteps(currentResponse.text),
+                        });
+                        setFeedback('Saved to your member portal — the previous custom plan was replaced.', 'success');
+                        saveButton.disabled = true;
+                        saveButton.classList.add('opacity-60');
+                    });
+                }
+            }
+
+            function rehydrateConversation(history) {
+                if (!Array.isArray(history) || history.length === 0) return;
+
+                const lastAssistantIndex = [...history].reverse().findIndex((entry) => entry.role === 'assistant');
+                if (lastAssistantIndex === -1) return;
+
+                const assistantIndex = history.length - 1 - lastAssistantIndex;
+                const assistantEntry = history[assistantIndex];
+
+                let userEntry = null;
+                for (let i = assistantIndex - 1; i >= 0; i -= 1) {
+                    if (history[i].role === 'user') {
+                        userEntry = history[i];
+                        break;
+                    }
+                }
+
+                currentResponse = {
+                    prompt: (userEntry && userEntry.content) || 'Your previous request',
+                    text: assistantEntry.content || '',
+                };
+
+                const showPortalSave = portalAvailable && wantsStudyPlan(currentResponse.prompt);
+                renderResponse(currentResponse, { isFinal: true, showPortalSave });
+            }
+
+            function buildPlainText(payload) {
+                const lines = [];
+                lines.push('Faith Formation AI');
+                lines.push(`Prompt: ${payload.prompt}`);
+                lines.push('');
+                lines.push(payload.text);
+                lines.push('');
+                lines.push('Visit groundedthroughfaith.org for more resources.');
+                return lines.join('\n');
+            }
+
+            function buildPrintableHtml(payload) {
+                const safePrompt = escapeHtml(payload.prompt);
+                const bodyHtml = formatTextToHtml(payload.text);
+                return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Faith Formation AI</title>
+    <style>
+        body { font-family: 'Montserrat', system-ui, sans-serif; background: #f8f1e2; color: #2d1f13; margin: 0; padding: 32px; line-height: 1.6; }
+        header { border-bottom: 2px solid #c9a03a; margin-bottom: 24px; padding-bottom: 16px; }
+        h1 { margin: 0 0 8px; font-size: 26px; }
+        .content { font-size: 14px; }
+        .content p { margin: 0 0 12px; }
+        .content ul { margin: 0 0 12px 20px; padding: 0; }
+        .content ol { margin: 0 0 12px 20px; padding: 0; }
+        footer { margin-top: 24px; font-size: 12px; color: #5f4d30; text-align: center; }
+        @media print { body { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Faith Formation AI</h1>
+        <p><strong>Prompt:</strong> ${safePrompt}</p>
+    </header>
+    <div class="content">${bodyHtml}</div>
+    <footer>Carry this guidance with you in prayer. Visit groundedthroughfaith.org for more resources.</footer>
+</body>
+</html>`;
+            }
+
+            function buildStudyTitle(prompt) {
+                const base = truncateText(prompt || 'Faith Formation AI Study', 90);
+                if (/study|plan|series|curriculum|guide/i.test(base)) return base;
+                return `Study: ${base}`;
+            }
+
+            function buildStudySteps(text) {
+                const raw = String(text || '');
+                const lines = raw.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+
+                const headingSteps = lines
+                    .filter((line) => /^(week|day|session|part|chapter)\s+\d+/i.test(line) || /^\d+\./.test(line))
+                    .slice(0, 24)
+                    .map((line, index) => ({ id: `step-${index + 1}`, title: line.replace(/^\d+\.\s*/, '') }));
+
+                if (headingSteps.length > 0) return headingSteps;
+
+                const paragraphBlocks = raw
+                    .split(/\n{2,}/)
+                    .map((block) => block.trim())
+                    .filter(Boolean)
+                    .slice(0, 10)
+                    .map((block, index) => ({ id: `step-${index + 1}`, title: truncateText(block, 80) }));
+
+                return paragraphBlocks.length > 0
+                    ? paragraphBlocks
+                    : [
+                        { id: 'step-1', title: 'Pray and read the guidance' },
+                        { id: 'step-2', title: 'Journal your reflections' },
+                        { id: 'step-3', title: 'Live out a small action' },
+                    ];
+            }
+
+            function formatTextToHtml(md) {
+                if (!md) return '';
+
+                let text = String(md).replace(/\r\n/g, '\n');
+
+                text = text.replace(/```([\s\S]*?)```/g, (_, code) => code.trim());
+                text = text.replace(/^\s*---\s*$/gm, '');
+                text = text.replace(/^>\s?/gm, '');
+                text = text.replace(/^#{1,6}\s+/gm, '');
+                text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+                text = text.replace(/__(.*?)__/g, '$1');
+                text = text.replace(/\*(.*?)\*/g, '$1');
+                text = text.replace(/_(.*?)_/g, '$1');
+                text = text.replace(/`([^`]+)`/g, '$1');
+
+                const blocks = text
+                    .split(/\n{2,}/)
+                    .map((section) => section.trim())
+                    .filter(Boolean)
+                    .map((section) => {
+                        const lines = section.split('\n').filter(Boolean);
+                        const isOrdered = lines.every((line) => /^\d+\.\s+/.test(line));
+                        const isUnordered = lines.every((line) => /^[-*]\s+/.test(line));
+
+                        if (isOrdered) {
+                            const items = lines
+                                .map((line) => line.replace(/^\d+\.\s+/, '').trim())
+                                .map((item) => `<li>${escapeHtml(item)}</li>`)
+                                .join('');
+                            return `<ol class="list-decimal space-y-1 pl-6">${items}</ol>`;
+                        }
+
+                        if (isUnordered) {
+                            const items = lines
+                                .map((line) => line.replace(/^[-*]\s+/, '').trim())
+                                .map((item) => `<li>${escapeHtml(item)}</li>`)
+                                .join('');
+                            return `<ul class="list-disc space-y-1 pl-6">${items}</ul>`;
+                        }
+
+                        return `<p>${escapeHtml(section).replace(/\n/g, '<br>')}</p>`;
+                    });
+
+                return blocks.join('\n');
+            }
+
+            function truncateText(value, maxLength) {
+                const text = String(value || '').trim();
+                if (text.length <= maxLength) return text;
+                return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
+            }
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function setFeedback(message, tone) {
+                if (!feedback) return;
+                feedback.textContent = message;
+                feedback.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
+                if (tone === 'error') {
+                    feedback.classList.add('text-rose-600');
+                } else if (tone === 'success') {
+                    feedback.classList.add('text-emerald-600');
+                } else {
+                    feedback.classList.add('text-stone-600');
+                }
+            }
+
+            function toggleSubmitting(isSubmitting) {
+                if (!submitButton) return;
+                submitButton.disabled = isSubmitting;
+                submitButton.classList.toggle('opacity-70', isSubmitting);
+            }
+
+            function showPaywall(element) {
+                if (element) {
+                    element.classList.remove('hidden');
+                }
+            }
+
+            function hasFreeQuota() {
+                if (isMemberSignedIn()) {
+                    return true;
+                }
+                return getUsageCount() < FREE_USAGE_LIMIT;
+            }
+
+            function getUsageCount() {
+                try {
+                    const stored = window.localStorage.getItem(FAITH_FORMATION_USAGE_KEY);
+                    const value = parseInt(stored || '0', 10);
+                    return Number.isNaN(value) ? 0 : value;
+                } catch (error) {
+                    console.warn('Local storage unavailable:', error);
+                    return 0;
+                }
+            }
+
+            function recordUsage() {
+                try {
+                    const nextValue = Math.min(FREE_USAGE_LIMIT, getUsageCount() + 1);
+                    window.localStorage.setItem(FAITH_FORMATION_USAGE_KEY, String(nextValue));
+                } catch (error) {
+                    console.warn('Unable to persist usage count:', error);
+                }
+            }
+
+            function isMemberSignedIn() {
+                try {
+                    if (typeof window.gtfAuth?.signedIn === 'function') {
+                        return window.gtfAuth.signedIn();
+                    }
+                    return sessionStorage.getItem(MEMBER_SESSION_KEY) === 'true';
+                } catch (error) {
+                    return false;
+                }
+            }
+        })();
+
+        const faithFormationYearEl = document.getElementById('faith-formation-year');
+        if (faithFormationYearEl) {
+            faithFormationYearEl.textContent = new Date().getFullYear();
+        }
+    </script>
+</body>
+</html>
