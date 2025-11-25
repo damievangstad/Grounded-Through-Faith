@@ -573,11 +573,6 @@
           .trim();
       }
 
-      function capitalizeFirst(value) {
-        const text = String(value || '');
-        return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '';
-      }
-
       function stripClosingPrayer(text) {
         const raw = String(text || '');
         const marker = raw.search(/\n?\s*closing\s+prayer[:]?/i);
