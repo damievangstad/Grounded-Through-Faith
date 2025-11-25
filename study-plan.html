@@ -272,7 +272,7 @@
         const cleanedDescription = stripClosingPrayer(plan.description || plan.content || '');
 
         if (planTitle) planTitle.textContent = plan.title || 'Saved Study';
-        if (planSummary) planSummary.textContent = cleanedDescription || 'Review your saved Faith Formation AI plan and track steps here.';
+        if (planSummary) planSummary.textContent = 'Track each section below without extra intro text.';
         if (planFocus) planFocus.textContent = 'Custom Study';
         if (planFormat) planFormat.textContent = 'AI-generated flow';
         if (planFocusDetail) planFocusDetail.textContent = plan.prompt || 'Custom';
@@ -294,7 +294,8 @@
           return;
         }
 
-        const unit = detectStepUnit(steps, plan);
+        const cadence = detectPlanCadence(steps, plan);
+        const unit = cadence.unit;
         const stepDetails = buildStepDetails(cleanedDescription || plan.content, steps);
 
         const cards = steps
@@ -324,7 +325,11 @@
 
         planContent.innerHTML = `
           <section class="rounded-3xl border border-[var(--color-honey)]/35 bg-[var(--color-morning-sky)]/80 p-6 shadow-xl">
-            <div class="mt-4 space-y-3">${cards}</div>
+            <div class="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]/80">
+              <span>${cadence.label}</span>
+              <span class="rounded-full bg-white/70 px-2 py-1 text-[var(--color-stone)]">${steps.length} steps</span>
+            </div>
+            <div class="mt-1 space-y-3">${cards}</div>
           </section>
         `;
 
@@ -339,13 +344,20 @@
         });
       }
 
-      function detectStepUnit(steps, def) {
-        if (Array.isArray(steps)) {
-          const titles = steps.map((s) => String(s.title || '').toLowerCase());
-          if (titles.some((t) => t.startsWith('day '))) return 'Day';
-          if (titles.some((t) => t.startsWith('session '))) return 'Session';
-        }
-        return planUnit(def);
+      function detectPlanCadence(steps, def) {
+        const titles = Array.isArray(steps) ? steps.map((s) => String(s.title || '')).filter(Boolean) : [];
+        const lowered = titles.map((t) => t.toLowerCase());
+        const dayMentions = lowered.filter((t) => t.includes('day')).length;
+        const weekMentions = lowered.filter((t) => t.startsWith('week')).length;
+        const sessionMentions = lowered.filter((t) => t.startsWith('session')).length;
+
+        if (dayMentions && dayMentions >= weekMentions) return { unit: 'Day', label: 'Daily plan' };
+        if (weekMentions && weekMentions >= dayMentions) return { unit: 'Week', label: 'Weekly plan' };
+        if (sessionMentions) return { unit: 'Session', label: 'Session plan' };
+
+        const fallback = planUnit(def);
+        const fallbackLabel = fallback === 'Week' ? 'Weekly plan' : `${fallback} plan`;
+        return { unit: fallback, label: fallbackLabel };
       }
 
       function deriveCustomSteps(plan) {
@@ -465,16 +477,18 @@
         const lines = normalized.split('\n');
         const sections = [];
         let current = null;
+        let seenHeading = false;
 
         lines.forEach((line) => {
           const trimmed = line.trim();
           const headingMatch = trimmed.match(/^(?:#+\s*)?(day|week|session)\s*(\d+)(?:[.:\-]\s*|\s+)?(.*)$/i);
           if (headingMatch) {
+            seenHeading = true;
             if (current) sections.push(current);
             const [, label, number, remainder] = headingMatch;
             const headingText = `${capitalizeFirst(label)} ${number}${remainder ? `: ${remainder}` : ''}`.trim();
             current = { heading: headingText, bodyLines: remainder ? [remainder] : [] };
-          } else if (current) {
+          } else if (current && seenHeading) {
             current.bodyLines.push(line);
           }
         });
