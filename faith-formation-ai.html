@@ -384,7 +384,7 @@
 
             function buildRequestPrompt(prompt, history) {
                 const baseInstruction =
-                    'You are the Faith Formation AI, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_';
+                    'You are the Faith Formation AI, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_ When crafting any plan, respect multi-week or daily breakdowns the user mentions and add a short Closing Prayer at the end of the plan (keep it outside the numbered steps).';
                 const context = buildContextSnippet(history);
 
                 if (context) {
@@ -618,7 +618,10 @@
 
             function buildStudySteps(text) {
                 const raw = String(text || '');
-                const lines = raw
+
+                const withoutClosingPrayer = raw.replace(/(^|\n)\s*#{0,3}\s*closing\s+prayer[:\-]?\s*[\s\S]*$/i, '$1');
+
+                const lines = withoutClosingPrayer
                     .split(/\n+/)
                     .map((line) => line.trim())
                     .map((line) => line.replace(/^[#>*\-\s]+/, ''))
@@ -626,9 +629,12 @@
 
                 const headingSteps = lines
                     .map((line) => line.replace(/^\d+\.\s*/, ''))
-                    .filter((line) => /^(day|week|session)\s*\d+/i.test(line))
-                    .filter((line) => !/closing\s+prayer|study\s+plan|short\s+study/i.test(line))
-                    .slice(0, 24)
+                    .filter((line) => {
+                        const normalized = line.toLowerCase();
+                        const mentionsSchedule = /^(day|week|session)\s*\d+/.test(normalized) || /week\s*\d+.*day\s*\d+/.test(normalized);
+                        return mentionsSchedule && !/closing\s+prayer|study\s+plan|short\s+study/.test(normalized);
+                    })
+                    .slice(0, 60)
                     .map((line, index) => ({
                         id: `step-${index + 1}`,
                         title: truncateText(line, 120),
@@ -636,11 +642,11 @@
 
                 if (headingSteps.length > 0) return headingSteps;
 
-                const paragraphBlocks = raw
+                const paragraphBlocks = withoutClosingPrayer
                     .split(/\n{2,}/)
                     .map((block) => block.replace(/^[#>*\-\s]+/, '').trim())
                     .filter(Boolean)
-                    .slice(0, 6)
+                    .slice(0, 8)
                     .map((block, index) => ({ id: `step-${index + 1}`, title: truncateText(block, 80) }));
 
                 return paragraphBlocks.length > 0
