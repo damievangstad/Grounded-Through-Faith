@@ -269,8 +269,10 @@
       }
 
       function renderCustomPlan(plan) {
+        const cleanedDescription = stripClosingPrayer(plan.description || plan.content || '');
+
         if (planTitle) planTitle.textContent = plan.title || 'Saved Study';
-        if (planSummary) planSummary.textContent = plan.description || 'Review your saved Faith Formation AI plan and track steps here.';
+        if (planSummary) planSummary.textContent = cleanedDescription || 'Review your saved Faith Formation AI plan and track steps here.';
         if (planFocus) planFocus.textContent = 'Custom Study';
         if (planFormat) planFormat.textContent = 'AI-generated flow';
         if (planFocusDetail) planFocusDetail.textContent = plan.prompt || 'Custom';
@@ -293,7 +295,7 @@
         }
 
         const unit = detectStepUnit(steps, plan);
-        const stepDetails = buildStepDetails(plan.content, steps);
+        const stepDetails = buildStepDetails(cleanedDescription || plan.content, steps);
 
         const cards = steps
           .map((step, idx) => {
@@ -359,27 +361,56 @@
       }
 
       function buildStepsFromText(text) {
-        const raw = String(text || '');
+        const raw = stripClosingPrayer(String(text || ''));
         if (!raw.trim()) return [];
 
         const lines = raw
           .split(/\n+/)
           .map((line) => line.trim())
           .map((line) => line.replace(/^[#>*\-\s]+/, ''))
-          .filter(Boolean);
+          .filter(Boolean)
+          .filter((line) => !/closing\s+prayer|closing\s+blessing|benediction/i.test(line));
 
-        const daySteps = lines
-          .map((line) => line.replace(/^\d+\.\s*/, ''))
-          .filter((line) => /^(day|week|session)\s*\d+/i.test(line))
-          .filter((line) => !/closing\s+prayer|study\s+plan|short\s+study/i.test(line))
-          .map((line, index) => ({ id: `step-${index + 1}`, title: truncate(line, 120) }));
+        const days = [];
+        const weeks = [];
+        let currentWeek = null;
 
-        if (daySteps.length) return daySteps;
+        lines.forEach((line) => {
+          const weekMatch = line.match(/^week\s*(\d+)[:.\-\s]*(.*)/i);
+          const sessionMatch = line.match(/^session\s*(\d+)[:.\-\s]*(.*)/i);
+          const dayMatch = line.match(/^day\s*(\d+)[:.\-\s]*(.*)/i);
+          if (weekMatch) {
+            currentWeek = weekMatch[1];
+            const title = weekMatch[2].trim();
+            weeks.push({ id: `week-${weeks.length + 1}`, title: truncate(title ? `Week ${currentWeek}: ${title}` : `Week ${currentWeek}`, 120) });
+            return;
+          }
+
+          if (sessionMatch) {
+            const sessionNumber = sessionMatch[1];
+            const detail = sessionMatch[2].trim();
+            const label = detail ? `Session ${sessionNumber}: ${detail}` : `Session ${sessionNumber}`;
+            weeks.push({ id: `session-${weeks.length + 1}`, title: truncate(label, 120) });
+            return;
+          }
+
+          if (dayMatch) {
+            const dayNumber = dayMatch[1];
+            const detail = dayMatch[2].trim();
+            const prefix = currentWeek ? `Week ${currentWeek} – Day ${dayNumber}` : `Day ${dayNumber}`;
+            const title = detail ? `${prefix}: ${detail}` : prefix;
+            days.push({ id: `step-${days.length + 1}`, title: truncate(title, 120) });
+          }
+        });
+
+        if (days.length) return days;
+        if (weeks.length) return weeks;
 
         const blocks = raw
           .split(/\n{2,}/)
           .map((block) => block.replace(/^[#>*\-\s]+/, '').trim())
           .filter(Boolean)
+          .filter((block) => !/closing\s+prayer|closing\s+blessing|benediction/i.test(block))
           .slice(0, 5)
           .map((block, index) => ({ id: `step-${index + 1}`, title: truncate(block, 90) }));
 
@@ -388,7 +419,8 @@
 
       function buildStepDetails(content, steps) {
         const details = {};
-        const sections = parseContentSections(content);
+        const cleanContent = stripClosingPrayer(content);
+        const sections = parseContentSections(cleanContent);
 
         steps.forEach((step, index) => {
           const normalizedStep = normalizeLabel(step.title || '');
@@ -403,8 +435,8 @@
           }
         });
 
-        if (!Object.keys(details).length && String(content || '').trim() && steps[0]) {
-          details[steps[0].id] = formatRichText(content);
+        if (!Object.keys(details).length && String(cleanContent || '').trim() && steps[0]) {
+          details[steps[0].id] = formatRichText(cleanContent);
         }
 
         return details;
@@ -516,6 +548,13 @@
           .replace(/\*(.+?)\*/g, '$1')
           .replace(/`([^`]+)`/g, '$1')
           .trim();
+      }
+
+      function stripClosingPrayer(text) {
+        const raw = String(text || '');
+        const marker = raw.search(/\n?\s*closing\s+prayer[:]?/i);
+        if (marker === -1) return raw;
+        return raw.slice(0, marker).trim();
       }
 
       function loadMensProgress() {
