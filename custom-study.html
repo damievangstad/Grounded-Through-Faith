@@ -176,7 +176,8 @@
             titleEl.textContent = study.title || 'Custom Study';
             metaEl.textContent = study.createdAt ? `Saved on ${new Date(study.createdAt).toLocaleDateString()}` : '';
             descEl.textContent = 'Mark each step below as you complete it. Your progress is saved to your account.';
-            contentEl.innerHTML = formatTextToHtml(study.content || 'No study content was saved.');
+            const content = stripClosingPrayer(study.content || '');
+            contentEl.innerHTML = formatTextToHtml(content || 'No study content was saved.');
 
             renderSteps(study);
 
@@ -262,6 +263,13 @@
                         return `<p>${section.replace(/\n/g, '<br>')}</p>`;
                     })
                     .join('\n');
+            }
+
+            function stripClosingPrayer(text) {
+                const raw = String(text || '');
+                const marker = raw.search(/\n?\s*closing\s+prayer[:]?/i);
+                if (marker === -1) return raw;
+                return raw.slice(0, marker).trim();
             }
 
             const yearEl = document.getElementById('footer-year');
