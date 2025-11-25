@@ -105,14 +105,33 @@
                     <p class="mt-2 text-xs text-stone-600">Receive pastoral answers anchored in Scripture and Church teaching.</p>
                 </div>
             </div>
-            <form id="assistant-form" class="mx-auto mt-12 max-w-3xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 shadow-2xl shadow-[var(--color-mist)]/70">
-                <label for="assistant-prompt" class="sr-only">Ask Faith Formation AI</label>
-                <div class="flex flex-col gap-3 sm:flex-row">
-                    <input id="assistant-prompt" name="assistant-prompt" type="text" class="w-full flex-1 rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-base text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Ask for a devotional, study plan, or faith insight..." required />
-                    <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Send</button>
+            <form id="assistant-form" class="mx-auto mt-12 max-w-3xl space-y-4 rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-6 shadow-2xl shadow-[var(--color-mist)]/70">
+                <div class="space-y-2">
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Step 1 • Choose your need</p>
+                    <div id="assistant-mode" class="grid gap-3 sm:grid-cols-3">
+                        <button type="button" data-mode="devotional" class="mode-button rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-stone-800 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)]/50">Daily Devotional</button>
+                        <button type="button" data-mode="study" class="mode-button rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-stone-800 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)]/50">Study Plan</button>
+                        <button type="button" data-mode="question" class="mode-button rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-stone-800 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)]/50">Ask a Question</button>
+                    </div>
                 </div>
-                <p id="assistant-feedback" class="mt-3 hidden text-sm text-stone-600" aria-live="polite"></p>
-                <p class="mt-4 text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response. Free visitors receive one prompt—join the community for unlimited access.</p>
+
+                <div id="day-count-wrapper" class="space-y-2 hidden">
+                    <label for="assistant-days" class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Step 2 • How many days?</label>
+                    <div class="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-sm shadow-sm">
+                        <input id="assistant-days" name="assistant-days" type="number" min="1" max="60" inputmode="numeric" class="w-28 rounded-xl border border-stone-200 px-3 py-2 text-base text-stone-700 focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="7" />
+                        <p class="text-sm text-stone-600">Faith Formation AI will split the response into clear Day 1, Day 2, Day 3... sections.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="assistant-prompt" class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Step 3 • Share the focus</label>
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                        <input id="assistant-prompt" name="assistant-prompt" type="text" class="w-full flex-1 rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-base text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="E.g., create a 7-day study on the Beatitudes" required />
+                        <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Send</button>
+                    </div>
+                    <p id="assistant-feedback" class="mt-1 hidden text-sm text-stone-600" aria-live="polite"></p>
+                    <p class="text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response. Free visitors receive one prompt—join the community for unlimited access.</p>
+                </div>
             </form>
             <div id="assistant-results" class="mx-auto mt-10 hidden max-w-3xl space-y-6" aria-live="polite"></div>
             <div id="assistant-paywall" class="mx-auto mt-8 hidden max-w-3xl rounded-3xl border border-[var(--color-cerulean)]/40 bg-white/95 p-6 text-sm text-stone-700 shadow-2xl">
@@ -297,14 +316,19 @@
             if (!form) return;
 
             const promptInput = document.getElementById('assistant-prompt');
+            const dayInput = document.getElementById('assistant-days');
+            const dayWrapper = document.getElementById('day-count-wrapper');
+            const modeWrapper = document.getElementById('assistant-mode');
             const feedback = document.getElementById('assistant-feedback');
             const results = document.getElementById('assistant-results');
             const paywall = document.getElementById('assistant-paywall');
             const submitButton = form.querySelector('button[type="submit"]');
             const conversation = loadConversationHistory();
             const portalAvailable = Boolean(window.gtfPortalData && window.gtfPortalData.isSignedIn && window.gtfPortalData.isSignedIn());
+            let selectedMode = null;
             let currentResponse = null;
 
+            setupModeChooser();
             rehydrateConversation(conversation);
 
             if (!hasFreeQuota()) {
@@ -313,6 +337,11 @@
 
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
+                if (!selectedMode) {
+                    setFeedback('Choose whether you need a devotional, study plan, or quick question before sending.', 'error');
+                    return;
+                }
+
                 const prompt = (promptInput && promptInput.value.trim()) || '';
                 if (!prompt) {
                     setFeedback('Please share a focus, need, or question so Faith Formation AI can respond.', 'error');
@@ -320,6 +349,13 @@
                         results.classList.add('hidden');
                         results.innerHTML = '';
                     }
+                    return;
+                }
+
+                const daysValue = dayInput ? parseInt(dayInput.value || '0', 10) : 0;
+                const requiresDays = selectedMode === 'devotional' || selectedMode === 'study';
+                if (requiresDays && (!Number.isFinite(daysValue) || daysValue <= 0)) {
+                    setFeedback('Enter how many days you want so each day becomes its own section.', 'error');
                     return;
                 }
 
@@ -332,20 +368,21 @@
                     return;
                 }
 
-                const requestPrompt = buildRequestPrompt(prompt, conversation);
-                conversation.push({ role: 'user', content: prompt, request: requestPrompt });
+                const requestPrompt = buildRequestPrompt({ prompt, mode: selectedMode, days: daysValue }, conversation);
+                const displayPrompt = formatUserPromptSummary({ prompt, mode: selectedMode, days: daysValue });
+                conversation.push({ role: 'user', content: requestPrompt, request: displayPrompt, meta: { mode: selectedMode, days: daysValue } });
 
                 setFeedback('Praying with your request...', 'info');
                 toggleSubmitting(true);
-                currentResponse = { prompt, text: '' };
-                const showPortalSave = portalAvailable && wantsStudyPlan(prompt);
+                currentResponse = { prompt: displayPrompt, text: '', mode: selectedMode };
+                const showPortalSave = portalAvailable && selectedMode !== 'question';
                 renderResponse(currentResponse, { isFinal: false, showPortalSave });
 
                 try {
                     const messages = buildMessages(conversation);
                     const finalText = await streamAssistant(messages, {
                         onToken: (partial) => {
-                            currentResponse = { prompt, text: partial };
+                            currentResponse = { prompt: displayPrompt, text: partial, mode: selectedMode };
                             renderResponse(currentResponse, { isFinal: false, showPortalSave });
                         },
                     });
@@ -355,7 +392,7 @@
                         throw new Error('Faith Formation AI returned an empty response.');
                     }
 
-                    currentResponse = { prompt, text: trimmed };
+                    currentResponse = { prompt: displayPrompt, text: trimmed, mode: selectedMode };
                     conversation.push({ role: 'assistant', content: trimmed });
                     saveConversationHistory(conversation);
                     renderResponse(currentResponse, { isFinal: true, showPortalSave });
@@ -382,20 +419,42 @@
                 }
             });
 
-            function buildRequestPrompt(prompt, history) {
-                const baseInstruction =
-                    'You are the Faith Formation AI, a Catholic spiritual companion. Answer plainly and pastorally, offering at most one Scripture reference for simple questions. Only build structured devotionals or study plans when the person clearly requests one, otherwise end with the line: _Would you like a short study plan to go deeper?_ When crafting any plan, respect multi-week or daily breakdowns the user mentions and add a short Closing Prayer at the end of the plan (keep it outside the numbered steps).';
+            function buildRequestPrompt(options, history) {
+                const { prompt, mode, days } = options || {};
                 const context = buildContextSnippet(history);
 
-                if (context) {
-                    return `${baseInstruction}\n\nRecent conversation (continue this thread, do not restart):\n${context}\n\nRequest: ${prompt}`;
+                const common = [
+                    'You are the Faith Formation AI, a Catholic spiritual companion.',
+                    'Stay pastoral, Christ-centered, and concise. Use simple markdown headings and short paragraphs.',
+                ];
+
+                let task = '';
+                if (mode === 'question') {
+                    task = [
+                        'Answer the question briefly with at most one Scripture reference in parentheses.',
+                        'Do not create a devotional or study plan and do not add a closing prayer.',
+                        'End with the italic invitation: _Would you like a short study plan to go deeper?_,'
+                    ].join(' ');
+                } else {
+                    const dayCount = Number.isFinite(days) && days > 0 ? `${days}-day` : 'multi-day';
+                    const planLabel = mode === 'devotional' ? 'daily devotional' : 'study plan';
+                    task = [
+                        `Create a ${dayCount} ${planLabel} with one clearly separated section per day.`,
+                        'Use markdown headings that start with "Day 1:", "Day 2:", etc. Place each heading on its own line and add a blank line before the next day so every day is distinct.',
+                        'Under each day include Scripture, reflection, and a simple action step tied to that day.',
+                        'After the final day, add a short section labeled "Closing Prayer:" that is not part of the day sections.',
+                        'Avoid long introductory paragraphs—start with Day 1 and keep the tone pastoral and concise.',
+                    ].join(' ');
                 }
 
-                return `${baseInstruction}\n\nRequest: ${prompt}`;
-            }
+                const requestLines = [common.join(' '), task, '', 'Request:', String(prompt || '').trim() || ''];
+                const request = requestLines.join('\n');
 
-            function wantsStudyPlan(prompt) {
-                return /study|plan|series|curriculum|course|lessons?/i.test(String(prompt || ''));
+                if (context) {
+                    return `${request}\n\nRecent conversation (continue this thread, do not restart):\n${context}`;
+                }
+
+                return request;
             }
 
             function buildMessages(history) {
@@ -403,7 +462,7 @@
                     if (entry.role === 'user') {
                         return {
                             role: 'user',
-                            content: entry.request || entry.content || '',
+                            content: entry.content || entry.request || '',
                         };
                     }
                     return {
@@ -419,9 +478,67 @@
                 return recent
                     .map((entry) => {
                         const label = entry.role === 'assistant' ? 'Assistant' : 'User';
-                        return `${label}: ${truncateText(entry.content || '', 320)}`;
+                        return `${label}: ${truncateText(entry.request || entry.content || '', 320)}`;
                     })
                     .join('\n');
+            }
+
+            function setupModeChooser() {
+                if (!modeWrapper) {
+                    selectedMode = 'question';
+                    toggleDayField(selectedMode);
+                    return;
+                }
+
+                const buttons = modeWrapper.querySelectorAll('.mode-button');
+                buttons.forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const mode = button.getAttribute('data-mode');
+                        selectedMode = mode;
+                        updateModeSelection(mode);
+                        toggleDayField(mode);
+                    });
+                });
+
+                toggleDayField(null);
+            }
+
+            function updateModeSelection(mode) {
+                if (!modeWrapper) return;
+                const buttons = modeWrapper.querySelectorAll('.mode-button');
+                buttons.forEach((button) => {
+                    const isActive = button.getAttribute('data-mode') === mode;
+                    button.classList.toggle('border-[var(--color-cerulean)]/60', isActive);
+                    button.classList.toggle('ring-2', isActive);
+                    button.classList.toggle('ring-[var(--color-cerulean)]/50', isActive);
+                    button.classList.toggle('bg-white', isActive);
+                });
+            }
+
+            function toggleDayField(mode) {
+                if (!dayWrapper) return;
+                const needsDays = mode === 'devotional' || mode === 'study';
+                dayWrapper.classList.toggle('hidden', !needsDays);
+                if (!needsDays && dayInput) {
+                    dayInput.value = '';
+                }
+
+                if (promptInput) {
+                    if (mode === 'question') {
+                        promptInput.placeholder = 'Ask a faith question...';
+                    } else if (needsDays) {
+                        promptInput.placeholder = 'Share the theme for your daily plan...';
+                    } else {
+                        promptInput.placeholder = 'E.g., create a 7-day study on the Beatitudes';
+                    }
+                }
+            }
+
+            function formatUserPromptSummary(options) {
+                const { prompt, mode, days } = options || {};
+                const label = mode === 'devotional' ? 'Daily Devotional' : mode === 'study' ? 'Study Plan' : 'Question';
+                const dayLabel = (mode === 'devotional' || mode === 'study') && Number.isFinite(days) && days > 0 ? ` • ${days} days` : '';
+                return `${label}${dayLabel ? dayLabel : ''} — ${prompt}`;
             }
 
             function renderResponse(payload, options = {}) {
@@ -559,12 +676,24 @@
                     }
                 }
 
+                const meta = (userEntry && userEntry.meta) || {};
+                if (meta.mode) {
+                    selectedMode = meta.mode;
+                    updateModeSelection(meta.mode);
+                }
+                if (typeof meta.days === 'number' && meta.days > 0 && dayInput) {
+                    dayInput.value = meta.days;
+                }
+
+                toggleDayField(selectedMode);
+
                 currentResponse = {
-                    prompt: (userEntry && userEntry.content) || 'Your previous request',
+                    prompt: (userEntry && (userEntry.request || userEntry.content)) || 'Your previous request',
                     text: assistantEntry.content || '',
+                    mode: meta.mode || null,
                 };
 
-                const showPortalSave = portalAvailable && wantsStudyPlan(currentResponse.prompt);
+                const showPortalSave = portalAvailable && currentResponse.mode !== 'question';
                 renderResponse(currentResponse, { isFinal: true, showPortalSave });
             }
 
@@ -617,32 +746,18 @@
             }
 
             function buildStudySteps(text) {
-                const raw = String(text || '');
+                const cleaned = stripClosingPrayerSection(String(text || ''));
+                const sections = collectDailySections(cleaned);
 
-                const withoutClosingPrayer = raw.replace(/(^|\n)\s*#{0,3}\s*closing\s+prayer[:\-]?\s*[\s\S]*$/i, '$1');
-
-                const lines = withoutClosingPrayer
-                    .split(/\n+/)
-                    .map((line) => line.trim())
-                    .map((line) => line.replace(/^[#>*\-\s]+/, ''))
-                    .filter(Boolean);
-
-                const headingSteps = lines
-                    .map((line) => line.replace(/^\d+\.\s*/, ''))
-                    .filter((line) => {
-                        const normalized = line.toLowerCase();
-                        const mentionsSchedule = /^(day|week|session)\s*\d+/.test(normalized) || /week\s*\d+.*day\s*\d+/.test(normalized);
-                        return mentionsSchedule && !/closing\s+prayer|study\s+plan|short\s+study/.test(normalized);
-                    })
-                    .slice(0, 60)
-                    .map((line, index) => ({
+                if (sections.length > 0) {
+                    return sections.slice(0, 60).map((section, index) => ({
                         id: `step-${index + 1}`,
-                        title: truncateText(line, 120),
+                        title: truncateText(section.heading || `Day ${index + 1}`, 120),
+                        description: section.preview,
                     }));
+                }
 
-                if (headingSteps.length > 0) return headingSteps;
-
-                const paragraphBlocks = withoutClosingPrayer
+                const paragraphBlocks = cleaned
                     .split(/\n{2,}/)
                     .map((block) => block.replace(/^[#>*\-\s]+/, '').trim())
                     .filter(Boolean)
@@ -656,6 +771,57 @@
                         { id: 'step-2', title: 'Journal your reflections' },
                         { id: 'step-3', title: 'Live out a small action' },
                     ];
+            }
+
+            function stripClosingPrayerSection(text) {
+                return String(text || '').replace(/(^|\n)\s*#{0,3}\s*closing\s+prayer[:\-]?\s*[\s\S]*$/i, '$1');
+            }
+
+            function collectDailySections(text) {
+                const normalized = String(text || '').replace(/\r\n/g, '\n');
+                const splitSections = normalized
+                    .split(/(?=\b(?:Day|Week|Session)\s*\d+)/i)
+                    .map((chunk) => chunk.trim())
+                    .filter(Boolean);
+
+                const sections = [];
+
+                splitSections.forEach((chunk) => {
+                    const lines = chunk.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+                    if (lines.length === 0) return;
+
+                    const headingLine = lines.shift();
+                    const headingMatch = headingLine.match(/^(?:#+\s*)?(day|week|session)\s*(\d+)(?:[.:\-]\s*|\s+)?(.*)$/i);
+                    if (!headingMatch) return;
+
+                    const [, label, number, remainder] = headingMatch;
+                    const heading = `${capitalizeFirst(label)} ${number}${remainder ? `: ${remainder}` : ''}`.trim();
+                    const body = lines.join('\n').trim();
+                    sections.push({ heading: cleanStepTitle(heading), preview: createStepPreview(body || heading) });
+                });
+
+                return sections;
+            }
+
+            function createStepPreview(text) {
+                const clean = cleanStepTitle(text || '');
+                if (!clean) return '';
+                return truncateText(clean, 180);
+            }
+
+            function cleanStepTitle(value) {
+                return String(value || '')
+                    .replace(/^[#>*\-\s]+/, '')
+                    .replace(/^\d+\.\s*/, '')
+                    .replace(/\*\*([^*]+)\*\*/g, '$1')
+                    .replace(/\*(.+?)\*/g, '$1')
+                    .replace(/`([^`]+)`/g, '$1')
+                    .trim();
+            }
+
+            function capitalizeFirst(value) {
+                const textValue = String(value || '');
+                return textValue ? `${textValue.charAt(0).toUpperCase()}${textValue.slice(1)}` : '';
             }
 
             function formatTextToHtml(md) {
