@@ -457,7 +457,12 @@
         const text = String(content || '').replace(/\r\n/g, '\n');
         if (!text.trim()) return [];
 
-        const lines = text.split('\n');
+        const normalized = text
+          .replace(/#+\s*(?:day|week|session)\s*\d+/gi, (match) => `\n${match}`)
+          .replace(/(?:^|\s)(?:\*\*\s*)?(day|week|session)\s*\d+[.:]/gi, (match) => `\n${match.trim()}`)
+          .replace(/\n{3,}/g, '\n\n');
+
+        const lines = normalized.split('\n');
         const sections = [];
         let current = null;
 
@@ -571,6 +576,11 @@
           .replace(/\*(.+?)\*/g, '$1')
           .replace(/`([^`]+)`/g, '$1')
           .trim();
+      }
+
+      function capitalizeFirst(value) {
+        const text = String(value || '');
+        return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '';
       }
 
       function stripClosingPrayer(text) {
