@@ -17,6 +17,7 @@
   };
 
   const API_ENDPOINT = '/api/bible/progress';
+  const STATE_ENDPOINT = '/api/portal-state';
 
   const BOOK_METADATA = [
     { id: 'genesis', name: 'Genesis', chapters: 50, testament: 'ot' },
@@ -93,6 +94,7 @@
   }, {});
 
   let syncInFlight = null;
+  let stateSyncInFlight = null;
 
   function isSignedIn() {
     try {
@@ -161,6 +163,63 @@
     return normalized.slice(-1);
   }
 
+  function mergeRemoteState(state, remoteState) {
+    if (!remoteState || typeof remoteState !== 'object') return state;
+
+    const remoteReading = remoteState.reading || {};
+    const remoteStudies = remoteState.studies || {};
+
+    state.reading = {
+      ...DEFAULT_STATE.reading,
+      ...remoteReading,
+      bookChapters: {
+        ...(DEFAULT_STATE.reading.bookChapters || {}),
+        ...(remoteReading.bookChapters || {}),
+      },
+    };
+
+    const normalizedCustom = normalizeCustomCollection(remoteStudies.custom);
+    const completedMap = { ...(remoteStudies.completed || {}) };
+    normalizedCustom.forEach((entry) => {
+      if (typeof completedMap[entry.id] === 'undefined') {
+        const stepsComplete = Array.isArray(entry.steps)
+          ? entry.steps.every((step) => entry.stepsProgress && entry.stepsProgress[step.id])
+          : false;
+        completedMap[entry.id] = stepsComplete;
+      }
+    });
+
+    state.studies = {
+      completed: completedMap,
+      custom: normalizedCustom,
+    };
+
+    recomputeTotalsFromBooks(state);
+    return state;
+  }
+
+  function recomputeTotalsFromBooks(state) {
+    if (!state || !state.reading) return state;
+    let otChapters = 0;
+    let ntChapters = 0;
+
+    Object.entries(state.reading.bookChapters || {}).forEach(([bookId, chapters]) => {
+      const meta = BOOK_BY_ID[bookId];
+      if (!meta || !Array.isArray(chapters)) return;
+
+      chapters.forEach((isComplete) => {
+        if (isComplete) {
+          if (meta.testament === 'nt') ntChapters += 1;
+          else otChapters += 1;
+        }
+      });
+    });
+
+    state.reading.otChapters = otChapters;
+    state.reading.ntChapters = ntChapters;
+    return state;
+  }
+
   function mergeRemoteProgress(state, progressRows) {
     if (!state || !Array.isArray(progressRows)) return state;
 
@@ -226,6 +285,40 @@
       })
       .finally(() => {
         syncInFlight = null;
+      });
+
+    return state;
+  }
+
+  function syncPortalState(state) {
+    if (!isSignedIn()) return state;
+    if (stateSyncInFlight) return state;
+
+    const userId = getEmail();
+    if (!userId) return state;
+
+    stateSyncInFlight = fetch(STATE_ENDPOINT, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-gtf-user-id': userId,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Unable to load saved portal state');
+        return response.json();
+      })
+      .then((payload) => {
+        if (payload && payload.state) {
+          mergeRemoteState(state, payload.state);
+          saveState(state, { force: true, skipRemote: true });
+          broadcastProgress(state);
+        }
+      })
+      .catch((error) => {
+        console.warn('Sync portal state failed:', error);
+      })
+      .finally(() => {
+        stateSyncInFlight = null;
       });
 
     return state;
@@ -304,6 +397,7 @@
       console.warn('Portal data unavailable:', error);
     }
 
+    syncPortalState(hydratedState);
     syncFromServer(hydratedState);
 
     return hydratedState;
@@ -311,13 +405,52 @@
 
   function saveState(state, options = {}) {
     const force = Boolean(options.force);
+    const skipRemote = Boolean(options.skipRemote);
     if (!isSignedIn() && !force) return state;
     try {
       localStorage.setItem(storageKey(), JSON.stringify(state));
     } catch (error) {
       console.warn('Unable to persist portal data:', error);
     }
+
+    if (!skipRemote && isSignedIn()) {
+      persistPortalState(state);
+    }
     return state;
+  }
+
+  function sanitizeStateForServer(state) {
+    if (!state || typeof state !== 'object') return DEFAULT_STATE;
+    const sanitized = {
+      reading: {
+        ...DEFAULT_STATE.reading,
+        ...(state.reading || {}),
+        bookChapters: { ...(state.reading?.bookChapters || {}) },
+      },
+      studies: {
+        completed: { ...(state.studies?.completed || {}) },
+        custom: normalizeCustomCollection(state.studies?.custom),
+      },
+    };
+    recomputeTotalsFromBooks(sanitized);
+    return sanitized;
+  }
+
+  function persistPortalState(state) {
+    const userId = getEmail();
+    if (!userId) return;
+    const payload = { state: sanitizeStateForServer(state) };
+
+    fetch(STATE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-gtf-user-id': userId,
+      },
+      body: JSON.stringify(payload),
+    }).catch((error) => {
+      console.warn('Unable to persist portal state:', error);
+    });
   }
 
   function upsertCustomStudy(state, study) {
