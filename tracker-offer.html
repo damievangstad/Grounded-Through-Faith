@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Month + Digital Bible Tracker | Grounded Through Faith</title>
+    <meta name="description" content="Claim the digital Bible Reading Tracker and one month of member access for free. See everything included and unlock it with your email." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+        body { font-family: 'Montserrat', system-ui, sans-serif; }
+        .section-title { font-family: 'Playfair Display', Georgia, serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/20 text-stone-800">
+    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/60 to-[var(--color-honey)]/20" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-4xl px-6 py-12">
+        <div class="mb-8 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)] shadow">
+            Hidden Offer • By invitation only
+        </div>
+        <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/90 p-8 shadow-2xl">
+            <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+                <div class="space-y-4">
+                    <p class="section-title text-4xl font-semibold text-stone-900">Unlock the Digital Bible Tracker + 1 Month Free</p>
+                    <p class="text-stone-700">Get instant access to the Grounded Through Faith member portal for 30 days. Track every Bible chapter, sync your progress across devices, and explore member-only guides.</p>
+                    <ul class="space-y-3 text-sm text-stone-700">
+                        <li class="flex gap-3"><span class="mt-0.5 text-[var(--color-cerulean)]">✔</span>Full Bible Reading Tracker with per-chapter checkboxes and salvation-history map.</li>
+                        <li class="flex gap-3"><span class="mt-0.5 text-[var(--color-cerulean)]">✔</span>Member Portal with devotionals, study plans, and Faith Formation AI access.</li>
+                        <li class="flex gap-3"><span class="mt-0.5 text-[var(--color-cerulean)]">✔</span>Progress saved to your account—pick up on any device.</li>
+                        <li class="flex gap-3"><span class="mt-0.5 text-[var(--color-cerulean)]">✔</span>Cancel anytime; this page stays hidden from the public site.</li>
+                    </ul>
+                </div>
+                <form id="tracker-offer" class="space-y-4 rounded-3xl border border-[var(--color-mist)]/80 bg-[var(--color-morning-sky)]/90 p-6 shadow-inner">
+                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Claim your pass</p>
+                    <h2 class="section-title text-2xl font-semibold text-stone-900">Enter your email to unlock</h2>
+                    <p class="text-sm text-stone-700">We will send your confirmation and free-month access link. No credit card required for this trial.</p>
+                    <label class="block space-y-2 text-sm text-stone-700">
+                        <span class="font-semibold">Email address</span>
+                        <input id="offer-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                    </label>
+                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/30 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Confirm &amp; Continue</button>
+                    <p id="offer-status" class="hidden text-xs"></p>
+                    <p class="text-xs text-stone-500">By claiming, you agree to receive updates about the Grounded Through Faith mission. You can unsubscribe anytime.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const form = document.getElementById('tracker-offer');
+            const emailInput = document.getElementById('offer-email');
+            const statusEl = document.getElementById('offer-status');
+            if (!form || !emailInput) return;
+
+            function setStatus(message, tone) {
+                if (!statusEl) return;
+                statusEl.textContent = message;
+                statusEl.classList.remove('hidden', 'text-emerald-600', 'text-rose-600', 'text-stone-600');
+                const toneClass = tone === 'success' ? 'text-emerald-600' : tone === 'error' ? 'text-rose-600' : 'text-stone-600';
+                statusEl.classList.add(toneClass);
+            }
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const email = (emailInput.value || '').trim();
+                if (!email) {
+                    setStatus('Please enter a valid email address.', 'error');
+                    return;
+                }
+                try {
+                    localStorage.setItem('gtfTrackerLeadEmail', email);
+                } catch (error) {
+                    /* no-op */
+                }
+                setStatus('Almost there... redirecting you to your access pass.', 'success');
+                const url = new URL('tracker-thank-you.html', window.location.href);
+                url.searchParams.set('email', email);
+                setTimeout(() => window.location.replace(url.toString()), 300);
+            });
+        })();
+    </script>
+</body>
+</html>
