@@ -6,6 +6,7 @@ const DEFAULT_HEADERS = {
 };
 
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
+const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com'];
 
 function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();
@@ -86,6 +87,12 @@ async function trackKnownAccount(db, email) {
     )
     .bind(email, timestamp, timestamp)
     .run();
+}
+
+async function seedKnownAccounts(db) {
+  for (const email of DEFAULT_KNOWN_EMAILS) {
+    await trackKnownAccount(db, email);
+  }
 }
 
 function toHex(buffer) {
@@ -200,6 +207,7 @@ export async function onRequestPost({ env, request }) {
   try {
     db = requireDb(env);
     await ensureSchema(db);
+    await seedKnownAccounts(db);
   } catch (errorResponse) {
     return errorResponse;
   }

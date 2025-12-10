@@ -64,20 +64,22 @@
         <section class="mx-auto max-w-5xl px-6">
             <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
                 <div class="grid gap-8 md:grid-cols-2">
-                    <form id="member-signin" class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
-                        <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership Access</div>
-                        <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in with your membership code</h2>
-                        <p class="text-stone-600" id="signin-subhead">Use the temporary access code you received after checkout as your password. Once you’re in, set a new password to keep your Bible tracker and devotionals synced across devices.</p>
-                        <div class="space-y-2">
-                            <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
-                            <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
-                        </div>
-                        <div class="space-y-2">
-                            <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                            <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Membership code or password" />
-                        </div>
-                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
-                        <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
+                    <div class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
+                        <form id="member-signin" class="space-y-4">
+                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership Access</div>
+                            <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in with your membership code</h2>
+                            <p class="text-stone-600" id="signin-subhead">Use the temporary access code you received after checkout as your password. Once you’re in, set a new password to keep your Bible tracker and devotionals synced across devices.</p>
+                            <div class="space-y-2">
+                                <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                                <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                            </div>
+                            <div class="space-y-2">
+                                <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Membership code or password" />
+                            </div>
+                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
+                            <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
+                        </form>
                         <div class="flex flex-col gap-2 rounded-2xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/70 p-3 text-left text-sm text-stone-700">
                             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Need your membership code?</p>
                             <form id="code-request" class="flex flex-col gap-2 md:flex-row">
@@ -105,7 +107,7 @@
                             <button type="button" id="setup-submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Save password &amp; continue</button>
                         </div>
                         <p class="text-xs text-stone-500">We’ll securely save your portal progress to your account so you can pick up where you left off on any device.</p>
-                    </form>
+                    </div>
                     <div id="recovery-panel" class="hidden space-y-4 rounded-3xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-6 text-sm text-stone-700 shadow-inner">
                         <div class="space-y-1">
                             <p class="text-base font-semibold text-stone-900">Reset your password</p>
