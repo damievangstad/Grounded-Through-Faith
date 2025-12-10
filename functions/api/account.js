@@ -142,25 +142,49 @@ function generateTempCode() {
 }
 
 async function sendEmail(env, to, { subject, text, html, from }) {
+  const resendKey = (env?.RESEND_KEY || '').trim();
+  const sender = from || DEFAULT_SENDER;
+
+  if (resendKey) {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({ from: sender, to: Array.isArray(to) ? to : [to], subject, text, html }),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      return { sent: false, reason: message || 'Resend request failed' };
+    }
+
+    const json = await response.json().catch(() => ({}));
+    return { sent: true, id: json?.id || null, provider: 'resend' };
+  }
+
   const webhook = (env?.EMAIL_WEBHOOK_URL || '').trim();
-  if (!webhook) {
-    throw new Error('Email webhook not configured');
+  if (webhook) {
+    const token = (env?.EMAIL_WEBHOOK_TOKEN || '').trim();
+    const response = await fetch(webhook, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ to, subject, text, html, from: sender }),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      return { sent: false, reason: message || 'Email request failed' };
+    }
+
+    return { sent: true, provider: 'webhook' };
   }
 
-  const token = (env?.EMAIL_WEBHOOK_TOKEN || '').trim();
-  const response = await fetch(webhook, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify({ to, subject, text, html, from: from || DEFAULT_SENDER }),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || 'Email request failed');
-  }
+  return { sent: false, reason: 'Email delivery not configured' };
 }
 
 export function onRequestOptions() {
@@ -312,26 +336,26 @@ export async function onRequestPost({ env, request }) {
       .bind(email, token, expiresAt, createdAt)
       .run();
 
-    try {
-      await sendEmail(env, email, {
-        subject: 'Reset your Grounded Through Faith password',
-        text: `Use this code to reset your password: ${token}. It expires in 30 minutes. If you did not request this, ignore this email.`,
-        html: `<p>Use this code to reset your password: <strong>${token}</strong>.</p><p>This code expires in 30 minutes. If you did not request this, you can ignore this email.</p>`,
-      });
-    } catch (error) {
-      return new Response(JSON.stringify({ message: `Unable to send reset email: ${error.message}` }), {
-        status: 500,
-        headers: DEFAULT_HEADERS,
-      });
-    }
+    const emailStatus = await sendEmail(env, email, {
+      subject: 'Reset your Grounded Through Faith password',
+      text: `Use this code to reset your password: ${token}. It expires in 30 minutes. If you did not request this, ignore this email.`,
+      html: `<p>Use this code to reset your password: <strong>${token}</strong>.</p><p>This code expires in 30 minutes. If you did not request this, you can ignore this email.</p>`,
+    });
+
+    const delivered = Boolean(emailStatus?.sent);
+    const message = delivered
+      ? 'Reset instructions generated'
+      : `Reset code created, but email could not be sent${emailStatus?.reason ? `: ${emailStatus.reason}` : ''}`;
 
     return new Response(
       JSON.stringify({
-        message: 'Reset instructions generated',
+        message,
         resetToken: token,
         expiresAt,
+        emailDelivered: delivered,
+        emailError: delivered ? null : emailStatus?.reason || 'Email delivery failed',
       }),
-      { status: 200, headers: DEFAULT_HEADERS }
+      { status: delivered ? 200 : 207, headers: DEFAULT_HEADERS }
     );
   }
 
@@ -359,23 +383,21 @@ export async function onRequestPost({ env, request }) {
       .bind(tempHash, tempSalt, expiresAt, email)
       .run();
 
-    try {
-      await sendEmail(env, email, {
-        from: 'groundedthroughfaith@gmail.com',
-        subject: 'Your Grounded Through Faith login code',
-        text: `Here is your login code: ${code}. It expires in 7 days. Use this code as your password to sign in, then set a new password to keep your account secure.`,
-        html: `<p>Here is your Grounded Through Faith login code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. Use it as your password to sign in, then set a new password to keep your account secure.</p>`,
-      });
-    } catch (error) {
-      return new Response(JSON.stringify({ message: `Unable to send code email: ${error.message}` }), {
-        status: 500,
-        headers: DEFAULT_HEADERS,
-      });
-    }
+    const emailStatus = await sendEmail(env, email, {
+      from: 'groundedthroughfaith@gmail.com',
+      subject: 'Your Grounded Through Faith login code',
+      text: `Here is your login code: ${code}. It expires in 7 days. Use this code as your password to sign in, then set a new password to keep your account secure.`,
+      html: `<p>Here is your Grounded Through Faith login code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. Use it as your password to sign in, then set a new password to keep your account secure.</p>`,
+    });
+
+    const delivered = Boolean(emailStatus?.sent);
+    const message = delivered
+      ? 'Temporary code sent'
+      : `Login code created, but email could not be sent${emailStatus?.reason ? `: ${emailStatus.reason}` : ''}`;
 
     return new Response(
-      JSON.stringify({ message: 'Temporary code sent', expiresAt }),
-      { status: 200, headers: DEFAULT_HEADERS }
+      JSON.stringify({ message, expiresAt, code, emailDelivered: delivered, emailError: delivered ? null : emailStatus?.reason || 'Email delivery failed' }),
+      { status: delivered ? 200 : 207, headers: DEFAULT_HEADERS }
     );
   }
 

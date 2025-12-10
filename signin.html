@@ -262,7 +262,17 @@
                             return;
                         }
 
-                        setCodeRequestStatus('We emailed you a fresh login code. Check your inbox and spam folder.', 'success');
+                        const delivered = payload?.emailDelivered !== false;
+                        const code = payload?.code;
+                        const errorDetail = payload?.emailError ? ` (${payload.emailError})` : '';
+                        const message = delivered
+                            ? 'We emailed you a fresh login code. Check your inbox and spam folder.'
+                            : `We generated your login code${errorDetail}. Copy and use this code to sign in: ${code || 'Use the code shown here.'}`;
+
+                        setCodeRequestStatus(message, delivered ? 'success' : 'info');
+                        if (!delivered && code) {
+                            setCodeRequestStatus(`${message}\nCode: ${code}`, 'info');
+                        }
                         if (emailInput) {
                             emailInput.value = email;
                         }
@@ -305,7 +315,13 @@
                             recoveryCodeDisplay.classList.remove('hidden');
                         }
 
-                        setRecoveryStatus('Reset instructions generated. Check your email for the code.', 'success');
+                        const delivered = payload?.emailDelivered !== false;
+                        const errorDetail = payload?.emailError ? ` (${payload.emailError})` : '';
+                        const message = delivered
+                            ? 'Reset instructions generated. Check your email for the code.'
+                            : `Reset code created${errorDetail}. Use the code above to reset your password now.`;
+
+                        setRecoveryStatus(message, delivered ? 'success' : 'info');
                         recoveryTokenInput?.focus();
                     } catch (error) {
                         console.error('Unable to request reset:', error);

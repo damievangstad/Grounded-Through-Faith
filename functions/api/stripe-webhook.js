@@ -142,37 +142,51 @@ async function saveTempCode(db, email, code) {
 }
 
 async function sendEmail(env, to, code) {
-  const webhook = (env?.EMAIL_WEBHOOK_URL || '').trim();
-  if (!webhook) {
-    return { sent: false, reason: 'Email webhook not configured' };
-  }
-
-  const token = (env?.EMAIL_WEBHOOK_TOKEN || '').trim();
   const subject = 'Your Grounded Through Faith membership code';
   const text = `Welcome to Grounded Through Faith! Your membership code is: ${code}\n\nGo to https://www.groundedthroughfaith.org/signin.html and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.`;
-  const body = {
-    to,
-    subject,
-    text,
-    html: `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Go to <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.</p>`,
-    from: DEFAULT_SENDER,
-  };
+  const html = `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Go to <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.</p>`;
 
-  const response = await fetch(webhook, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
+  const resendKey = (env?.RESEND_KEY || '').trim();
+  if (resendKey) {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({ from: DEFAULT_SENDER, to: Array.isArray(to) ? to : [to], subject, text, html }),
+    });
 
-  if (!response.ok) {
-    const message = await response.text();
-    return { sent: false, reason: message || 'Email request failed' };
+    if (!response.ok) {
+      const message = await response.text();
+      return { sent: false, reason: message || 'Resend request failed' };
+    }
+
+    const json = await response.json().catch(() => ({}));
+    return { sent: true, id: json?.id || null, provider: 'resend' };
   }
 
-  return { sent: true };
+  const webhook = (env?.EMAIL_WEBHOOK_URL || '').trim();
+  if (webhook) {
+    const token = (env?.EMAIL_WEBHOOK_TOKEN || '').trim();
+    const response = await fetch(webhook, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ to, subject, text, html, from: DEFAULT_SENDER }),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      return { sent: false, reason: message || 'Email request failed' };
+    }
+
+    return { sent: true, provider: 'webhook' };
+  }
+
+  return { sent: false, reason: 'Email delivery not configured' };
 }
 
 export function onRequestOptions() {
