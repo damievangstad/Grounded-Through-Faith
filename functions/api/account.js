@@ -32,6 +32,19 @@ async function ensureSchema(db) {
       );`
     )
     .run();
+
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS PasswordResets (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Email TEXT NOT NULL,
+        Token TEXT NOT NULL UNIQUE,
+        ExpiresAt TEXT NOT NULL,
+        Used INTEGER NOT NULL DEFAULT 0,
+        CreatedAt TEXT NOT NULL
+      );`
+    )
+    .run();
 }
 
 function toHex(buffer) {
@@ -44,6 +57,12 @@ function generateSalt() {
   const saltBytes = new Uint8Array(16);
   crypto.getRandomValues(saltBytes);
   return toHex(saltBytes.buffer);
+}
+
+function generateResetToken() {
+  const tokenBytes = new Uint8Array(16);
+  crypto.getRandomValues(tokenBytes);
+  return toHex(tokenBytes.buffer);
 }
 
 async function hashPassword(password, salt) {
@@ -74,14 +93,22 @@ export async function onRequestPost({ env, request }) {
   const email = normalizeEmail(payload?.email);
   const password = (payload?.password || '').trim();
 
-  if (!action || !email || !password) {
-    return new Response(JSON.stringify({ message: 'Email, password, and action are required' }), {
+  if (!action || !email) {
+    return new Response(JSON.stringify({ message: 'Email and action are required' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });
   }
 
-  if (password.length < 8) {
+  const requiresPassword = ['register', 'login', 'reset-password'].includes(action);
+  if (requiresPassword && !password) {
+    return new Response(JSON.stringify({ message: 'Password is required for this action' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
+    });
+  }
+
+  if (requiresPassword && password.length < 8) {
     return new Response(JSON.stringify({ message: 'Password must be at least 8 characters' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
@@ -133,6 +160,82 @@ export async function onRequestPost({ env, request }) {
     }
 
     return new Response(JSON.stringify({ userId: email }), { status: 200, headers: DEFAULT_HEADERS });
+  }
+
+  if (action === 'request-reset') {
+    const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+    if (!user || !user.Email) {
+      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
+    }
+
+    const token = generateResetToken();
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+    const createdAt = new Date().toISOString();
+
+    await db
+      .prepare('INSERT INTO PasswordResets (Email, Token, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)')
+      .bind(email, token, expiresAt, createdAt)
+      .run();
+
+    return new Response(
+      JSON.stringify({
+        message: 'Reset instructions generated',
+        resetToken: token,
+        expiresAt,
+      }),
+      { status: 200, headers: DEFAULT_HEADERS }
+    );
+  }
+
+  if (action === 'reset-password') {
+    const token = (payload?.token || '').trim();
+    if (!token) {
+      return new Response(JSON.stringify({ message: 'Reset token is required' }), { status: 400, headers: DEFAULT_HEADERS });
+    }
+
+    if (!password || password.length < 8) {
+      return new Response(JSON.stringify({ message: 'New password must be at least 8 characters' }), {
+        status: 400,
+        headers: DEFAULT_HEADERS,
+      });
+    }
+
+    const reset = await db
+      .prepare('SELECT Email, ExpiresAt, Used FROM PasswordResets WHERE Token = ?')
+      .bind(token)
+      .first();
+
+    if (!reset || !reset.Email) {
+      return new Response(JSON.stringify({ message: 'Reset link invalid or expired' }), { status: 404, headers: DEFAULT_HEADERS });
+    }
+
+    if (reset.Used) {
+      return new Response(JSON.stringify({ message: 'Reset link already used' }), { status: 400, headers: DEFAULT_HEADERS });
+    }
+
+    const expiresAt = new Date(reset.ExpiresAt);
+    if (Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() < Date.now()) {
+      return new Response(JSON.stringify({ message: 'Reset link invalid or expired' }), { status: 400, headers: DEFAULT_HEADERS });
+    }
+
+    if (reset.Email !== email) {
+      return new Response(JSON.stringify({ message: 'Email does not match this reset request' }), {
+        status: 400,
+        headers: DEFAULT_HEADERS,
+      });
+    }
+
+    const salt = generateSalt();
+    const hash = await hashPassword(password, salt);
+
+    await db
+      .prepare('UPDATE Users SET PasswordHash = ?, PasswordSalt = ? WHERE Email = ?')
+      .bind(hash, salt, email)
+      .run();
+
+    await db.prepare('UPDATE PasswordResets SET Used = 1 WHERE Token = ?').bind(token).run();
+
+    return new Response(JSON.stringify({ message: 'Password updated successfully' }), { status: 200, headers: DEFAULT_HEADERS });
   }
 
   return new Response(JSON.stringify({ message: 'Unsupported action' }), { status: 400, headers: DEFAULT_HEADERS });

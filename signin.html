@@ -85,6 +85,29 @@
                         </div>
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Save &amp; Continue</button>
                         <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
+                        <button type="button" id="forgot-password-toggle" class="w-full text-left text-sm font-semibold text-[var(--color-cerulean)] underline underline-offset-4">Forgot password? Reset it</button>
+                        <div id="recovery-panel" class="hidden space-y-4 rounded-2xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-4">
+                            <div class="space-y-1">
+                                <p class="text-sm font-semibold text-stone-800">Reset your password</p>
+                                <p class="text-xs text-stone-600">Request a reset link, then enter the code we provide and a new password to get back in.</p>
+                            </div>
+                            <form id="recovery-request" class="space-y-3 text-sm">
+                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email for your account</label>
+                                <input id="recovery-email" type="email" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                                <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2 font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5">Send reset code</button>
+                            </form>
+                            <form id="recovery-complete" class="space-y-3 text-sm">
+                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Reset code</label>
+                                <input id="recovery-token" type="text" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Paste the code" />
+                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
+                                <input id="recovery-password" type="password" minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                                <input id="recovery-password-confirm" type="password" minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Confirm new password" />
+                                <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#a67925]">Update password</button>
+                                <p class="text-xs text-stone-500">We’ll sign you in after updating your password.</p>
+                                <p id="recovery-code-display" class="hidden break-all text-[11px] text-stone-500"></p>
+                            </form>
+                            <p id="recovery-status" class="hidden text-sm" aria-live="polite"></p>
+                        </div>
                         <p class="text-xs text-stone-500">We’ll securely save your portal progress to your account so you can pick up where you left off on any device.</p>
                     </form>
                     <div class="space-y-4 rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-white/85 p-6 text-sm text-stone-700">
@@ -150,6 +173,16 @@
             const modeButtons = Array.from(document.querySelectorAll('[data-auth-mode]'));
             const params = new URLSearchParams(window.location.search);
             const redirectTarget = params.get('redirect');
+            const recoveryToggle = document.getElementById('forgot-password-toggle');
+            const recoveryPanel = document.getElementById('recovery-panel');
+            const recoveryRequestForm = document.getElementById('recovery-request');
+            const recoveryCompleteForm = document.getElementById('recovery-complete');
+            const recoveryEmailInput = document.getElementById('recovery-email');
+            const recoveryTokenInput = document.getElementById('recovery-token');
+            const recoveryPasswordInput = document.getElementById('recovery-password');
+            const recoveryPasswordConfirm = document.getElementById('recovery-password-confirm');
+            const recoveryStatus = document.getElementById('recovery-status');
+            const recoveryCodeDisplay = document.getElementById('recovery-code-display');
 
             let mode = 'register';
 
@@ -193,6 +226,106 @@
                 button.addEventListener('click', () => setMode(button.dataset.authMode));
             });
             setMode(mode);
+
+            if (recoveryToggle && recoveryPanel) {
+                recoveryToggle.addEventListener('click', () => {
+                    recoveryPanel.classList.toggle('hidden');
+                    if (!recoveryPanel.classList.contains('hidden') && recoveryEmailInput) {
+                        recoveryEmailInput.value = emailInput?.value || '';
+                        recoveryEmailInput.focus();
+                    }
+                });
+            }
+
+            if (recoveryRequestForm) {
+                recoveryRequestForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const email = (recoveryEmailInput?.value || '').trim();
+                    if (!email) {
+                        setRecoveryStatus('Enter the email tied to your account.', 'error');
+                        return;
+                    }
+
+                    setRecoveryStatus('Sending reset link...', 'info');
+                    try {
+                        const response = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'request-reset', email }),
+                        });
+
+                        const payload = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            setRecoveryStatus(payload?.message || 'Unable to send reset link.', 'error');
+                            return;
+                        }
+
+                        if (recoveryTokenInput && payload?.resetToken) {
+                            recoveryTokenInput.value = payload.resetToken;
+                        }
+
+                        if (recoveryCodeDisplay && payload?.resetToken) {
+                            recoveryCodeDisplay.textContent = `Reset code (save this): ${payload.resetToken}`;
+                            recoveryCodeDisplay.classList.remove('hidden');
+                        }
+
+                        setRecoveryStatus('Reset instructions generated. Check your email for the code.', 'success');
+                        recoveryTokenInput?.focus();
+                    } catch (error) {
+                        console.error('Unable to request reset:', error);
+                        setRecoveryStatus('Something went wrong. Please try again.', 'error');
+                    }
+                });
+            }
+
+            if (recoveryCompleteForm) {
+                recoveryCompleteForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const email = (recoveryEmailInput?.value || '').trim();
+                    const token = (recoveryTokenInput?.value || '').trim();
+                    const password = (recoveryPasswordInput?.value || '').trim();
+                    const confirm = (recoveryPasswordConfirm?.value || '').trim();
+
+                    if (!email || !token || !password) {
+                        setRecoveryStatus('Email, reset code, and new password are required.', 'error');
+                        return;
+                    }
+
+                    if (password !== confirm) {
+                        setRecoveryStatus('Passwords must match to reset.', 'error');
+                        return;
+                    }
+
+                    setRecoveryStatus('Updating your password...', 'info');
+                    try {
+                        const response = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'reset-password', email, password, token }),
+                        });
+
+                        const payload = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            setRecoveryStatus(payload?.message || 'Unable to reset password.', 'error');
+                            return;
+                        }
+
+                        try {
+                            sessionStorage.setItem('gtfMemberSession', 'true');
+                            sessionStorage.setItem('gtfMemberEmail', email);
+                        } catch (error) {
+                            console.warn('Session storage unavailable:', error);
+                        }
+
+                        setRecoveryStatus('Password updated. Signing you in...', 'success');
+                        const destination = redirectTarget === 'faith-formation-ai' ? 'faith-formation-ai.html' : 'member-portal.html';
+                        setTimeout(() => (window.location.href = destination), 300);
+                    } catch (error) {
+                        console.error('Unable to reset password:', error);
+                        setRecoveryStatus('Something went wrong. Please try again.', 'error');
+                    }
+                });
+            }
 
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -247,6 +380,14 @@
                 feedback.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
                 const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
                 feedback.classList.add(toneClass);
+            }
+
+            function setRecoveryStatus(message, tone) {
+                if (!recoveryStatus) return;
+                recoveryStatus.textContent = message;
+                recoveryStatus.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
+                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
+                recoveryStatus.classList.add(toneClass);
             }
         })();
     </script>
