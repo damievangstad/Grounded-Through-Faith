@@ -273,8 +273,15 @@
                 });
             }
 
-            const state = (window.gtfPortalData && window.gtfPortalData.load()) || null;
+            let state = (window.gtfPortalData && window.gtfPortalData.load()) || null;
             if (!state) return;
+
+            window.addEventListener('gtf:progress-sync', (event) => {
+                if (event && event.detail && event.detail.state) {
+                    state = event.detail.state;
+                    updateReadingUI();
+                }
+            });
 
             const readingInputs = {
                 ot: document.getElementById('reading-ot'),

@@ -28,16 +28,23 @@
     });
 
     const navSignIn = document.querySelector('[data-auth-link="signin"]');
+    const navPortal = document.querySelector('[data-auth-link="portal"]');
     if (navSignIn) {
-      if (signedIn) {
-        navSignIn.textContent = 'Member Portal';
-        navSignIn.href = 'member-portal.html';
-        navSignIn.classList.add('text-[var(--color-cerulean)]');
-      } else {
-        navSignIn.textContent = 'Sign In';
-        navSignIn.href = 'signin.html';
-        navSignIn.classList.remove('text-[var(--color-cerulean)]');
-      }
+      navSignIn.classList.toggle('hidden', signedIn);
+      navSignIn.classList.toggle('inline-flex', !signedIn);
+      navSignIn.classList.toggle('inline-block', !signedIn);
+      navSignIn.textContent = 'Sign In';
+      navSignIn.href = 'signin.html';
+      navSignIn.classList.remove('text-[var(--color-cerulean)]');
+    }
+
+    if (navPortal) {
+      navPortal.classList.toggle('hidden', !signedIn);
+      navPortal.classList.toggle('inline-flex', signedIn);
+      navPortal.classList.toggle('inline-block', signedIn);
+      navPortal.textContent = 'Member Portal';
+      navPortal.href = 'member-portal.html';
+      navPortal.classList.add('text-[var(--color-cerulean)]');
     }
 
     document.querySelectorAll('[data-auth-indicator]').forEach((el) => {
