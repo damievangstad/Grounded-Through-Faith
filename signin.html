@@ -56,8 +56,8 @@
         </nav>
         <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-24 pt-20 text-center">
             <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Community Access</span>
-            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Create your login to sync your progress</h1>
-            <p class="mx-auto max-w-2xl text-base text-stone-600">Set a password once, sign in from any device, and we’ll keep your Bible reading tracker, custom devotionals, and Faith Formation AI history together under your account.</p>
+            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Use your membership code to sign in</h1>
+            <p class="mx-auto max-w-2xl text-base text-stone-600">Enter the temporary code you received after payment to log in, then set a password so your Bible tracker and devotionals stay synced on every device.</p>
         </section>
     </header>
     <main class="relative z-10 space-y-20 pb-24">
@@ -65,25 +65,18 @@
             <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
                 <div class="grid gap-8 md:grid-cols-2">
                     <form id="member-signin" class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
-                        <div class="flex gap-2">
-                            <button type="button" data-auth-mode="login" class="flex-1 rounded-2xl border border-[var(--color-cerulean)]/50 bg-[var(--color-morning-sky)] px-4 py-2 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5">Sign in</button>
-                            <button type="button" data-auth-mode="register" class="flex-1 rounded-2xl border border-transparent bg-[var(--color-cerulean)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#a67925]">Create account</button>
-                        </div>
-                        <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Create a password to keep your progress</h2>
-                        <p class="text-stone-600" id="signin-subhead">Use your email and a new password to set up your account. We’ll sync your Bible tracker, custom devotionals, and Faith Formation AI activity anywhere you sign in.</p>
+                        <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership Access</div>
+                        <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in with your membership code</h2>
+                        <p class="text-stone-600" id="signin-subhead">Use the temporary access code you received after checkout as your password. Once you’re in, set a new password to keep your Bible tracker and devotionals synced across devices.</p>
                         <div class="space-y-2">
                             <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
                             <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
                         </div>
                         <div class="space-y-2">
                             <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                            <input id="member-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                            <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Membership code or password" />
                         </div>
-                        <div class="space-y-2" data-confirm-wrapper>
-                            <label for="member-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
-                            <input id="member-password-confirm" type="password" minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
-                        </div>
-                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Save &amp; Continue</button>
+                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
                         <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
                         <button type="button" id="forgot-password-toggle" class="w-full text-left text-sm font-semibold text-[var(--color-cerulean)] underline underline-offset-4">Forgot password? Reset it</button>
                         <div id="recovery-panel" class="hidden space-y-4 rounded-2xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-4">
@@ -107,6 +100,23 @@
                                 <p id="recovery-code-display" class="hidden break-all text-[11px] text-stone-500"></p>
                             </form>
                             <p id="recovery-status" class="hidden text-sm" aria-live="polite"></p>
+                        </div>
+                        <div id="password-setup" class="hidden space-y-3 rounded-2xl border border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/80 p-4 text-sm text-stone-700">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Set your new password</p>
+                                <p class="text-stone-600">You signed in with a temporary membership code. Save a password now to keep logging in on any device.</p>
+                            </div>
+                            <div class="grid gap-3 md:grid-cols-2">
+                                <div class="space-y-1">
+                                    <label for="setup-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
+                                    <input id="setup-password" type="password" minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                                </div>
+                                <div class="space-y-1">
+                                    <label for="setup-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
+                                    <input id="setup-password-confirm" type="password" minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter password" />
+                                </div>
+                            </div>
+                            <button type="button" id="setup-submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Save password &amp; continue</button>
                         </div>
                         <p class="text-xs text-stone-500">We’ll securely save your portal progress to your account so you can pick up where you left off on any device.</p>
                     </form>
@@ -165,12 +175,9 @@
             if (!form) return;
             const emailInput = document.getElementById('member-email');
             const passwordInput = document.getElementById('member-password');
-            const confirmInput = document.getElementById('member-password-confirm');
             const feedback = document.getElementById('signin-status');
             const heading = document.getElementById('signin-heading');
             const subhead = document.getElementById('signin-subhead');
-            const confirmWrapper = document.querySelector('[data-confirm-wrapper]');
-            const modeButtons = Array.from(document.querySelectorAll('[data-auth-mode]'));
             const params = new URLSearchParams(window.location.search);
             const redirectTarget = params.get('redirect');
             const recoveryToggle = document.getElementById('forgot-password-toggle');
@@ -183,49 +190,12 @@
             const recoveryPasswordConfirm = document.getElementById('recovery-password-confirm');
             const recoveryStatus = document.getElementById('recovery-status');
             const recoveryCodeDisplay = document.getElementById('recovery-code-display');
+            const passwordSetup = document.getElementById('password-setup');
+            const setupPasswordInput = document.getElementById('setup-password');
+            const setupPasswordConfirm = document.getElementById('setup-password-confirm');
+            const setupSubmit = document.getElementById('setup-submit');
 
-            let mode = 'register';
-
-            function setMode(next) {
-                mode = next === 'login' ? 'login' : 'register';
-                modeButtons.forEach((button) => {
-                    const isActive = button.dataset.authMode === mode;
-                    button.classList.toggle('bg-[var(--color-cerulean)]', isActive && mode === 'register');
-                    button.classList.toggle('text-white', isActive && mode === 'register');
-                    button.classList.toggle('border-transparent', isActive && mode === 'register');
-                    button.classList.toggle('bg-[var(--color-morning-sky)]', isActive && mode === 'login');
-                    button.classList.toggle('text-[var(--color-cerulean)]', isActive && mode === 'login');
-                    button.classList.toggle('border-[var(--color-cerulean)]/50', isActive && mode === 'login');
-                });
-
-                if (heading && subhead) {
-                    if (mode === 'login') {
-                        heading.textContent = 'Sign in to pick up where you left off';
-                        subhead.textContent = 'Use your email and password to load your saved Bible tracker, devotionals, and Faith Formation AI activity on any device.';
-                    } else {
-                        heading.textContent = 'Create a password to keep your progress';
-                        subhead.textContent = 'Use your email and a new password to set up your account. We’ll sync your Bible tracker, custom devotionals, and Faith Formation AI activity anywhere you sign in.';
-                    }
-                }
-
-                if (confirmWrapper) {
-                    confirmWrapper.classList.toggle('hidden', mode === 'login');
-                }
-
-                if (confirmInput) {
-                    confirmInput.required = mode === 'register';
-                }
-
-                const submitButton = form.querySelector('button[type="submit"]');
-                if (submitButton) {
-                    submitButton.textContent = mode === 'login' ? 'Sign In & Continue' : 'Save & Continue';
-                }
-            }
-
-            modeButtons.forEach((button) => {
-                button.addEventListener('click', () => setMode(button.dataset.authMode));
-            });
-            setMode(mode);
+            let lastLoginSecret = '';
 
             if (recoveryToggle && recoveryPanel) {
                 recoveryToggle.addEventListener('click', () => {
@@ -331,25 +301,19 @@
                 event.preventDefault();
                 const email = (emailInput?.value || '').trim();
                 const password = (passwordInput?.value || '').trim();
-                const confirm = (confirmInput?.value || '').trim();
 
                 if (!email || !password) {
                     setFeedback('Please enter your email and password.', 'error');
                     return;
                 }
 
-                if (mode === 'register' && password !== confirm) {
-                    setFeedback('Passwords must match to create your account.', 'error');
-                    return;
-                }
-
-                setFeedback(mode === 'login' ? 'Signing you in...' : 'Creating your account...', 'info');
+                setFeedback('Signing you in...', 'info');
 
                 try {
                     const response = await fetch('/api/account', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: mode, email, password }),
+                        body: JSON.stringify({ action: 'login', email, password }),
                     });
 
                     const payload = await response.json().catch(() => ({}));
@@ -358,11 +322,20 @@
                         return;
                     }
 
+                    lastLoginSecret = password;
+
                     try {
                         sessionStorage.setItem('gtfMemberSession', 'true');
                         sessionStorage.setItem('gtfMemberEmail', payload.userId || email);
                     } catch (error) {
                         console.warn('Session storage unavailable:', error);
+                    }
+
+                    if (payload?.requiresPasswordChange && passwordSetup) {
+                        passwordSetup.classList.remove('hidden');
+                        setupPasswordInput?.focus();
+                        setFeedback('Signed in with your membership code. Set a new password to continue.', 'info');
+                        return;
                     }
 
                     setFeedback('Success! Redirecting you to the member portal.', 'success');
@@ -373,6 +346,59 @@
                     setFeedback('Something went wrong. Please try again.', 'error');
                 }
             });
+
+            if (setupSubmit) {
+                setupSubmit.addEventListener('click', async () => {
+                    const email = (emailInput?.value || '').trim();
+                    const newPassword = (setupPasswordInput?.value || '').trim();
+                    const confirmPassword = (setupPasswordConfirm?.value || '').trim();
+
+                    if (!lastLoginSecret) {
+                        setFeedback('Sign in with your membership code first.', 'error');
+                        return;
+                    }
+
+                    if (!email || !newPassword) {
+                        setFeedback('Enter and confirm your new password.', 'error');
+                        return;
+                    }
+
+                    if (newPassword !== confirmPassword) {
+                        setFeedback('Passwords must match to save.', 'error');
+                        return;
+                    }
+
+                    setFeedback('Saving your password...', 'info');
+
+                    try {
+                        const response = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'set-password', email, password: newPassword, current: lastLoginSecret }),
+                        });
+
+                        const payload = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            setFeedback(payload?.message || 'Unable to save password.', 'error');
+                            return;
+                        }
+
+                        try {
+                            sessionStorage.setItem('gtfMemberSession', 'true');
+                            sessionStorage.setItem('gtfMemberEmail', payload.userId || email);
+                        } catch (error) {
+                            console.warn('Session storage unavailable:', error);
+                        }
+
+                        setFeedback('Password saved. Redirecting you to the member portal.', 'success');
+                        const destination = redirectTarget === 'faith-formation-ai' ? 'faith-formation-ai.html' : 'member-portal.html';
+                        setTimeout(() => (window.location.href = destination), 200);
+                    } catch (error) {
+                        console.error('Unable to save password:', error);
+                        setFeedback('Something went wrong. Please try again.', 'error');
+                    }
+                });
+            }
 
             function setFeedback(message, tone) {
                 if (!feedback) return;

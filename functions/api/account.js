@@ -28,6 +28,9 @@ async function ensureSchema(db) {
         Email TEXT NOT NULL UNIQUE,
         PasswordHash TEXT NOT NULL,
         PasswordSalt TEXT NOT NULL,
+        TemporaryCodeHash TEXT,
+        TemporaryCodeSalt TEXT,
+        TemporaryCodeExpiresAt TEXT,
         CreatedAt TEXT NOT NULL
       );`
     )
@@ -45,6 +48,19 @@ async function ensureSchema(db) {
       );`
     )
     .run();
+
+  const columns = await db.prepare("PRAGMA table_info('Users');").all();
+  const columnNames = new Set((columns?.results || columns || []).map((c) => c?.name));
+
+  async function ensureColumn(name, definition) {
+    if (!columnNames.has(name)) {
+      await db.prepare(`ALTER TABLE Users ADD COLUMN ${name} ${definition};`).run();
+    }
+  }
+
+  await ensureColumn('TemporaryCodeHash', 'TEXT');
+  await ensureColumn('TemporaryCodeSalt', 'TEXT');
+  await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
 }
 
 function toHex(buffer) {
@@ -63,6 +79,12 @@ function generateResetToken() {
   const tokenBytes = new Uint8Array(16);
   crypto.getRandomValues(tokenBytes);
   return toHex(tokenBytes.buffer);
+}
+
+function isExpired(timestamp) {
+  if (!timestamp) return true;
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime()) || date.getTime() < Date.now();
 }
 
 async function hashPassword(password, salt) {
@@ -92,6 +114,7 @@ export async function onRequestPost({ env, request }) {
   const action = (payload?.action || '').trim().toLowerCase();
   const email = normalizeEmail(payload?.email);
   const password = (payload?.password || '').trim();
+  const currentSecret = (payload?.current || '').trim();
 
   if (!action || !email) {
     return new Response(JSON.stringify({ message: 'Email and action are required' }), {
@@ -100,7 +123,7 @@ export async function onRequestPost({ env, request }) {
     });
   }
 
-  const requiresPassword = ['register', 'login', 'reset-password'].includes(action);
+  const requiresPassword = ['register', 'login', 'reset-password', 'set-password'].includes(action);
   if (requiresPassword && !password) {
     return new Response(JSON.stringify({ message: 'Password is required for this action' }), {
       status: 400,
@@ -108,7 +131,8 @@ export async function onRequestPost({ env, request }) {
     });
   }
 
-  if (requiresPassword && password.length < 8) {
+  const requiresMinLength = ['register', 'reset-password', 'set-password'].includes(action);
+  if (requiresMinLength && password.length < 8) {
     return new Response(JSON.stringify({ message: 'Password must be at least 8 characters' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
@@ -123,30 +147,11 @@ export async function onRequestPost({ env, request }) {
     return errorResponse;
   }
 
-  if (action === 'register') {
-    const existing = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-    if (existing && existing.Email) {
-      return new Response(JSON.stringify({ message: 'Account already exists' }), {
-        status: 409,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    const salt = generateSalt();
-    const hash = await hashPassword(password, salt);
-    const createdAt = new Date().toISOString();
-
-    await db
-      .prepare('INSERT INTO Users (Email, PasswordHash, PasswordSalt, CreatedAt) VALUES (?, ?, ?, ?)')
-      .bind(email, hash, salt, createdAt)
-      .run();
-
-    return new Response(JSON.stringify({ userId: email, createdAt }), { status: 200, headers: DEFAULT_HEADERS });
-  }
-
   if (action === 'login') {
     const user = await db
-      .prepare('SELECT Email, PasswordHash, PasswordSalt FROM Users WHERE Email = ?')
+      .prepare(
+        'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
+      )
       .bind(email)
       .first();
 
@@ -154,10 +159,59 @@ export async function onRequestPost({ env, request }) {
       return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
     }
 
-    const valid = await verifyPassword(password, user.PasswordSalt, user.PasswordHash);
-    if (!valid) {
+    const validPassword = await verifyPassword(password, user.PasswordSalt, user.PasswordHash);
+
+    const hasTempCode = user.TemporaryCodeHash && user.TemporaryCodeSalt && !isExpired(user.TemporaryCodeExpiresAt);
+    const validTemp = hasTempCode ? await verifyPassword(password, user.TemporaryCodeSalt, user.TemporaryCodeHash) : false;
+
+    if (!validPassword && !validTemp) {
       return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401, headers: DEFAULT_HEADERS });
     }
+
+    const requiresPasswordChange = Boolean(validTemp && hasTempCode);
+
+    return new Response(JSON.stringify({ userId: email, requiresPasswordChange }), { status: 200, headers: DEFAULT_HEADERS });
+  }
+
+  if (action === 'set-password') {
+    if (!currentSecret) {
+      return new Response(JSON.stringify({ message: 'Current password or code is required' }), {
+        status: 400,
+        headers: DEFAULT_HEADERS,
+      });
+    }
+
+    const user = await db
+      .prepare(
+        'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
+      )
+      .bind(email)
+      .first();
+
+    if (!user || !user.Email) {
+      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
+    }
+
+    const validPassword = await verifyPassword(currentSecret, user.PasswordSalt, user.PasswordHash);
+    const hasTempCode = user.TemporaryCodeHash && user.TemporaryCodeSalt && !isExpired(user.TemporaryCodeExpiresAt);
+    const validTemp = hasTempCode ? await verifyPassword(currentSecret, user.TemporaryCodeSalt, user.TemporaryCodeHash) : false;
+
+    if (!validPassword && !validTemp) {
+      return new Response(JSON.stringify({ message: 'Current password or code is incorrect' }), {
+        status: 401,
+        headers: DEFAULT_HEADERS,
+      });
+    }
+
+    const salt = generateSalt();
+    const hash = await hashPassword(password, salt);
+
+    await db
+      .prepare(
+        'UPDATE Users SET PasswordHash = ?, PasswordSalt = ?, TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?'
+      )
+      .bind(hash, salt, email)
+      .run();
 
     return new Response(JSON.stringify({ userId: email }), { status: 200, headers: DEFAULT_HEADERS });
   }
@@ -235,7 +289,56 @@ export async function onRequestPost({ env, request }) {
 
     await db.prepare('UPDATE PasswordResets SET Used = 1 WHERE Token = ?').bind(token).run();
 
+    await db
+      .prepare('UPDATE Users SET TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?')
+      .bind(email)
+      .run();
+
     return new Response(JSON.stringify({ message: 'Password updated successfully' }), { status: 200, headers: DEFAULT_HEADERS });
+  }
+
+  if (action === 'issue-temp-code') {
+    const adminKey = (payload?.adminKey || '').trim();
+    const expectedKey = (env?.ACCOUNT_ADMIN_KEY || '').trim();
+    if (!expectedKey) {
+      return new Response(JSON.stringify({ message: 'Admin key missing' }), { status: 500, headers: DEFAULT_HEADERS });
+    }
+
+    if (adminKey !== expectedKey) {
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 403, headers: DEFAULT_HEADERS });
+    }
+
+    const code = (payload?.code || '').trim();
+    if (!code) {
+      return new Response(JSON.stringify({ message: 'Temporary code is required' }), { status: 400, headers: DEFAULT_HEADERS });
+    }
+
+    const tempSalt = generateSalt();
+    const tempHash = await hashPassword(code, tempSalt);
+    const expiresAt = payload?.expiresAt || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+    const createdAt = new Date().toISOString();
+
+    const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+
+    if (user && user.Email) {
+      await db
+        .prepare(
+          'UPDATE Users SET TemporaryCodeHash = ?, TemporaryCodeSalt = ?, TemporaryCodeExpiresAt = ? WHERE Email = ?'
+        )
+        .bind(tempHash, tempSalt, expiresAt, email)
+        .run();
+    } else {
+      const salt = generateSalt();
+      const hash = await hashPassword(code, salt);
+      await db
+        .prepare(
+          'INSERT INTO Users (Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        )
+        .bind(email, hash, salt, tempHash, tempSalt, expiresAt, createdAt)
+        .run();
+    }
+
+    return new Response(JSON.stringify({ userId: email, expiresAt }), { status: 200, headers: DEFAULT_HEADERS });
   }
 
   return new Response(JSON.stringify({ message: 'Unsupported action' }), { status: 400, headers: DEFAULT_HEADERS });
