@@ -7,6 +7,8 @@ const HEADERS = {
 
 const TEMP_CODE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
+const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
+
 function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();
 }
@@ -63,6 +65,16 @@ async function ensureSchema(db) {
     )
     .run();
 
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS KnownAccounts (
+        Email TEXT PRIMARY KEY,
+        RecordedAt TEXT NOT NULL,
+        LastSeenAt TEXT NOT NULL
+      );`
+    )
+    .run();
+
   const columns = await db.prepare("PRAGMA table_info('Users');").all();
   const columnNames = new Set((columns?.results || columns || []).map((c) => c?.name));
 
@@ -75,6 +87,19 @@ async function ensureSchema(db) {
   await ensureColumn('TemporaryCodeHash', 'TEXT');
   await ensureColumn('TemporaryCodeSalt', 'TEXT');
   await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
+}
+
+async function trackKnownAccount(db, email) {
+  if (!email) return;
+  const timestamp = new Date().toISOString();
+  await db
+    .prepare(
+      `INSERT INTO KnownAccounts (Email, RecordedAt, LastSeenAt)
+       VALUES (?, ?, ?)
+       ON CONFLICT(Email) DO UPDATE SET LastSeenAt = excluded.LastSeenAt`
+    )
+    .bind(email, timestamp, timestamp)
+    .run();
 }
 
 async function saveTempCode(db, email, code) {
@@ -91,6 +116,7 @@ async function saveTempCode(db, email, code) {
       )
       .bind(tempHash, tempSalt, expiresAt, email)
       .run();
+    await trackKnownAccount(db, email);
     return { exists: true, expiresAt };
   }
 
@@ -103,6 +129,8 @@ async function saveTempCode(db, email, code) {
     )
     .bind(email, hash, salt, tempHash, tempSalt, expiresAt, createdAt)
     .run();
+
+  await trackKnownAccount(db, email);
   return { exists: false, expiresAt };
 }
 
@@ -114,12 +142,13 @@ async function sendEmail(env, to, code) {
 
   const token = (env?.EMAIL_WEBHOOK_TOKEN || '').trim();
   const subject = 'Your Grounded Through Faith membership code';
-  const text = `Welcome to Grounded Through Faith! Your membership code is: ${code}\n\nUse this code to sign in, then set a permanent password for future logins.`;
+  const text = `Welcome to Grounded Through Faith! Your membership code is: ${code}\n\nGo to https://www.groundedthroughfaith.org/signin.html and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.`;
   const body = {
     to,
     subject,
     text,
-    html: `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Use this code to sign in, then set a permanent password for future logins.</p>`,
+    html: `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Go to <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.</p>`,
+    from: DEFAULT_SENDER,
   };
 
   const response = await fetch(webhook, {
@@ -178,6 +207,13 @@ export async function onRequestPost({ env, request }) {
   const code = generateTempCode();
   const { expiresAt } = await saveTempCode(db, customerEmail, code);
   const emailStatus = await sendEmail(env, customerEmail, code);
+
+  if (!emailStatus.sent) {
+    return new Response(JSON.stringify({ message: emailStatus.reason || 'Unable to send membership code email' }), {
+      status: 500,
+      headers: HEADERS,
+    });
+  }
 
   return new Response(
     JSON.stringify({

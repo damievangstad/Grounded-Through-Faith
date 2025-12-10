@@ -78,29 +78,15 @@
                         </div>
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
                         <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
-                        <button type="button" id="forgot-password-toggle" class="w-full text-left text-sm font-semibold text-[var(--color-cerulean)] underline underline-offset-4">Forgot password? Reset it</button>
-                        <div id="recovery-panel" class="hidden space-y-4 rounded-2xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-4">
-                            <div class="space-y-1">
-                                <p class="text-sm font-semibold text-stone-800">Reset your password</p>
-                                <p class="text-xs text-stone-600">Request a reset link, then enter the code we provide and a new password to get back in.</p>
-                            </div>
-                            <form id="recovery-request" class="space-y-3 text-sm">
-                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email for your account</label>
-                                <input id="recovery-email" type="email" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
-                                <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2 font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5">Send reset code</button>
+                        <div class="flex flex-col gap-2 rounded-2xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/70 p-3 text-left text-sm text-stone-700">
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Need your membership code?</p>
+                            <form id="code-request" class="flex flex-col gap-2 md:flex-row">
+                                <input id="code-request-email" type="email" class="w-full rounded-xl border border-stone-200 bg-white/90 px-3 py-2 text-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Email tied to your membership" />
+                                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[var(--color-cerulean)]/30 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Email me my code</button>
                             </form>
-                            <form id="recovery-complete" class="space-y-3 text-sm">
-                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Reset code</label>
-                                <input id="recovery-token" type="text" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Paste the code" />
-                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
-                                <input id="recovery-password" type="password" minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
-                                <input id="recovery-password-confirm" type="password" minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Confirm new password" />
-                                <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#a67925]">Update password</button>
-                                <p class="text-xs text-stone-500">We’ll sign you in after updating your password.</p>
-                                <p id="recovery-code-display" class="hidden break-all text-[11px] text-stone-500"></p>
-                            </form>
-                            <p id="recovery-status" class="hidden text-sm" aria-live="polite"></p>
+                            <p id="code-request-status" class="text-xs text-stone-600" aria-live="polite"></p>
                         </div>
+                        <button type="button" id="forgot-password-toggle" class="w-full text-left text-sm font-semibold text-[var(--color-cerulean)] underline underline-offset-4">Forgot password? Reset it</button>
                         <div id="password-setup" class="hidden space-y-3 rounded-2xl border border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/80 p-4 text-sm text-stone-700">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Set your new password</p>
@@ -120,6 +106,28 @@
                         </div>
                         <p class="text-xs text-stone-500">We’ll securely save your portal progress to your account so you can pick up where you left off on any device.</p>
                     </form>
+                    <div id="recovery-panel" class="hidden space-y-4 rounded-3xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-6 text-sm text-stone-700 shadow-inner">
+                        <div class="space-y-1">
+                            <p class="text-base font-semibold text-stone-900">Reset your password</p>
+                            <p class="text-xs text-stone-600">Request a reset link, then enter the code we email you along with a new password to get back in.</p>
+                        </div>
+                        <form id="recovery-request" class="space-y-3 text-sm">
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email for your account</label>
+                            <input id="recovery-email" type="email" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2 font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5">Send reset code</button>
+                        </form>
+                        <form id="recovery-complete" class="space-y-3 text-sm">
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Reset code</label>
+                            <input id="recovery-token" type="text" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Paste the code" />
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
+                            <input id="recovery-password" type="password" required minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                            <input id="recovery-password-confirm" type="password" required minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Confirm new password" />
+                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#a67925]">Update password</button>
+                            <p class="text-xs text-stone-500">We’ll sign you in after updating your password.</p>
+                            <p id="recovery-code-display" class="hidden break-all text-[11px] text-stone-500"></p>
+                        </form>
+                        <p id="recovery-status" class="hidden text-sm" aria-live="polite"></p>
+                    </div>
                     <div class="space-y-4 rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-white/85 p-6 text-sm text-stone-700">
                         <h3 class="text-xl font-semibold text-stone-900">After you sign in</h3>
                         <ol class="list-decimal space-y-3 pl-5">
@@ -194,6 +202,9 @@
             const setupPasswordInput = document.getElementById('setup-password');
             const setupPasswordConfirm = document.getElementById('setup-password-confirm');
             const setupSubmit = document.getElementById('setup-submit');
+            const codeRequestForm = document.getElementById('code-request');
+            const codeRequestEmail = document.getElementById('code-request-email');
+            const codeRequestStatus = document.getElementById('code-request-status');
 
             let lastLoginSecret = '';
 
@@ -203,6 +214,59 @@
                     if (!recoveryPanel.classList.contains('hidden') && recoveryEmailInput) {
                         recoveryEmailInput.value = emailInput?.value || '';
                         recoveryEmailInput.focus();
+                    }
+                });
+            }
+
+            if (codeRequestForm) {
+                if (codeRequestEmail && emailInput) {
+                    codeRequestEmail.value = emailInput.value;
+                    emailInput.addEventListener('input', () => {
+                        codeRequestEmail.value = emailInput.value;
+                    });
+                }
+
+                codeRequestForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const email = (codeRequestEmail?.value || '').trim();
+                    if (!email) {
+                        setCodeRequestStatus('Enter the email tied to your membership.', 'error');
+                        return;
+                    }
+
+                    setCodeRequestStatus('Checking your account and sending a new code...', 'info');
+                    try {
+                        const lookup = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'lookup-account', email }),
+                        });
+
+                        if (!lookup.ok) {
+                            const payload = await lookup.json().catch(() => ({}));
+                            setCodeRequestStatus(payload?.message || 'We could not find an account with that email. Use the email you joined with.', 'error');
+                            return;
+                        }
+
+                        const response = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'request-temp-code', email }),
+                        });
+
+                        const payload = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            setCodeRequestStatus(payload?.message || 'Unable to send a new code right now.', 'error');
+                            return;
+                        }
+
+                        setCodeRequestStatus('We emailed you a fresh login code. Check your inbox and spam folder.', 'success');
+                        if (emailInput) {
+                            emailInput.value = email;
+                        }
+                    } catch (error) {
+                        console.error('Unable to request temp code:', error);
+                        setCodeRequestStatus('Something went wrong. Please try again.', 'error');
                     }
                 });
             }
@@ -406,6 +470,14 @@
                 feedback.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
                 const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
                 feedback.classList.add(toneClass);
+            }
+
+            function setCodeRequestStatus(message, tone) {
+                if (!codeRequestStatus) return;
+                codeRequestStatus.textContent = message;
+                codeRequestStatus.classList.remove('text-rose-600', 'text-emerald-600', 'text-stone-600');
+                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
+                codeRequestStatus.classList.add(toneClass);
             }
 
             function setRecoveryStatus(message, tone) {
