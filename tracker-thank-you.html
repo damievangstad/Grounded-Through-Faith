@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thank You | Grounded Through Faith</title>
+    <meta name="description" content="Thanks for claiming your free month of member access. Grab the link to return to the Grounded Through Faith site." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+        body { font-family: 'Montserrat', system-ui, sans-serif; }
+        .section-title { font-family: 'Playfair Display', Georgia, serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/30 to-[var(--color-honey)]/15 text-stone-800">
+    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/60 to-[var(--color-honey)]/20" aria-hidden="true"></div>
+    <main class="relative mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
+        <div class="space-y-4 rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-10 shadow-2xl">
+            <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-morning-sky)]/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Offer confirmed</span>
+            <h1 class="section-title text-4xl font-semibold text-stone-900">You&rsquo;re on the list</h1>
+            <p id="thankyou-message" class="text-sm text-stone-700">We&rsquo;ve reserved your free month and emailed your link.</p>
+            <a href="index.html" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/30 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Go to the website</a>
+        </div>
+    </main>
+    <script>
+        (function () {
+            const message = document.getElementById('thankyou-message');
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get('email') || localStorage.getItem('gtfTrackerLeadEmail');
+            if (message && email) {
+                message.textContent = `We’ve reserved your free month and emailed ${email} with the next steps.`;
+            }
+        })();
+    </script>
+</body>
+</html>
