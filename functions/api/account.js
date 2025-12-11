@@ -7,7 +7,9 @@ const DEFAULT_HEADERS = {
 
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
 // Seed KnownAccounts with paying member emails so lookup and code requests work
-// even before Stripe webhooks insert user rows.
+// even before Stripe webhooks insert user rows. We still keep this list, but we
+// will now allow any email to create an account directly without needing to be
+// pre-seeded or present in Stripe.
 const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
@@ -106,6 +108,31 @@ async function seedKnownAccounts(db) {
   for (const email of DEFAULT_KNOWN_EMAILS) {
     await trackKnownAccount(db, email);
   }
+}
+
+// Create a fresh user row when the address does not yet exist in the Users
+// table. If a password is provided we honor it, otherwise we generate a random
+// placeholder so subsequent temp code or reset flows can update it.
+async function createUserIfMissing(db, email, providedPassword) {
+  if (!email) return null;
+
+  const existing = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+  if (existing && existing.Email) {
+    return existing;
+  }
+
+  const salt = generateSalt();
+  const passwordToStore = providedPassword || generateTempCode() + generateTempCode();
+  const hash = await hashPassword(passwordToStore, salt);
+  const createdAt = new Date().toISOString();
+
+  await db
+    .prepare('INSERT INTO Users (Email, PasswordHash, PasswordSalt, CreatedAt) VALUES (?, ?, ?, ?)')
+    .bind(email, hash, salt, createdAt)
+    .run();
+
+  await trackKnownAccount(db, email);
+  return { Email: email };
 }
 
 // Create a lightweight placeholder user if a KnownAccounts record exists but no
@@ -287,9 +314,10 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'login') {
-    // Pull the account, but also hydrate a placeholder if this email is in
-    // KnownAccounts (e.g., paid via Stripe) yet has not been inserted into the
-    // Users table due to webhook delays.
+    // Pull the account; if it does not exist yet, create it on the fly so any
+    // email address can sign up or sign in without Stripe seeding. When we
+    // create the record during login, we treat the provided password as the
+    // initial credential.
     let user = await db
       .prepare(
         'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
@@ -298,17 +326,13 @@ export async function onRequestPost({ env, request }) {
       .first();
 
     if (!user || !user.Email) {
-      await ensureUserForKnownAccount(db, email);
+      await createUserIfMissing(db, email, password);
       user = await db
         .prepare(
           'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
         )
         .bind(email)
         .first();
-    }
-
-    if (!user || !user.Email) {
-      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
     }
 
     await trackKnownAccount(db, email);
@@ -328,19 +352,14 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'lookup-account') {
-    const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-    if (user && user.Email) {
-      await trackKnownAccount(db, email);
-      return new Response(JSON.stringify({ exists: true }), { status: 200, headers: DEFAULT_HEADERS });
-    }
-
-    const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
-    if (known && known.Email) {
-      await ensureUserForKnownAccount(db, email);
-      return new Response(JSON.stringify({ exists: true, created: true }), { status: 200, headers: DEFAULT_HEADERS });
-    }
-
-    return new Response(JSON.stringify({ exists: false }), { status: 404, headers: DEFAULT_HEADERS });
+    // Ensure an account row exists for the email, creating one if missing so
+    // anyone can request codes immediately.
+    const created = await createUserIfMissing(db, email);
+    await trackKnownAccount(db, email);
+    return new Response(JSON.stringify({ exists: true, created: Boolean(created) }), {
+      status: 200,
+      headers: DEFAULT_HEADERS,
+    });
   }
 
   if (action === 'set-password') {
@@ -429,21 +448,13 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'request-temp-code') {
-    let user = await db
-      .prepare('SELECT Email FROM Users WHERE Email = ?')
-      .bind(email)
-      .first();
+    // Make sure the account exists; if not, create it so any email can receive
+    // a temporary login code without prior Stripe setup.
+    let user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
 
     if (!user || !user.Email) {
-      await ensureUserForKnownAccount(db, email);
-      user = await db
-        .prepare('SELECT Email FROM Users WHERE Email = ?')
-        .bind(email)
-        .first();
-    }
-
-    if (!user || !user.Email) {
-      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
+      await createUserIfMissing(db, email);
+      user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
     }
 
     await trackKnownAccount(db, email);
