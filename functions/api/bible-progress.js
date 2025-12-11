@@ -45,12 +45,15 @@ export function onRequestOptions() {
 }
 
 export async function onRequestGet({ env, request }) {
-  const db = env?.BIBLE_PROGRESS;
+  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
   if (!db) {
-    return new Response(JSON.stringify({ message: 'Database binding missing' }), {
-      status: 500,
-      headers: DEFAULT_HEADERS,
-    });
+    return new Response(
+      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
+      {
+        status: 500,
+        headers: DEFAULT_HEADERS,
+      }
+    );
   }
 
   let userId;
@@ -74,12 +77,15 @@ export async function onRequestGet({ env, request }) {
 }
 
 export async function onRequestPost({ env, request }) {
-  const db = env?.BIBLE_PROGRESS;
+  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
   if (!db) {
-    return new Response(JSON.stringify({ message: 'Database binding missing' }), {
-      status: 500,
-      headers: DEFAULT_HEADERS,
-    });
+    return new Response(
+      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
+      {
+        status: 500,
+        headers: DEFAULT_HEADERS,
+      }
+    );
   }
 
   let userId;

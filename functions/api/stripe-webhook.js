@@ -43,9 +43,12 @@ function generateTempCode(length = 10) {
 }
 
 function requireDb(env) {
-  const db = env?.BIBLE_PROGRESS;
+  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
   if (!db) {
-    throw new Response(JSON.stringify({ message: 'Database binding missing' }), { status: 500, headers: HEADERS });
+    throw new Response(
+      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
+      { status: 500, headers: HEADERS }
+    );
   }
   return db;
 }
@@ -141,12 +144,18 @@ async function saveTempCode(db, email, code) {
   return { exists: false, expiresAt };
 }
 
+function resolveSender(env) {
+  const configured = (env?.RESEND_FROM || '').trim();
+  return configured || DEFAULT_SENDER;
+}
+
 async function sendEmail(env, to, code) {
   const subject = 'Your Grounded Through Faith membership code';
   const text = `Welcome to Grounded Through Faith! Your membership code is: ${code}\n\nGo to https://www.groundedthroughfaith.org/signin.html and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.`;
   const html = `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Go to <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.</p>`;
 
   const resendKey = (env?.RESEND_KEY || '').trim();
+  const sender = resolveSender(env);
   if (resendKey) {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -154,7 +163,7 @@ async function sendEmail(env, to, code) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${resendKey}`,
       },
-      body: JSON.stringify({ from: DEFAULT_SENDER, to: Array.isArray(to) ? to : [to], subject, text, html }),
+      body: JSON.stringify({ from: sender, to: Array.isArray(to) ? to : [to], subject, text, html }),
     });
 
     if (!response.ok) {
@@ -175,8 +184,8 @@ async function sendEmail(env, to, code) {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({ to, subject, text, html, from: DEFAULT_SENDER }),
-    });
+        body: JSON.stringify({ to, subject, text, html, from: sender }),
+      });
 
     if (!response.ok) {
       const message = await response.text();

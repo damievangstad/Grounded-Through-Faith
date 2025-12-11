@@ -12,12 +12,15 @@ function requireUserId(request) {
 }
 
 function requireDb(env) {
-  const db = env?.BIBLE_PROGRESS;
+  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
   if (!db) {
-    throw new Response(JSON.stringify({ message: 'Database binding missing' }), {
-      status: 500,
-      headers: DEFAULT_HEADERS,
-    });
+    throw new Response(
+      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
+      {
+        status: 500,
+        headers: DEFAULT_HEADERS,
+      }
+    );
   }
   return db;
 }

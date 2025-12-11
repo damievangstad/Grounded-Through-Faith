@@ -13,12 +13,15 @@ function normalizeEmail(email) {
 }
 
 function requireDb(env) {
-  const db = env?.BIBLE_PROGRESS;
+  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
   if (!db) {
-    throw new Response(JSON.stringify({ message: 'Database binding missing' }), {
-      status: 500,
-      headers: DEFAULT_HEADERS,
-    });
+    throw new Response(
+      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
+      {
+        status: 500,
+        headers: DEFAULT_HEADERS,
+      }
+    );
   }
   return db;
 }
@@ -141,9 +144,14 @@ function generateTempCode() {
   return code;
 }
 
+function resolveSender(env, override) {
+  const configured = (env?.RESEND_FROM || '').trim();
+  return override || configured || DEFAULT_SENDER;
+}
+
 async function sendEmail(env, to, { subject, text, html, from }) {
   const resendKey = (env?.RESEND_KEY || '').trim();
-  const sender = from || DEFAULT_SENDER;
+  const sender = resolveSender(env, from);
 
   if (resendKey) {
     const response = await fetch('https://api.resend.com/emails', {
@@ -157,7 +165,7 @@ async function sendEmail(env, to, { subject, text, html, from }) {
 
     if (!response.ok) {
       const message = await response.text();
-      return { sent: false, reason: message || 'Resend request failed' };
+      return { sent: false, reason: message || 'Resend request failed', provider: 'resend' };
     }
 
     const json = await response.json().catch(() => ({}));
