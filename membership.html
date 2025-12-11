@@ -48,7 +48,8 @@
                 <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
                 <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="font-semibold text-[var(--color-cerulean)]">Membership</a>
-                <a data-auth-link="signin" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+                <a data-auth-link="signin" data-auth-show="signed-out" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+                <a data-auth-link="portal" data-auth-show="signed-in" href="member-portal.html" class="hidden transition text-[var(--color-cerulean)] hover:text-[var(--color-honey)]">Member Portal</a>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
@@ -110,7 +111,7 @@
                     <h3 class="text-xl font-semibold text-stone-900">How access works</h3>
                     <ol class="mt-4 list-decimal space-y-3 pl-5 text-sm text-stone-700">
                         <li>Join through the secure Stripe checkout to activate your Community Member access.</li>
-                        <li>Check your email for the portal link, private Facebook invite, and Faith Formation AI unlock.</li>
+                        <li>Check your email for your membership code (plus portal link, private Facebook invite, and Faith Formation AI unlock).</li>
                         <li>Sign in anytime to track Bible reading, manage studies, and revisit premium plans.</li>
                     </ol>
                 </div>
@@ -138,7 +139,7 @@
             <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-xl">
                 <div class="space-y-5 text-sm text-stone-700">
                     <h3 class="section-title text-3xl font-semibold text-stone-900">Already a Community Member?</h3>
-                    <p>Stripe emails your receipt and login instructions immediately after checkout. Visit the sign-in page to confirm your status, launch the member portal, and recover links to the private Facebook group and unlimited Faith Formation AI experience.</p>
+                    <p>Stripe emails your receipt and a unique membership code immediately after checkout. Visit the sign-in page to enter that code, set your password, launch the member portal, and recover links to the private Facebook group and unlimited Faith Formation AI experience.</p>
                     <div class="flex flex-wrap gap-3">
                         <a href="signin.html" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Go to Sign In</a>
                         <a href="mailto:TheMissionEffect@gmail.com" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-dashed border-[var(--color-cerulean)]/40 px-5 py-3 text-sm font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Contact support</a>
