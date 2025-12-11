@@ -7,9 +7,9 @@ const DEFAULT_HEADERS = {
 
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
 // Seed KnownAccounts with paying member emails so lookup and code requests work
-// even before Stripe webhooks insert user rows. We still keep this list, but we
-// will now allow any email to create an account directly without needing to be
-// pre-seeded or present in Stripe.
+// even before Stripe webhooks insert user rows. Unlike the previous iteration
+// that auto-created accounts for any email, we now limit access to emails that
+// came through checkout or were explicitly seeded as members.
 const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
@@ -108,31 +108,6 @@ async function seedKnownAccounts(db) {
   for (const email of DEFAULT_KNOWN_EMAILS) {
     await trackKnownAccount(db, email);
   }
-}
-
-// Create a fresh user row when the address does not yet exist in the Users
-// table. If a password is provided we honor it, otherwise we generate a random
-// placeholder so subsequent temp code or reset flows can update it.
-async function createUserIfMissing(db, email, providedPassword) {
-  if (!email) return null;
-
-  const existing = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-  if (existing && existing.Email) {
-    return existing;
-  }
-
-  const salt = generateSalt();
-  const passwordToStore = providedPassword || generateTempCode() + generateTempCode();
-  const hash = await hashPassword(passwordToStore, salt);
-  const createdAt = new Date().toISOString();
-
-  await db
-    .prepare('INSERT INTO Users (Email, PasswordHash, PasswordSalt, CreatedAt) VALUES (?, ?, ?, ?)')
-    .bind(email, hash, salt, createdAt)
-    .run();
-
-  await trackKnownAccount(db, email);
-  return { Email: email };
 }
 
 // Create a lightweight placeholder user if a KnownAccounts record exists but no
@@ -288,17 +263,12 @@ export async function onRequestPost({ env, request }) {
     });
   }
 
-  const requiresPassword = ['register', 'login', 'reset-password', 'set-password'].includes(action);
-  if (requiresPassword && !password) {
-    return new Response(JSON.stringify({ message: 'Password is required for this action' }), {
-      status: 400,
-      headers: DEFAULT_HEADERS,
-    });
-  }
-
-  const requiresMinLength = ['register', 'reset-password', 'set-password'].includes(action);
-  if (requiresMinLength && password.length < 8) {
-    return new Response(JSON.stringify({ message: 'Password must be at least 8 characters' }), {
+  // Membership access is handled with emailed codes rather than user-created
+  // passwords. We only require a code (passed via the password field) for
+  // login and ignore password creation flows entirely.
+  const requiresCode = ['login'].includes(action);
+  if (requiresCode && !password) {
+    return new Response(JSON.stringify({ message: 'Membership code is required for this action' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });
@@ -314,147 +284,88 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'login') {
-    // Pull the account; if it does not exist yet, create it on the fly so any
-    // email address can sign up or sign in without Stripe seeding. When we
-    // create the record during login, we treat the provided password as the
-    // initial credential.
+    // Pull the account; if it does not exist, try to hydrate it from a seeded
+    // KnownAccounts entry so only paid or pre-approved emails can sign in.
     let user = await db
       .prepare(
-        'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
+        'SELECT Email, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, PasswordHash, PasswordSalt FROM Users WHERE Email = ?'
       )
       .bind(email)
       .first();
 
     if (!user || !user.Email) {
-      await createUserIfMissing(db, email, password);
-      user = await db
-        .prepare(
-          'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
-        )
-        .bind(email)
-        .first();
+      user = await ensureUserForKnownAccount(db, email);
+    }
+
+    if (!user || !user.Email) {
+      return new Response(
+        JSON.stringify({ message: 'Email not found. Use the email from your membership purchase.' }),
+        { status: 404, headers: DEFAULT_HEADERS }
+      );
     }
 
     await trackKnownAccount(db, email);
-
-    const validPassword = await verifyPassword(password, user.PasswordSalt, user.PasswordHash);
 
     const hasTempCode = user.TemporaryCodeHash && user.TemporaryCodeSalt && !isExpired(user.TemporaryCodeExpiresAt);
     const validTemp = hasTempCode ? await verifyPassword(password, user.TemporaryCodeSalt, user.TemporaryCodeHash) : false;
 
-    if (!validPassword && !validTemp) {
-      return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401, headers: DEFAULT_HEADERS });
+    // Legacy passwords are still honored for existing users, but the primary
+    // path uses the emailed membership code. This keeps earlier members
+    // functional while focusing new logins on codes only.
+    const validPassword = user.PasswordHash && user.PasswordSalt
+      ? await verifyPassword(password, user.PasswordSalt, user.PasswordHash)
+      : false;
+
+    if (!validTemp && !validPassword) {
+      return new Response(JSON.stringify({ message: 'Invalid membership code' }), { status: 401, headers: DEFAULT_HEADERS });
     }
 
-    const requiresPasswordChange = Boolean(validTemp && hasTempCode);
-
-    return new Response(JSON.stringify({ userId: email, requiresPasswordChange }), { status: 200, headers: DEFAULT_HEADERS });
+    return new Response(JSON.stringify({ userId: email }), { status: 200, headers: DEFAULT_HEADERS });
   }
 
   if (action === 'lookup-account') {
-    // Ensure an account row exists for the email, creating one if missing so
-    // anyone can request codes immediately.
-    const created = await createUserIfMissing(db, email);
-    await trackKnownAccount(db, email);
-    return new Response(JSON.stringify({ exists: true, created: Boolean(created) }), {
-      status: 200,
+    // Confirm whether the email already exists as a user or known account so the
+    // UI can prompt the member to use the same address they used at checkout.
+    const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+    const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
+    const exists = Boolean(user?.Email || known?.Email);
+    if (exists) {
+      await trackKnownAccount(db, email);
+    }
+    return new Response(JSON.stringify({ exists, created: false }), {
+      status: exists ? 200 : 404,
       headers: DEFAULT_HEADERS,
     });
   }
 
   if (action === 'set-password') {
-    if (!currentSecret) {
-      return new Response(JSON.stringify({ message: 'Current password or code is required' }), {
-        status: 400,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    const user = await db
-      .prepare(
-        'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
-      )
-      .bind(email)
-      .first();
-
-    if (!user || !user.Email) {
-      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
-    }
-
-    await trackKnownAccount(db, email);
-
-    const validPassword = await verifyPassword(currentSecret, user.PasswordSalt, user.PasswordHash);
-    const hasTempCode = user.TemporaryCodeHash && user.TemporaryCodeSalt && !isExpired(user.TemporaryCodeExpiresAt);
-    const validTemp = hasTempCode ? await verifyPassword(currentSecret, user.TemporaryCodeSalt, user.TemporaryCodeHash) : false;
-
-    if (!validPassword && !validTemp) {
-      return new Response(JSON.stringify({ message: 'Current password or code is incorrect' }), {
-        status: 401,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    const salt = generateSalt();
-    const hash = await hashPassword(password, salt);
-
-    await db
-      .prepare(
-        'UPDATE Users SET PasswordHash = ?, PasswordSalt = ?, TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?'
-      )
-      .bind(hash, salt, email)
-      .run();
-
-    return new Response(JSON.stringify({ userId: email }), { status: 200, headers: DEFAULT_HEADERS });
+    return new Response(JSON.stringify({ message: 'Password setup is disabled. Use your membership code to sign in.' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
+    });
   }
 
   if (action === 'request-reset') {
-    const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-    if (!user || !user.Email) {
-      return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
-    }
-
-    await trackKnownAccount(db, email);
-
-    const token = generateResetToken();
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
-    const createdAt = new Date().toISOString();
-
-    await db
-      .prepare('INSERT INTO PasswordResets (Email, Token, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)')
-      .bind(email, token, expiresAt, createdAt)
-      .run();
-
-    const emailStatus = await sendEmail(env, email, {
-      subject: 'Reset your Grounded Through Faith password',
-      text: `Use this code to reset your password: ${token}. It expires in 30 minutes. If you did not request this, ignore this email.`,
-      html: `<p>Use this code to reset your password: <strong>${token}</strong>.</p><p>This code expires in 30 minutes. If you did not request this, you can ignore this email.</p>`,
+    return new Response(JSON.stringify({ message: 'Password resets are disabled. Use your membership code instead.' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
     });
-
-    const delivered = Boolean(emailStatus?.sent);
-    const message = delivered
-      ? 'Reset instructions generated'
-      : `Reset code created, but email could not be sent${emailStatus?.reason ? `: ${emailStatus.reason}` : ''}`;
-
-    return new Response(
-      JSON.stringify({
-        message,
-        resetToken: token,
-        expiresAt,
-        emailDelivered: delivered,
-        emailError: delivered ? null : emailStatus?.reason || 'Email delivery failed',
-      }),
-      { status: delivered ? 200 : 207, headers: DEFAULT_HEADERS }
-    );
   }
 
   if (action === 'request-temp-code') {
-    // Make sure the account exists; if not, create it so any email can receive
-    // a temporary login code without prior Stripe setup.
+    // Send a login code only when the email matches an existing member account
+    // or a KnownAccounts entry that originated from Stripe checkout seeding.
     let user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
 
     if (!user || !user.Email) {
-      await createUserIfMissing(db, email);
-      user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+      user = await ensureUserForKnownAccount(db, email);
+    }
+
+    if (!user || !user.Email) {
+      return new Response(JSON.stringify({ message: 'Email not found. Use the email from your membership purchase.' }), {
+        status: 404,
+        headers: DEFAULT_HEADERS,
+      });
     }
 
     await trackKnownAccount(db, email);
@@ -473,9 +384,9 @@ export async function onRequestPost({ env, request }) {
 
     const emailStatus = await sendEmail(env, email, {
       from: 'groundedthroughfaith@gmail.com',
-      subject: 'Your Grounded Through Faith login code',
-      text: `Here is your login code: ${code}. It expires in 7 days. Use this code as your password to sign in, then set a new password to keep your account secure.`,
-      html: `<p>Here is your Grounded Through Faith login code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. Use it as your password to sign in, then set a new password to keep your account secure.</p>`,
+      subject: 'Your Grounded Through Faith membership code',
+      text: `Here is your membership code: ${code}. It expires in 7 days. Use this code to sign in to the member portal.`,
+      html: `<p>Here is your Grounded Through Faith membership code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. Use it to sign in to the member portal.</p>`,
     });
 
     const delivered = Boolean(emailStatus?.sent);
@@ -490,61 +401,10 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'reset-password') {
-    const token = (payload?.token || '').trim();
-    if (!token) {
-      return new Response(JSON.stringify({ message: 'Reset token is required' }), { status: 400, headers: DEFAULT_HEADERS });
-    }
-
-    if (!password || password.length < 8) {
-      return new Response(JSON.stringify({ message: 'New password must be at least 8 characters' }), {
-        status: 400,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    const reset = await db
-      .prepare('SELECT Email, ExpiresAt, Used FROM PasswordResets WHERE Token = ?')
-      .bind(token)
-      .first();
-
-    if (!reset || !reset.Email) {
-      return new Response(JSON.stringify({ message: 'Reset link invalid or expired' }), { status: 404, headers: DEFAULT_HEADERS });
-    }
-
-    if (reset.Used) {
-      return new Response(JSON.stringify({ message: 'Reset link already used' }), { status: 400, headers: DEFAULT_HEADERS });
-    }
-
-    const expiresAt = new Date(reset.ExpiresAt);
-    if (Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() < Date.now()) {
-      return new Response(JSON.stringify({ message: 'Reset link invalid or expired' }), { status: 400, headers: DEFAULT_HEADERS });
-    }
-
-    if (reset.Email !== email) {
-      return new Response(JSON.stringify({ message: 'Email does not match this reset request' }), {
-        status: 400,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    const salt = generateSalt();
-    const hash = await hashPassword(password, salt);
-
-    await db
-      .prepare('UPDATE Users SET PasswordHash = ?, PasswordSalt = ? WHERE Email = ?')
-      .bind(hash, salt, email)
-      .run();
-
-    await trackKnownAccount(db, email);
-
-    await db.prepare('UPDATE PasswordResets SET Used = 1 WHERE Token = ?').bind(token).run();
-
-    await db
-      .prepare('UPDATE Users SET TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?')
-      .bind(email)
-      .run();
-
-    return new Response(JSON.stringify({ message: 'Password updated successfully' }), { status: 200, headers: DEFAULT_HEADERS });
+    return new Response(JSON.stringify({ message: 'Password resets are disabled. Use your membership code instead.' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
+    });
   }
 
   if (action === 'issue-temp-code') {
