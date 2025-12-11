@@ -350,6 +350,22 @@
                     codeRequestStatus.classList.add('text-stone-600');
                 }
             }
+
+            function setCodeRequestStatus(message, tone) {
+                if (!codeRequestStatus) return;
+                codeRequestStatus.textContent = message;
+                codeRequestStatus.classList.remove('text-rose-600', 'text-emerald-600', 'text-stone-600');
+                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
+                codeRequestStatus.classList.add(toneClass);
+            }
+
+            function setRecoveryStatus(message, tone) {
+                if (!recoveryStatus) return;
+                recoveryStatus.textContent = message;
+                recoveryStatus.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
+                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
+                recoveryStatus.classList.add(toneClass);
+            }
         })();
     </script>
 </body>
