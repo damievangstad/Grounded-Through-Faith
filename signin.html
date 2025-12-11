@@ -184,6 +184,9 @@
             const subhead = document.getElementById('signin-subhead');
             const params = new URLSearchParams(window.location.search);
             const redirectTarget = params.get('redirect');
+            const codeRequestForm = document.getElementById('code-request');
+            const codeRequestEmail = document.getElementById('code-request-email');
+            const codeRequestStatus = document.getElementById('code-request-status');
 
             // Hide password-reset UI fragments left in the markup so the page stays focused on the streamlined login.
             ['recovery-panel', 'password-setup', 'forgot-password-toggle', 'recovery-request', 'recovery-complete'].forEach((id) => {
