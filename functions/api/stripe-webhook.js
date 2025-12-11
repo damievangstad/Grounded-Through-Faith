@@ -8,7 +8,9 @@ const HEADERS = {
 const TEMP_CODE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
-const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com'];
+// Seed KnownAccounts with paid member emails so they always receive codes even
+// if a webhook has not populated the database yet.
+const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();

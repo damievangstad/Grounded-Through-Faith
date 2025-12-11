@@ -6,7 +6,9 @@ const DEFAULT_HEADERS = {
 };
 
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
-const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com'];
+// Seed KnownAccounts with paying member emails so lookup and code requests work
+// even before Stripe webhooks insert user rows.
+const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();
@@ -104,6 +106,38 @@ async function seedKnownAccounts(db) {
   for (const email of DEFAULT_KNOWN_EMAILS) {
     await trackKnownAccount(db, email);
   }
+}
+
+// Create a lightweight placeholder user if a KnownAccounts record exists but no
+// corresponding Users row is present. This keeps paid members from hitting
+// "account not found" errors when requesting codes before the Stripe webhook
+// has populated the Users table.
+async function ensureUserForKnownAccount(db, email) {
+  if (!email) return null;
+
+  const existing = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
+  if (existing && existing.Email) {
+    return existing;
+  }
+
+  const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
+  if (!known || !known.Email) {
+    return null;
+  }
+
+  const placeholderSalt = generateSalt();
+  const placeholderHash = await hashPassword(generateTempCode() + generateTempCode(), placeholderSalt);
+  const createdAt = new Date().toISOString();
+
+  await db
+    .prepare(
+      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, CreatedAt) VALUES (?, ?, ?, ?)' 
+    )
+    .bind(email, placeholderHash, placeholderSalt, createdAt)
+    .run();
+
+  await trackKnownAccount(db, email);
+  return { Email: email };
 }
 
 function toHex(buffer) {
@@ -253,12 +287,25 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'login') {
-    const user = await db
+    // Pull the account, but also hydrate a placeholder if this email is in
+    // KnownAccounts (e.g., paid via Stripe) yet has not been inserted into the
+    // Users table due to webhook delays.
+    let user = await db
       .prepare(
         'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
       )
       .bind(email)
       .first();
+
+    if (!user || !user.Email) {
+      await ensureUserForKnownAccount(db, email);
+      user = await db
+        .prepare(
+          'SELECT Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt FROM Users WHERE Email = ?'
+        )
+        .bind(email)
+        .first();
+    }
 
     if (!user || !user.Email) {
       return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
@@ -285,6 +332,12 @@ export async function onRequestPost({ env, request }) {
     if (user && user.Email) {
       await trackKnownAccount(db, email);
       return new Response(JSON.stringify({ exists: true }), { status: 200, headers: DEFAULT_HEADERS });
+    }
+
+    const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
+    if (known && known.Email) {
+      await ensureUserForKnownAccount(db, email);
+      return new Response(JSON.stringify({ exists: true, created: true }), { status: 200, headers: DEFAULT_HEADERS });
     }
 
     return new Response(JSON.stringify({ exists: false }), { status: 404, headers: DEFAULT_HEADERS });
@@ -376,10 +429,18 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'request-temp-code') {
-    const user = await db
+    let user = await db
       .prepare('SELECT Email FROM Users WHERE Email = ?')
       .bind(email)
       .first();
+
+    if (!user || !user.Email) {
+      await ensureUserForKnownAccount(db, email);
+      user = await db
+        .prepare('SELECT Email FROM Users WHERE Email = ?')
+        .bind(email)
+        .first();
+    }
 
     if (!user || !user.Email) {
       return new Response(JSON.stringify({ message: 'Account not found' }), { status: 404, headers: DEFAULT_HEADERS });
