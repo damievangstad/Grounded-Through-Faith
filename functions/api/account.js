@@ -39,6 +39,9 @@ function requireDb(env) {
 }
 
 async function ensureSchema(db) {
+  // Create the Users table if it does not already exist. Each column captures
+  // the credential state so we can support temporary codes and first-time
+  // password creation without breaking existing members.
   await db
     .prepare(
       `CREATE TABLE IF NOT EXISTS Users (
@@ -49,6 +52,7 @@ async function ensureSchema(db) {
         TemporaryCodeHash TEXT,
         TemporaryCodeSalt TEXT,
         TemporaryCodeExpiresAt TEXT,
+        NeedsPassword INTEGER NOT NULL DEFAULT 0,
         CreatedAt TEXT NOT NULL
       );`
     )
@@ -89,6 +93,7 @@ async function ensureSchema(db) {
   await ensureColumn('TemporaryCodeHash', 'TEXT');
   await ensureColumn('TemporaryCodeSalt', 'TEXT');
   await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
+  await ensureColumn('NeedsPassword', 'INTEGER NOT NULL DEFAULT 0');
 }
 
 async function trackKnownAccount(db, email) {
@@ -127,13 +132,15 @@ async function ensureUserForKnownAccount(db, email) {
     return null;
   }
 
+  // Create a placeholder user record with a throwaway password hash and flag
+  // it as needing a real password so the first login can set one.
   const placeholderSalt = generateSalt();
   const placeholderHash = await hashPassword(generateTempCode() + generateTempCode(), placeholderSalt);
   const createdAt = new Date().toISOString();
 
   await db
     .prepare(
-      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, CreatedAt) VALUES (?, ?, ?, ?)' 
+      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, NeedsPassword, CreatedAt) VALUES (?, ?, ?, 1, ?)'
     )
     .bind(email, placeholderHash, placeholderSalt, createdAt)
     .run();
@@ -263,12 +270,11 @@ export async function onRequestPost({ env, request }) {
     });
   }
 
-  // Membership access is handled with emailed codes rather than user-created
-  // passwords. We only require a code (passed via the password field) for
-  // login and ignore password creation flows entirely.
-  const requiresCode = ['login'].includes(action);
-  if (requiresCode && !password) {
-    return new Response(JSON.stringify({ message: 'Membership code is required for this action' }), {
+  // All flows require a password for login, but first-time members create that
+  // password during their initial sign-in. We still enforce presence for the
+  // login action so we can hash and save it when missing.
+  if (action === 'login' && !password) {
+    return new Response(JSON.stringify({ message: 'Password is required to sign in.' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });
@@ -288,7 +294,7 @@ export async function onRequestPost({ env, request }) {
     // KnownAccounts entry so only paid or pre-approved emails can sign in.
     let user = await db
       .prepare(
-        'SELECT Email, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, PasswordHash, PasswordSalt FROM Users WHERE Email = ?'
+        'SELECT Email, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, PasswordHash, PasswordSalt, NeedsPassword FROM Users WHERE Email = ?'
       )
       .bind(email)
       .first();
@@ -306,21 +312,47 @@ export async function onRequestPost({ env, request }) {
 
     await trackKnownAccount(db, email);
 
+    const needsPassword = user.NeedsPassword === 1 || user.NeedsPassword === '1';
     const hasTempCode = user.TemporaryCodeHash && user.TemporaryCodeSalt && !isExpired(user.TemporaryCodeExpiresAt);
     const validTemp = hasTempCode ? await verifyPassword(password, user.TemporaryCodeSalt, user.TemporaryCodeHash) : false;
 
-    // Legacy passwords are still honored for existing users, but the primary
-    // path uses the emailed membership code. This keeps earlier members
-    // functional while focusing new logins on codes only.
+    // If the member has never set a password, accept the provided one, hash it,
+    // and clear any temporary code so future logins rely on the stored secret.
+    if (needsPassword || !user.PasswordHash || !user.PasswordSalt) {
+      const salt = generateSalt();
+      const hash = await hashPassword(password, salt);
+      await db
+        .prepare(
+          'UPDATE Users SET PasswordHash = ?, PasswordSalt = ?, NeedsPassword = 0, TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?'
+        )
+        .bind(hash, salt, email)
+        .run();
+
+      return new Response(JSON.stringify({ userId: email, passwordCreated: true }), { status: 200, headers: DEFAULT_HEADERS });
+    }
+
+    // Otherwise validate against either a fresh temporary code or the stored
+    // password hash so existing members continue to work during the transition.
     const validPassword = user.PasswordHash && user.PasswordSalt
       ? await verifyPassword(password, user.PasswordSalt, user.PasswordHash)
       : false;
 
     if (!validTemp && !validPassword) {
-      return new Response(JSON.stringify({ message: 'Invalid membership code' }), { status: 401, headers: DEFAULT_HEADERS });
+      return new Response(JSON.stringify({ message: 'Invalid password or code' }), { status: 401, headers: DEFAULT_HEADERS });
     }
 
-    return new Response(JSON.stringify({ userId: email }), { status: 200, headers: DEFAULT_HEADERS });
+    // If the user logged in with a temporary code, keep it from blocking future
+    // password-based sign-ins by clearing the expired state.
+    if (validTemp) {
+      await db
+        .prepare(
+          'UPDATE Users SET TemporaryCodeHash = NULL, TemporaryCodeSalt = NULL, TemporaryCodeExpiresAt = NULL WHERE Email = ?'
+        )
+        .bind(email)
+        .run();
+    }
+
+    return new Response(JSON.stringify({ userId: email, passwordCreated: false }), { status: 200, headers: DEFAULT_HEADERS });
   }
 
   if (action === 'lookup-account') {
@@ -339,14 +371,14 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'set-password') {
-    return new Response(JSON.stringify({ message: 'Password setup is disabled. Use your membership code to sign in.' }), {
+    return new Response(JSON.stringify({ message: 'Password updates are not available yet. Please sign in with your saved password.' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });
   }
 
   if (action === 'request-reset') {
-    return new Response(JSON.stringify({ message: 'Password resets are disabled. Use your membership code instead.' }), {
+    return new Response(JSON.stringify({ message: 'Password resets are not available yet. Contact support if you need help.' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });
@@ -384,9 +416,9 @@ export async function onRequestPost({ env, request }) {
 
     const emailStatus = await sendEmail(env, email, {
       from: 'groundedthroughfaith@gmail.com',
-      subject: 'Your Grounded Through Faith membership code',
-      text: `Here is your membership code: ${code}. It expires in 7 days. Use this code to sign in to the member portal.`,
-      html: `<p>Here is your Grounded Through Faith membership code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. Use it to sign in to the member portal.</p>`,
+      subject: 'Your temporary sign-in code',
+      text: `Here is your temporary sign-in code: ${code}. It expires in 7 days. You can enter any password on your first sign-in and we will save it for future logins.`,
+      html: `<p>Here is your temporary sign-in code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. On your first sign-in you can enter any password you like and we will save it for future logins.</p>`,
     });
 
     const delivered = Boolean(emailStatus?.sent);
@@ -401,7 +433,7 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'reset-password') {
-    return new Response(JSON.stringify({ message: 'Password resets are disabled. Use your membership code instead.' }), {
+    return new Response(JSON.stringify({ message: 'Password resets are not available yet. Contact support if you need help.' }), {
       status: 400,
       headers: DEFAULT_HEADERS,
     });

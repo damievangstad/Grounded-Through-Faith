@@ -65,6 +65,9 @@ function requireDb(env) {
 }
 
 async function ensureSchema(db) {
+  // Create the Users table if missing so Stripe webhooks can seed members.
+  // NeedsPassword flags first-time sign-ins so the password a member enters is
+  // stored immediately, avoiding separate setup screens.
   await db
     .prepare(
       `CREATE TABLE IF NOT EXISTS Users (
@@ -75,6 +78,7 @@ async function ensureSchema(db) {
         TemporaryCodeHash TEXT,
         TemporaryCodeSalt TEXT,
         TemporaryCodeExpiresAt TEXT,
+        NeedsPassword INTEGER NOT NULL DEFAULT 0,
         CreatedAt TEXT NOT NULL
       );`
     )
@@ -102,6 +106,7 @@ async function ensureSchema(db) {
   await ensureColumn('TemporaryCodeHash', 'TEXT');
   await ensureColumn('TemporaryCodeSalt', 'TEXT');
   await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
+  await ensureColumn('NeedsPassword', 'INTEGER NOT NULL DEFAULT 0');
 }
 
 async function trackKnownAccount(db, email) {
@@ -124,7 +129,13 @@ async function seedKnownAccounts(db) {
 }
 
 async function saveTempCode(db, email, code) {
-  const user = await db.prepare('SELECT Email, PasswordHash, PasswordSalt FROM Users WHERE Email = ?').bind(email).first();
+  // Look for an existing member and refresh their temporary code without
+  // disturbing the stored password; this allows optional backup codes.
+  const user = await db
+    .prepare('SELECT Email, PasswordHash, PasswordSalt FROM Users WHERE Email = ?')
+    .bind(email)
+    .first();
+
   const tempSalt = generateSalt();
   const tempHash = await hashSecret(code, tempSalt);
   const expiresAt = new Date(Date.now() + TEMP_CODE_TTL_MS).toISOString();
@@ -141,14 +152,16 @@ async function saveTempCode(db, email, code) {
     return { exists: true, expiresAt };
   }
 
-  // New users keep their temporary code as the initial password hash to allow immediate sign-in.
+  // New members start with a placeholder password hash and a NeedsPassword flag
+  // so their first login saves whatever password they enter. The temporary code
+  // remains optional for those who prefer using the emailed code one time.
   const salt = generateSalt();
-  const hash = await hashSecret(code, salt);
+  const placeholderHash = await hashSecret(code + generateTempCode(), salt);
   await db
     .prepare(
-      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, NeedsPassword, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, 1, ?)'
     )
-    .bind(email, hash, salt, tempHash, tempSalt, expiresAt, createdAt)
+    .bind(email, placeholderHash, salt, tempHash, tempSalt, expiresAt, createdAt)
     .run();
 
   await trackKnownAccount(db, email);
@@ -161,9 +174,9 @@ function resolveSender(env) {
 }
 
 async function sendEmail(env, to, code) {
-  const subject = 'Your Grounded Through Faith membership code';
-  const text = `Welcome to Grounded Through Faith! Your membership code is: ${code}\n\nGo to https://www.groundedthroughfaith.org/signin.html and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.`;
-  const html = `<p>Welcome to Grounded Through Faith!</p><p>Your membership code is <strong>${code}</strong>.</p><p>Go to <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter this code as your password. After signing in, you will be prompted to create a permanent password for future logins.</p>`;
+  const subject = 'Welcome to Grounded Through Faith — set your password';
+  const text = `Thank you for joining Grounded Through Faith!\n\nVisit https://www.groundedthroughfaith.org/signin.html and enter your email. On your first sign-in, any password you choose will be saved for future logins.\n\nIf you prefer, you can also use this one-time access code: ${code}. It expires in 7 days. After signing in, you can keep using your chosen password.`;
+  const html = `<p>Thank you for joining Grounded Through Faith!</p><p>Visit <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter your email.</p><p><strong>On your first sign-in, any password you choose will be saved for future logins.</strong></p><p>If you prefer, you can also use this one-time access code: <strong>${code}</strong> (expires in 7 days). After signing in, you can keep using your chosen password.</p>`;
 
   const resendKey = (env?.RESEND_KEY || '').trim();
   const sender = resolveSender(env);

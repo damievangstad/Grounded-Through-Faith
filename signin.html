@@ -57,7 +57,7 @@
         <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-24 pt-20 text-center">
             <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Community Access</span>
             <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Sign in with your membership email</h1>
-            <p class="mx-auto max-w-2xl text-base text-stone-600">Use the same email you used at checkout. Enter the membership code we emailed you after payment (or request a fresh code) to sync your Bible tracker and devotionals on every device.</p>
+            <p class="mx-auto max-w-2xl text-base text-stone-600">Use the same email you used at checkout. On your first sign-in, any password you enter will be saved for future logins so you can sync your Bible tracker and devotionals on every device.</p>
         </section>
     </header>
     <main class="relative z-10 space-y-20 pb-24">
@@ -67,28 +67,19 @@
                     <div class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
                         <form id="member-signin" class="space-y-4">
                             <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership Access</div>
-                            <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in with your membership code</h2>
-                            <p class="text-stone-600" id="signin-subhead">Use the temporary access code we emailed after checkout. Membership emails from Stripe are the only ones that can access the portal.</p>
+                            <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in to your account</h2>
+                            <p class="text-stone-600" id="signin-subhead">Enter the email you used at checkout. The first password you enter will be saved to your account for all future logins.</p>
                             <div class="space-y-2">
                                 <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
                                 <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
                             </div>
                             <div class="space-y-2">
-                                <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership code</label>
-                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Enter your membership code" />
+                                <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Choose or enter your password" />
                             </div>
                             <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
                             <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
                         </form>
-                        <div class="flex flex-col gap-2 rounded-2xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/70 p-3 text-left text-sm text-stone-700">
-                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Need a login code?</p>
-                            <form id="code-request" class="flex flex-col gap-2 md:flex-row">
-                                <input id="code-request-email" type="email" required class="w-full rounded-xl border border-stone-200 bg-white/90 px-3 py-2 text-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Email used at checkout" />
-                                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[var(--color-cerulean)]/30 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Email me a code</button>
-                            </form>
-                            <p id="code-request-status" class="text-xs text-stone-600" aria-live="polite"></p>
-                        </div>
-                        <button type="button" id="forgot-password-toggle" class="hidden w-full text-left text-sm font-semibold text-[var(--color-cerulean)] underline underline-offset-4">Forgot password? Reset it</button>
                         <div id="password-setup" class="hidden space-y-3 rounded-2xl border border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/80 p-4 text-sm text-stone-700">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Set your new password</p>
@@ -177,9 +168,9 @@
     </footer>
     <script src="assets/membership-links.js"></script>
     <script>
-        // Client-side authentication helper for membership-code-only access.
-        // The flow keeps paid members focused on their emailed code instead of
-        // creating passwords, and it synchronizes session storage for portal UI.
+        // Client-side authentication helper for the simplified email + password flow.
+        // First-time members can type any password to create their login, and we
+        // save the session locally so navigation updates instantly.
         (function () {
             // Update the footer year immediately for a polished experience.
             const signinYear = document.getElementById('signin-year');
@@ -197,8 +188,7 @@
             const codeRequestEmail = document.getElementById('code-request-email');
             const codeRequestStatus = document.getElementById('code-request-status');
 
-            // Hide password-reset UI fragments left in the markup so the page
-            // only presents the membership code flow.
+            // Hide password-reset UI fragments left in the markup so the page stays focused on the streamlined login.
             ['recovery-panel', 'password-setup', 'forgot-password-toggle', 'recovery-request', 'recovery-complete'].forEach((id) => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
@@ -233,7 +223,7 @@
                 return text;
             }
 
-            // Submit the login form using the membership code as the only secret.
+            // Submit the login form, saving the password on first sign-in when needed.
             if (form) {
                 form.addEventListener('submit', async (event) => {
                     event.preventDefault();
@@ -241,11 +231,11 @@
                     const code = (codeInput?.value || '').trim();
 
                     if (!email || !code) {
-                        showFeedback('Enter your email and membership code.', 'error');
+                        showFeedback('Enter your email and password.', 'error');
                         return;
                     }
 
-                    showFeedback('Signing you in with your code...', 'pending');
+                    showFeedback('Signing you in...', 'pending');
 
                     try {
                         const response = await fetch('/api/account', {
@@ -271,8 +261,10 @@
                         }
 
                         if (heading) heading.textContent = 'Signed in';
-                        if (subhead) subhead.textContent = 'Taking you to the member portal...';
-                        showFeedback('Signed in! Redirecting...', 'success');
+                        if (subhead) subhead.textContent = data?.passwordCreated
+                            ? 'Password saved. Taking you to the member portal...'
+                            : 'Taking you to the member portal...';
+                        showFeedback(data?.passwordCreated ? 'Password saved and signed in! Redirecting...' : 'Signed in! Redirecting...', 'success');
 
                         const target = redirectTarget || 'member-portal.html';
                         window.location.href = target;
@@ -280,91 +272,6 @@
                         showFeedback('Could not sign you in. Please try again.', 'error');
                     }
                 });
-            }
-
-            // Send a fresh membership code email on demand, falling back to
-            // showing the generated code if delivery fails.
-            if (codeRequestForm) {
-                if (codeRequestEmail && emailInput) {
-                    codeRequestEmail.value = emailInput.value;
-                    emailInput.addEventListener('input', () => {
-                        codeRequestEmail.value = emailInput.value;
-                    });
-                }
-
-                codeRequestForm.addEventListener('submit', async (event) => {
-                    event.preventDefault();
-                    const email = (codeRequestEmail?.value || '').trim();
-                    if (!email) {
-                        setCodeRequestStatus('Enter the email tied to your membership.', 'error');
-                        return;
-                    }
-
-                    setCodeRequestStatus('Sending your membership code...', 'pending');
-
-                    try {
-                        const response = await fetch('/api/account', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'request-temp-code', email }),
-                        });
-
-                        const data = await response.json();
-                        const message = friendlyMessage(data?.message, 'Could not send a membership code.');
-
-                        if (!response.ok) {
-                            setCodeRequestStatus(message, 'error');
-                            return;
-                        }
-
-                        const delivered = Boolean(data?.emailDelivered);
-                        const code = data?.code;
-
-                        if (delivered) {
-                            setCodeRequestStatus('Check your email for your membership code.', 'success');
-                        } else if (code) {
-                            setCodeRequestStatus(`Email delivery failed, but here is your code: ${code}`, 'success');
-                            if (codeInput) {
-                                codeInput.value = code;
-                                codeInput.focus();
-                            }
-                        } else {
-                            setCodeRequestStatus(message, 'error');
-                        }
-                    } catch (error) {
-                        setCodeRequestStatus('Could not send a membership code. Please try again.', 'error');
-                    }
-                });
-            }
-
-            // Apply helper styling to the code-request status line.
-            function setCodeRequestStatus(text, tone) {
-                if (!codeRequestStatus) return;
-                codeRequestStatus.textContent = text;
-                codeRequestStatus.classList.remove('text-stone-600', 'text-red-600', 'text-green-700');
-                if (tone === 'error') {
-                    codeRequestStatus.classList.add('text-red-600');
-                } else if (tone === 'success') {
-                    codeRequestStatus.classList.add('text-green-700');
-                } else {
-                    codeRequestStatus.classList.add('text-stone-600');
-                }
-            }
-
-            function setCodeRequestStatus(message, tone) {
-                if (!codeRequestStatus) return;
-                codeRequestStatus.textContent = message;
-                codeRequestStatus.classList.remove('text-rose-600', 'text-emerald-600', 'text-stone-600');
-                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
-                codeRequestStatus.classList.add(toneClass);
-            }
-
-            function setRecoveryStatus(message, tone) {
-                if (!recoveryStatus) return;
-                recoveryStatus.textContent = message;
-                recoveryStatus.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-stone-600');
-                const toneClass = tone === 'error' ? 'text-rose-600' : tone === 'success' ? 'text-emerald-600' : 'text-stone-600';
-                recoveryStatus.classList.add(toneClass);
             }
         })();
     </script>
