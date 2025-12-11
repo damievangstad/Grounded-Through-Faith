@@ -210,6 +210,22 @@
 
             let lastLoginSecret = '';
 
+            // Provide a consistent, friendly explanation when backend errors are
+            // technical so members see clear guidance instead of raw error text.
+            function friendlyMessage(raw, fallback) {
+                const text = (raw || '').toString();
+                if (!text) return fallback;
+                const normalized = text.toLowerCase();
+                const isDbIssue =
+                    normalized.includes('database') ||
+                    normalized.includes('binding') ||
+                    normalized.includes('service unavailable');
+                if (isDbIssue) {
+                    return 'We could not reach your account right now. Please try again or email support.';
+                }
+                return text;
+            }
+
             if (recoveryToggle && recoveryPanel) {
                 recoveryToggle.addEventListener('click', () => {
                     recoveryPanel.classList.toggle('hidden');
@@ -246,7 +262,13 @@
 
                         if (!lookup.ok) {
                             const payload = await lookup.json().catch(() => ({}));
-                            setCodeRequestStatus(payload?.message || 'We could not find an account with that email. Use the email you joined with.', 'error');
+                            setCodeRequestStatus(
+                                friendlyMessage(
+                                    payload?.message,
+                                    'We could not find an account with that email. Use the email you joined with.'
+                                ),
+                                'error'
+                            );
                             return;
                         }
 
@@ -258,7 +280,10 @@
 
                         const payload = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            setCodeRequestStatus(payload?.message || 'Unable to send a new code right now.', 'error');
+                            setCodeRequestStatus(
+                                friendlyMessage(payload?.message, 'Unable to send a new code right now.'),
+                                'error'
+                            );
                             return;
                         }
 
@@ -302,7 +327,10 @@
 
                         const payload = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            setRecoveryStatus(payload?.message || 'Unable to send reset link.', 'error');
+                            setRecoveryStatus(
+                                friendlyMessage(payload?.message, 'Unable to send reset link.'),
+                                'error'
+                            );
                             return;
                         }
 
@@ -358,7 +386,10 @@
 
                         const payload = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            setRecoveryStatus(payload?.message || 'Unable to reset password.', 'error');
+                            setRecoveryStatus(
+                                friendlyMessage(payload?.message, 'Unable to reset password.'),
+                                'error'
+                            );
                             return;
                         }
 
@@ -400,7 +431,7 @@
 
                     const payload = await response.json().catch(() => ({}));
                     if (!response.ok) {
-                        setFeedback(payload?.message || 'Unable to complete request.', 'error');
+                        setFeedback(friendlyMessage(payload?.message, 'Unable to complete request.'), 'error');
                         return;
                     }
 
@@ -461,7 +492,7 @@
 
                         const payload = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            setFeedback(payload?.message || 'Unable to save password.', 'error');
+                            setFeedback(friendlyMessage(payload?.message, 'Unable to save password.'), 'error');
                             return;
                         }
 

@@ -42,15 +42,24 @@ function generateTempCode(length = 10) {
     .join('');
 }
 
+// Resolve a D1 binding for membership creation, even if the environment uses a
+// different key. Known names are preferred, but we also scan for any binding
+// exposing the D1 `prepare` API to avoid failing after successful Stripe
+// payments.
 function requireDb(env) {
-  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
-  if (!db) {
-    throw new Response(
-      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
-      { status: 500, headers: HEADERS }
-    );
+  const direct = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__ || env?.__D1__;
+  if (direct) return direct;
+
+  for (const value of Object.values(env || {})) {
+    if (value && typeof value.prepare === 'function') {
+      return value;
+    }
   }
-  return db;
+
+  throw new Response(JSON.stringify({ message: 'Account database unavailable.' }), {
+    status: 503,
+    headers: HEADERS,
+  });
 }
 
 async function ensureSchema(db) {

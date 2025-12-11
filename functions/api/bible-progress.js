@@ -11,6 +11,8 @@ function requireUserId(request) {
   throw new Response(JSON.stringify({ message: 'User id required' }), { status: 401, headers: DEFAULT_HEADERS });
 }
 
+// Ensure the Bible progress table exists so chapter completion can be saved and
+// queried reliably for each user.
 async function ensureSchema(db) {
   await db.prepare(
     `CREATE TABLE IF NOT EXISTS BibleReadingProgress (
@@ -29,6 +31,7 @@ async function ensureSchema(db) {
   ).run();
 }
 
+// Normalize a raw database row into a consistent JSON object for clients.
 function normalizeRow(row) {
   return {
     id: row.Id,
@@ -40,21 +43,30 @@ function normalizeRow(row) {
   };
 }
 
+// Locate an available D1 binding regardless of the configured environment key
+// so users can load and save progress even if the binding name changes.
+function requireDb(env) {
+  const direct = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__ || env?.__D1__;
+  if (direct) return direct;
+
+  for (const value of Object.values(env || {})) {
+    if (value && typeof value.prepare === 'function') {
+      return value;
+    }
+  }
+
+  throw new Response(JSON.stringify({ message: 'Progress storage unavailable right now.' }), {
+    status: 503,
+    headers: DEFAULT_HEADERS,
+  });
+}
+
 export function onRequestOptions() {
   return new Response(null, { status: 204, headers: DEFAULT_HEADERS });
 }
 
 export async function onRequestGet({ env, request }) {
-  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
-  if (!db) {
-    return new Response(
-      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
-      {
-        status: 500,
-        headers: DEFAULT_HEADERS,
-      }
-    );
-  }
+  const db = requireDb(env);
 
   let userId;
   try {
@@ -77,16 +89,7 @@ export async function onRequestGet({ env, request }) {
 }
 
 export async function onRequestPost({ env, request }) {
-  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
-  if (!db) {
-    return new Response(
-      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
-      {
-        status: 500,
-        headers: DEFAULT_HEADERS,
-      }
-    );
-  }
+  const db = requireDb(env);
 
   let userId;
   try {

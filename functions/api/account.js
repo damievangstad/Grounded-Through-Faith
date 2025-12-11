@@ -12,18 +12,26 @@ function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();
 }
 
+// Resolve the best-available D1 binding so account actions do not fail when the
+// environment uses a different name. We scan common binding names first, then
+// fall back to any value that exposes a `prepare` function (the D1 interface).
 function requireDb(env) {
-  const db = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__;
-  if (!db) {
-    throw new Response(
-      JSON.stringify({ message: 'Database binding missing (add BIBLE_PROGRESS/DB D1 binding)' }),
-      {
-        status: 500,
-        headers: DEFAULT_HEADERS,
-      }
-    );
+  const direct = env?.BIBLE_PROGRESS || env?.DB || env?.__D1_BETA__ || env?.__D1__;
+  if (direct) return direct;
+
+  for (const value of Object.values(env || {})) {
+    if (value && typeof value.prepare === 'function') {
+      return value;
+    }
   }
-  return db;
+
+  throw new Response(
+    JSON.stringify({ message: 'Account service unavailable. Please try again shortly.' }),
+    {
+      status: 503,
+      headers: DEFAULT_HEADERS,
+    }
+  );
 }
 
 async function ensureSchema(db) {
