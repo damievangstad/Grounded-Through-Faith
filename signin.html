@@ -56,8 +56,8 @@
         </nav>
         <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-24 pt-20 text-center">
             <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Community Access</span>
-            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Sign in with your membership email</h1>
-            <p class="mx-auto max-w-2xl text-base text-stone-600">Use the same email you used at checkout. On your first sign-in, any password you enter will be saved for future logins so you can sync your Bible tracker and devotionals on every device.</p>
+            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Create your account, then subscribe</h1>
+            <p class="mx-auto max-w-2xl text-base text-stone-600">Step 1: create a Grounded Through Faith login with your email and a password you choose. Step 2: complete the Stripe subscription. Every future visit uses this same email and password.</p>
         </section>
     </header>
     <main class="relative z-10 space-y-20 pb-24">
@@ -65,17 +65,36 @@
             <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
                 <div class="grid gap-8 md:grid-cols-2">
                     <div class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
+                        <form id="member-register" class="space-y-4 border-b border-[var(--color-cerulean)]/15 pb-6">
+                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Step 1: Create account</div>
+                            <h2 class="section-title text-3xl font-semibold text-stone-900">Set up your login</h2>
+                            <p class="text-stone-600">Create your email and password before subscribing. You will use this login on every device.</p>
+                            <div class="space-y-2">
+                                <label for="register-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                                <input id="register-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                            </div>
+                            <div class="space-y-2">
+                                <label for="register-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                                <input id="register-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                            </div>
+                            <div class="space-y-2">
+                                <label for="register-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
+                                <input id="register-password-confirm" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
+                            </div>
+                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Create account</button>
+                            <p id="register-status" class="hidden text-sm" aria-live="polite"></p>
+                        </form>
                         <form id="member-signin" class="space-y-4">
-                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Membership Access</div>
+                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Step 2: Sign in</div>
                             <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in to your account</h2>
-                            <p class="text-stone-600" id="signin-subhead">Enter the email you used at checkout. The first password you enter will be saved to your account for all future logins.</p>
+                            <p class="text-stone-600" id="signin-subhead">Use the email and password you just created. We will remember this login for every visit.</p>
                             <div class="space-y-2">
                                 <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
                                 <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
                             </div>
                             <div class="space-y-2">
                                 <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Choose or enter your password" />
+                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Your saved password" />
                             </div>
                             <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
                             <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
@@ -159,7 +178,7 @@
                 <p>© <span id="signin-year"></span> Grounded Through Faith. All proceeds fuel the mission.</p>
                 <div class="flex flex-wrap items-center justify-center gap-4">
                     <a href="mailto:TheMissionEffect@gmail.com" class="hover:text-white">TheMissionEffect@gmail.com</a>
-                    <a href="membership.html#donate" data-donation-link class="hover:text-white">Donate</a>
+                    <a href="membership.html#join" data-donation-link class="hover:text-white">Subscribe</a>
                     <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
                     <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
                 </div>
@@ -168,14 +187,20 @@
     </footer>
     <script src="assets/membership-links.js"></script>
     <script>
-        // Client-side authentication helper for the simplified email + password flow.
-        // First-time members can type any password to create their login, and we
-        // save the session locally so navigation updates instantly.
+        // Client-side authentication helper for the two-step flow:
+        // 1) Create an email/password account
+        // 2) Subscribe via Stripe and then sign in with that same password
         (function () {
             // Update the footer year immediately for a polished experience.
             const signinYear = document.getElementById('signin-year');
             if (signinYear) signinYear.textContent = new Date().getFullYear();
 
+            // Capture registration and login inputs for the guided flow.
+            const registerForm = document.getElementById('member-register');
+            const registerEmail = document.getElementById('register-email');
+            const registerPassword = document.getElementById('register-password');
+            const registerConfirm = document.getElementById('register-password-confirm');
+            const registerFeedback = document.getElementById('register-status');
             const form = document.getElementById('member-signin');
             const emailInput = document.getElementById('member-email');
             const codeInput = document.getElementById('member-password');
@@ -194,17 +219,17 @@
                 if (el) el.classList.add('hidden');
             });
 
-            // Render a friendly status line with semantic colors.
-            function showFeedback(text, tone) {
-                if (!feedback) return;
-                feedback.textContent = text;
-                feedback.classList.remove('hidden', 'text-red-600', 'text-green-700', 'text-stone-600');
+            // Render a friendly status line with semantic colors for either form.
+            function showFeedback(target, text, tone) {
+                if (!target) return;
+                target.textContent = text;
+                target.classList.remove('hidden', 'text-red-600', 'text-green-700', 'text-stone-600');
                 if (tone === 'error') {
-                    feedback.classList.add('text-red-600');
+                    target.classList.add('text-red-600');
                 } else if (tone === 'success') {
-                    feedback.classList.add('text-green-700');
+                    target.classList.add('text-green-700');
                 } else {
-                    feedback.classList.add('text-stone-600');
+                    target.classList.add('text-stone-600');
                 }
             }
 
@@ -223,7 +248,72 @@
                 return text;
             }
 
-            // Submit the login form, saving the password on first sign-in when needed.
+            // Persist session flags so nav buttons can reflect sign-in state and subscriber status right away.
+            function storeSession(email, subscriber) {
+                try {
+                    sessionStorage.setItem('gtfMemberSession', 'true');
+                    sessionStorage.setItem('gtfMemberEmail', email);
+                    sessionStorage.setItem('gtfMemberSubscriber', subscriber ? 'true' : 'false');
+                    if (window.gtfAuth && typeof window.gtfAuth.refresh === 'function') {
+                        window.gtfAuth.refresh();
+                    }
+                } catch (error) {
+                    /* ignore storage errors */
+                }
+            }
+
+            // Support registration before checkout so Stripe can flip the subscriber flag for an existing login instead of inventing accounts.
+            if (registerForm) {
+                registerForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const email = (registerEmail?.value || '').trim();
+                    const password = (registerPassword?.value || '').trim();
+                    const confirm = (registerConfirm?.value || '').trim();
+
+                    if (!email || !password) {
+                        showFeedback(registerFeedback, 'Enter an email and password to continue.', 'error');
+                        return;
+                    }
+
+                    if (password !== confirm) {
+                        showFeedback(registerFeedback, 'Passwords must match.', 'error');
+                        return;
+                    }
+
+                    if (password.length < 8) {
+                        showFeedback(registerFeedback, 'Passwords must be at least 8 characters.', 'error');
+                        return;
+                    }
+
+                    showFeedback(registerFeedback, 'Creating your account...', 'pending');
+
+                    try {
+                        const response = await fetch('/api/account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'register', email, password }),
+                        });
+
+                        const data = await response.json();
+                        const message = friendlyMessage(data?.message, 'Could not create your account.');
+
+                        if (!response.ok) {
+                            showFeedback(registerFeedback, message, 'error');
+                            return;
+                        }
+
+                        storeSession(email, false);
+                        showFeedback(registerFeedback, 'Account created. Next, start your subscription.', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'membership.html#join';
+                        }, 600);
+                    } catch (error) {
+                        showFeedback(registerFeedback, 'Could not create your account. Please try again.', 'error');
+                    }
+                });
+            }
+
+            // Submit the login form, honoring existing passwords and redirecting non-subscribers to checkout.
             if (form) {
                 form.addEventListener('submit', async (event) => {
                     event.preventDefault();
@@ -231,11 +321,11 @@
                     const code = (codeInput?.value || '').trim();
 
                     if (!email || !code) {
-                        showFeedback('Enter your email and password.', 'error');
+                        showFeedback(feedback, 'Enter your email and password.', 'error');
                         return;
                     }
 
-                    showFeedback('Signing you in...', 'pending');
+                    showFeedback(feedback, 'Signing you in...', 'pending');
 
                     try {
                         const response = await fetch('/api/account', {
@@ -248,28 +338,29 @@
                         const message = friendlyMessage(data?.message, 'Could not sign you in.');
 
                         if (!response.ok) {
-                            showFeedback(message, 'error');
+                            showFeedback(feedback, message, 'error');
                             return;
                         }
 
-                        // Persist session flags so nav buttons update instantly.
-                        try {
-                            sessionStorage.setItem('gtfMemberSession', 'true');
-                            sessionStorage.setItem('gtfMemberEmail', email);
-                        } catch (error) {
-                            /* ignore storage errors */
-                        }
+                        const isSubscriber = data?.subscriber === true;
+                        storeSession(email, isSubscriber);
 
                         if (heading) heading.textContent = 'Signed in';
-                        if (subhead) subhead.textContent = data?.passwordCreated
-                            ? 'Password saved. Taking you to the member portal...'
-                            : 'Taking you to the member portal...';
-                        showFeedback(data?.passwordCreated ? 'Password saved and signed in! Redirecting...' : 'Signed in! Redirecting...', 'success');
+                        if (subhead) subhead.textContent = isSubscriber
+                            ? 'Taking you to the member portal...'
+                            : 'You are signed in. Start your subscription next.';
+                        showFeedback(
+                            feedback,
+                            isSubscriber
+                                ? 'Signed in! Redirecting to your member portal...'
+                                : 'Signed in! Redirecting to start your subscription...',
+                            'success'
+                        );
 
-                        const target = redirectTarget || 'member-portal.html';
+                        const target = redirectTarget || (isSubscriber ? 'member-portal.html' : 'membership.html#join');
                         window.location.href = target;
                     } catch (error) {
-                        showFeedback('Could not sign you in. Please try again.', 'error');
+                        showFeedback(feedback, 'Could not sign you in. Please try again.', 'error');
                     }
                 });
             }

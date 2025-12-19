@@ -1,3 +1,4 @@
+// Core headers keep webhook responses consistent and Stripe-friendly.
 const HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
   'Access-Control-Allow-Origin': '*',
@@ -5,11 +6,12 @@ const HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Stripe-Signature',
 };
 
-const TEMP_CODE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
-
+// Default sender used when no custom email configuration is supplied.
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
-// Seed KnownAccounts with paid member emails so they always receive codes even
-// if a webhook has not populated the database yet.
+
+// Known accounts remain from the previous implementation but no longer receive
+// automatically created logins. Users are expected to register first, then
+// subscribe, and we simply flip their subscriber flag after payment.
 const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
@@ -35,15 +37,6 @@ async function hashSecret(secret, salt) {
   return toHex(digest);
 }
 
-function generateTempCode(length = 10) {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes)
-    .map((b) => alphabet[b % alphabet.length])
-    .join('');
-}
-
 // Resolve a D1 binding for membership creation, even if the environment uses a
 // different key. Known names are preferred, but we also scan for any binding
 // exposing the D1 `prepare` API to avoid failing after successful Stripe
@@ -65,9 +58,8 @@ function requireDb(env) {
 }
 
 async function ensureSchema(db) {
-  // Create the Users table if missing so Stripe webhooks can seed members.
-  // NeedsPassword flags first-time sign-ins so the password a member enters is
-  // stored immediately, avoiding separate setup screens.
+  // Create the Users table if missing so Stripe webhooks can flip subscription
+  // flags on already-registered members instead of creating surprise accounts.
   await db
     .prepare(
       `CREATE TABLE IF NOT EXISTS Users (
@@ -79,6 +71,8 @@ async function ensureSchema(db) {
         TemporaryCodeSalt TEXT,
         TemporaryCodeExpiresAt TEXT,
         NeedsPassword INTEGER NOT NULL DEFAULT 0,
+        IsSubscriber INTEGER NOT NULL DEFAULT 0,
+        SubscriberSince TEXT,
         CreatedAt TEXT NOT NULL
       );`
     )
@@ -107,6 +101,8 @@ async function ensureSchema(db) {
   await ensureColumn('TemporaryCodeSalt', 'TEXT');
   await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
   await ensureColumn('NeedsPassword', 'INTEGER NOT NULL DEFAULT 0');
+  await ensureColumn('IsSubscriber', 'INTEGER NOT NULL DEFAULT 0');
+  await ensureColumn('SubscriberSince', 'TEXT');
 }
 
 async function trackKnownAccount(db, email) {
@@ -128,44 +124,30 @@ async function seedKnownAccounts(db) {
   }
 }
 
-async function saveTempCode(db, email, code) {
-  // Look for an existing member and refresh their temporary code without
-  // disturbing the stored password; this allows optional backup codes.
+async function updateSubscription(db, email) {
+  // Match the paying customer to an existing login and flip their subscriber
+  // flags. If the account is missing we avoid creating it automatically and
+  // simply return a hint so support can reach out.
   const user = await db
-    .prepare('SELECT Email, PasswordHash, PasswordSalt FROM Users WHERE Email = ?')
+    .prepare('SELECT Email, IsSubscriber, SubscriberSince FROM Users WHERE Email = ?')
     .bind(email)
     .first();
 
-  const tempSalt = generateSalt();
-  const tempHash = await hashSecret(code, tempSalt);
-  const expiresAt = new Date(Date.now() + TEMP_CODE_TTL_MS).toISOString();
-  const createdAt = new Date().toISOString();
-
-  if (user && user.Email) {
-    await db
-      .prepare(
-        'UPDATE Users SET TemporaryCodeHash = ?, TemporaryCodeSalt = ?, TemporaryCodeExpiresAt = ? WHERE Email = ?'
-      )
-      .bind(tempHash, tempSalt, expiresAt, email)
-      .run();
+  if (!user || !user.Email) {
     await trackKnownAccount(db, email);
-    return { exists: true, expiresAt };
+    return { updated: false, missingAccount: true };
   }
 
-  // New members start with a placeholder password hash and a NeedsPassword flag
-  // so their first login saves whatever password they enter. The temporary code
-  // remains optional for those who prefer using the emailed code one time.
-  const salt = generateSalt();
-  const placeholderHash = await hashSecret(code + generateTempCode(), salt);
+  const alreadySubscriber = user.IsSubscriber === 1 || user.IsSubscriber === '1';
+  const subscriberSince = user.SubscriberSince || new Date().toISOString();
+
   await db
-    .prepare(
-      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, NeedsPassword, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, 1, ?)'
-    )
-    .bind(email, placeholderHash, salt, tempHash, tempSalt, expiresAt, createdAt)
+    .prepare('UPDATE Users SET IsSubscriber = 1, SubscriberSince = ? WHERE Email = ?')
+    .bind(subscriberSince, email)
     .run();
 
   await trackKnownAccount(db, email);
-  return { exists: false, expiresAt };
+  return { updated: true, alreadySubscriber };
 }
 
 function resolveSender(env) {
@@ -173,10 +155,16 @@ function resolveSender(env) {
   return configured || DEFAULT_SENDER;
 }
 
-async function sendEmail(env, to, code) {
-  const subject = 'Welcome to Grounded Through Faith — set your password';
-  const text = `Thank you for joining Grounded Through Faith!\n\nVisit https://www.groundedthroughfaith.org/signin.html and enter your email. On your first sign-in, any password you choose will be saved for future logins.\n\nIf you prefer, you can also use this one-time access code: ${code}. It expires in 7 days. After signing in, you can keep using your chosen password.`;
-  const html = `<p>Thank you for joining Grounded Through Faith!</p><p>Visit <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> and enter your email.</p><p><strong>On your first sign-in, any password you choose will be saved for future logins.</strong></p><p>If you prefer, you can also use this one-time access code: <strong>${code}</strong> (expires in 7 days). After signing in, you can keep using your chosen password.</p>`;
+async function sendEmail(env, to, { missingAccount } = {}) {
+  // Payment confirmation email gently reminds the member to sign in with the
+  // password they created during registration; no temporary codes are issued.
+  const subject = 'Thank you for subscribing to Grounded Through Faith';
+  const text = missingAccount
+    ? `We received your subscription. Please finish creating your account at https://www.groundedthroughfaith.org/signin.html by registering with this email before signing in. If you ever need help, email groundedthroughfaith@gmail.com.`
+    : `Your subscription is active. Sign in at https://www.groundedthroughfaith.org/signin.html with the email and password you created. If you ever need help, email groundedthroughfaith@gmail.com.`;
+  const html = missingAccount
+    ? `<p>We received your subscription.</p><p>Please finish creating your account at <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> by registering with this email before signing in.</p><p>If you ever need help, email <a href="mailto:groundedthroughfaith@gmail.com">groundedthroughfaith@gmail.com</a>.</p>`
+    : `<p>Your subscription is active.</p><p>Sign in at <a href="https://www.groundedthroughfaith.org/signin.html">groundedthroughfaith.org/signin.html</a> with the email and password you created.</p><p>If you ever need help, email <a href="mailto:groundedthroughfaith@gmail.com">groundedthroughfaith@gmail.com</a>.</p>`;
 
   const resendKey = (env?.RESEND_KEY || '').trim();
   const sender = resolveSender(env);
@@ -259,25 +247,19 @@ export async function onRequestPost({ env, request }) {
     return errorResponse;
   }
 
-  const code = generateTempCode();
-  const { expiresAt } = await saveTempCode(db, customerEmail, code);
-  const emailStatus = await sendEmail(env, customerEmail, code);
+  const result = await updateSubscription(db, customerEmail);
+  const emailStatus = await sendEmail(env, customerEmail, { missingAccount: result.missingAccount });
 
-  if (!emailStatus.sent) {
-    return new Response(JSON.stringify({ message: emailStatus.reason || 'Unable to send membership code email' }), {
-      status: 500,
-      headers: HEADERS,
-    });
-  }
+  const responseBody = {
+    updated: result.updated,
+    alreadySubscriber: result.alreadySubscriber || false,
+    missingAccount: result.missingAccount || false,
+    email: customerEmail,
+    emailDelivered: emailStatus.sent || false,
+    emailError: emailStatus.sent ? null : emailStatus.reason || null,
+  };
 
-  return new Response(
-    JSON.stringify({
-      issued: true,
-      email: customerEmail,
-      expiresAt,
-      emailDelivered: emailStatus.sent,
-      emailError: emailStatus.reason || null,
-    }),
-    { status: 200, headers: HEADERS }
-  );
+  // We return 200 regardless to avoid Stripe retries, but the body reveals
+  // whether the account was missing so support can reconcile it manually.
+  return new Response(JSON.stringify(responseBody), { status: 200, headers: HEADERS });
 }

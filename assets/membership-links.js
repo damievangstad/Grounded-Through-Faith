@@ -1,7 +1,8 @@
 (function () {
+  // Primary checkout targets default to the membership join section.
   const FALLBACK_DETAILS = 'membership.html#join';
   const DEFAULT_PAYMENT_LINK = '';
-  const DONATION_FALLBACK = 'membership.html#donate';
+  const SUBSCRIBE_FALLBACK = 'membership.html#join';
 
   const state = {
     membershipLink: DEFAULT_PAYMENT_LINK,
@@ -77,8 +78,11 @@
   function applyDonationLink() {
     document.querySelectorAll('[data-donation-link]').forEach((anchor) => {
       if (!(anchor instanceof HTMLAnchorElement)) return;
-      const donationHref = state.donationLink || state.donationPriceLink || DONATION_FALLBACK;
+      // Treat donation buttons as subscription entry points until we reintroduce
+      // separate donation flows.
+      const donationHref = state.membershipLink || state.donationLink || state.donationPriceLink || SUBSCRIBE_FALLBACK;
       anchor.href = donationHref;
+      anchor.textContent = anchor.textContent?.trim() ? anchor.textContent : 'Subscribe';
       anchor.removeAttribute('aria-disabled');
       anchor.classList.remove('opacity-60');
       anchor.removeAttribute('tabindex');

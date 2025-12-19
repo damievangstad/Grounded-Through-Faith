@@ -1,3 +1,5 @@
+// Shared HTTP headers keep every response CORS-friendly and JSON encoded so
+// the browser clients can interpret results without extra parsing steps.
 const DEFAULT_HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
   'Access-Control-Allow-Origin': '*',
@@ -5,11 +7,13 @@ const DEFAULT_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+// Outbound email defaults keep transactional messages consistent even when no
+// custom sender is configured in the environment.
 const DEFAULT_SENDER = 'groundedthroughfaith@gmail.com';
-// Seed KnownAccounts with paying member emails so lookup and code requests work
-// even before Stripe webhooks insert user rows. Unlike the previous iteration
-// that auto-created accounts for any email, we now limit access to emails that
-// came through checkout or were explicitly seeded as members.
+
+// Previously we tried to mint accounts automatically during checkout, but that
+// caused confusion. KnownAccounts remains to honor earlier seeded rows, yet the
+// primary path now requires users to register first and then subscribe.
 const DEFAULT_KNOWN_EMAILS = ['themissioneffect@gmail.com', 'groundedthroughfaith@gmail.com'];
 
 function normalizeEmail(email) {
@@ -53,6 +57,8 @@ async function ensureSchema(db) {
         TemporaryCodeSalt TEXT,
         TemporaryCodeExpiresAt TEXT,
         NeedsPassword INTEGER NOT NULL DEFAULT 0,
+        IsSubscriber INTEGER NOT NULL DEFAULT 0,
+        SubscriberSince TEXT,
         CreatedAt TEXT NOT NULL
       );`
     )
@@ -94,6 +100,8 @@ async function ensureSchema(db) {
   await ensureColumn('TemporaryCodeSalt', 'TEXT');
   await ensureColumn('TemporaryCodeExpiresAt', 'TEXT');
   await ensureColumn('NeedsPassword', 'INTEGER NOT NULL DEFAULT 0');
+  await ensureColumn('IsSubscriber', 'INTEGER NOT NULL DEFAULT 0');
+  await ensureColumn('SubscriberSince', 'TEXT');
 }
 
 async function trackKnownAccount(db, email) {
@@ -113,40 +121,6 @@ async function seedKnownAccounts(db) {
   for (const email of DEFAULT_KNOWN_EMAILS) {
     await trackKnownAccount(db, email);
   }
-}
-
-// Create a lightweight placeholder user if a KnownAccounts record exists but no
-// corresponding Users row is present. This keeps paid members from hitting
-// "account not found" errors when requesting codes before the Stripe webhook
-// has populated the Users table.
-async function ensureUserForKnownAccount(db, email) {
-  if (!email) return null;
-
-  const existing = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-  if (existing && existing.Email) {
-    return existing;
-  }
-
-  const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
-  if (!known || !known.Email) {
-    return null;
-  }
-
-  // Create a placeholder user record with a throwaway password hash and flag
-  // it as needing a real password so the first login can set one.
-  const placeholderSalt = generateSalt();
-  const placeholderHash = await hashPassword(generateTempCode() + generateTempCode(), placeholderSalt);
-  const createdAt = new Date().toISOString();
-
-  await db
-    .prepare(
-      'INSERT INTO Users (Email, PasswordHash, PasswordSalt, NeedsPassword, CreatedAt) VALUES (?, ?, ?, 1, ?)'
-    )
-    .bind(email, placeholderHash, placeholderSalt, createdAt)
-    .run();
-
-  await trackKnownAccount(db, email);
-  return { Email: email };
 }
 
 function toHex(buffer) {
@@ -280,32 +254,71 @@ export async function onRequestPost({ env, request }) {
     });
   }
 
+  // Registration must capture a password upfront because we now insist on
+  // creating accounts before checkout instead of inventing credentials after
+  // payment succeeds.
+  if (action === 'register' && !password) {
+    return new Response(JSON.stringify({ message: 'Choose a password to create your account.' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
+    });
+  }
+
   let db;
   try {
     db = requireDb(env);
     await ensureSchema(db);
-    await seedKnownAccounts(db);
   } catch (errorResponse) {
     return errorResponse;
   }
 
-  if (action === 'login') {
-    // Pull the account; if it does not exist, try to hydrate it from a seeded
-    // KnownAccounts entry so only paid or pre-approved emails can sign in.
-    let user = await db
+  if (action === 'register') {
+    // New members create a credential before paying. We only block duplicates
+    // and keep the flow simple so checkout can rely on an existing account.
+    const existing = await db
+      .prepare('SELECT Email FROM Users WHERE Email = ?')
+      .bind(email)
+      .first();
+
+    if (existing && existing.Email) {
+      return new Response(JSON.stringify({ message: 'An account already exists for this email. Please sign in instead.' }), {
+        status: 409,
+        headers: DEFAULT_HEADERS,
+      });
+    }
+
+    const salt = generateSalt();
+    const hash = await hashPassword(password, salt);
+    const createdAt = new Date().toISOString();
+
+    await db
       .prepare(
-        'SELECT Email, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, PasswordHash, PasswordSalt, NeedsPassword FROM Users WHERE Email = ?'
+        'INSERT INTO Users (Email, PasswordHash, PasswordSalt, NeedsPassword, IsSubscriber, CreatedAt) VALUES (?, ?, ?, 0, 0, ?)'
+      )
+      .bind(email, hash, salt, createdAt)
+      .run();
+
+    await trackKnownAccount(db, email);
+
+    return new Response(
+      JSON.stringify({ userId: email, subscriber: false, passwordCreated: true, created: true }),
+      { status: 201, headers: DEFAULT_HEADERS }
+    );
+  }
+
+  if (action === 'login') {
+    // Pull the account; we no longer invent users during checkout, so a missing
+    // email means the member must register before subscribing.
+    const user = await db
+      .prepare(
+        'SELECT Email, TemporaryCodeHash, TemporaryCodeSalt, TemporaryCodeExpiresAt, PasswordHash, PasswordSalt, NeedsPassword, IsSubscriber FROM Users WHERE Email = ?'
       )
       .bind(email)
       .first();
 
     if (!user || !user.Email) {
-      user = await ensureUserForKnownAccount(db, email);
-    }
-
-    if (!user || !user.Email) {
       return new Response(
-        JSON.stringify({ message: 'Email not found. Use the email from your membership purchase.' }),
+        JSON.stringify({ message: 'Email not found. Please create an account before subscribing.' }),
         { status: 404, headers: DEFAULT_HEADERS }
       );
     }
@@ -328,7 +341,10 @@ export async function onRequestPost({ env, request }) {
         .bind(hash, salt, email)
         .run();
 
-      return new Response(JSON.stringify({ userId: email, passwordCreated: true }), { status: 200, headers: DEFAULT_HEADERS });
+      return new Response(
+        JSON.stringify({ userId: email, passwordCreated: true, subscriber: user.IsSubscriber === 1 || user.IsSubscriber === '1' }),
+        { status: 200, headers: DEFAULT_HEADERS }
+      );
     }
 
     // Otherwise validate against either a fresh temporary code or the stored
@@ -352,22 +368,23 @@ export async function onRequestPost({ env, request }) {
         .run();
     }
 
-    return new Response(JSON.stringify({ userId: email, passwordCreated: false }), { status: 200, headers: DEFAULT_HEADERS });
+    return new Response(
+      JSON.stringify({
+        userId: email,
+        passwordCreated: false,
+        subscriber: user.IsSubscriber === 1 || user.IsSubscriber === '1',
+      }),
+      { status: 200, headers: DEFAULT_HEADERS }
+    );
   }
 
   if (action === 'lookup-account') {
-    // Confirm whether the email already exists as a user or known account so the
-    // UI can prompt the member to use the same address they used at checkout.
+    // Confirm whether the email already exists so the UI can nudge members to
+    // sign in instead of creating duplicate accounts.
     const user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-    const known = await db.prepare('SELECT Email FROM KnownAccounts WHERE Email = ?').bind(email).first();
-    const exists = Boolean(user?.Email || known?.Email);
-    if (exists) {
-      await trackKnownAccount(db, email);
-    }
-    return new Response(JSON.stringify({ exists, created: false }), {
-      status: exists ? 200 : 404,
-      headers: DEFAULT_HEADERS,
-    });
+    const exists = Boolean(user?.Email);
+    if (exists) await trackKnownAccount(db, email);
+    return new Response(JSON.stringify({ exists, created: false }), { status: exists ? 200 : 404, headers: DEFAULT_HEADERS });
   }
 
   if (action === 'set-password') {
@@ -385,51 +402,12 @@ export async function onRequestPost({ env, request }) {
   }
 
   if (action === 'request-temp-code') {
-    // Send a login code only when the email matches an existing member account
-    // or a KnownAccounts entry that originated from Stripe checkout seeding.
-    let user = await db.prepare('SELECT Email FROM Users WHERE Email = ?').bind(email).first();
-
-    if (!user || !user.Email) {
-      user = await ensureUserForKnownAccount(db, email);
-    }
-
-    if (!user || !user.Email) {
-      return new Response(JSON.stringify({ message: 'Email not found. Use the email from your membership purchase.' }), {
-        status: 404,
-        headers: DEFAULT_HEADERS,
-      });
-    }
-
-    await trackKnownAccount(db, email);
-
-    const code = generateTempCode();
-    const tempSalt = generateSalt();
-    const tempHash = await hashPassword(code, tempSalt);
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
-    await db
-      .prepare(
-        'UPDATE Users SET TemporaryCodeHash = ?, TemporaryCodeSalt = ?, TemporaryCodeExpiresAt = ? WHERE Email = ?'
-      )
-      .bind(tempHash, tempSalt, expiresAt, email)
-      .run();
-
-    const emailStatus = await sendEmail(env, email, {
-      from: 'groundedthroughfaith@gmail.com',
-      subject: 'Your temporary sign-in code',
-      text: `Here is your temporary sign-in code: ${code}. It expires in 7 days. You can enter any password on your first sign-in and we will save it for future logins.`,
-      html: `<p>Here is your temporary sign-in code:</p><p><strong style="font-size:18px;letter-spacing:2px;">${code}</strong></p><p>This code expires in 7 days. On your first sign-in you can enter any password you like and we will save it for future logins.</p>`,
+    // Temporary codes are no longer issued automatically. The flow now focuses
+    // on password-based sign-ins after users have created accounts.
+    return new Response(JSON.stringify({ message: 'Temporary codes are disabled. Please sign in with your password.' }), {
+      status: 400,
+      headers: DEFAULT_HEADERS,
     });
-
-    const delivered = Boolean(emailStatus?.sent);
-    const message = delivered
-      ? 'Temporary code sent'
-      : `Login code created, but email could not be sent${emailStatus?.reason ? `: ${emailStatus.reason}` : ''}`;
-
-    return new Response(
-      JSON.stringify({ message, expiresAt, code, emailDelivered: delivered, emailError: delivered ? null : emailStatus?.reason || 'Email delivery failed' }),
-      { status: delivered ? 200 : 207, headers: DEFAULT_HEADERS }
-    );
   }
 
   if (action === 'reset-password') {
