@@ -53,11 +53,12 @@
                 <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
                 <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
                 <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
-                <a data-auth-link="signin" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+                <a data-auth-link="signin" data-auth-show="signed-out" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
+                <a data-auth-link="portal" data-auth-show="signed-in" href="member-portal.html" class="hidden transition text-[var(--color-cerulean)] hover:text-[var(--color-honey)]">Member Portal</a>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
-                <a data-donation-link class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]" href="#">Donate</a>
+                <a data-donation-link class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]" href="#">Subscribe</a>
             </div>
         </nav>
     </header>
@@ -101,7 +102,7 @@
                     <a href="membership.html" class="hover:text-white">Membership</a>
                     <a href="faith-formation-ai.html" class="hover:text-white">Faith Formation AI</a>
                     <a href="about.html" class="hover:text-white">About</a>
-                    <a data-donation-link class="hover:text-white" href="#">Donate</a>
+                    <a data-donation-link class="hover:text-white" href="#">Subscribe</a>
                 </div>
             </div>
             <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
@@ -109,7 +110,7 @@
                 <div class="flex items-center gap-4">
                     <a data-facebook-link href="https://www.facebook.com/" target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
                     <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
-                    <a data-donation-link class="hover:text-white" href="#">Donate</a>
+                    <a data-donation-link class="hover:text-white" href="#">Subscribe</a>
                 </div>
             </div>
         </div>
@@ -176,7 +177,8 @@
             titleEl.textContent = study.title || 'Custom Study';
             metaEl.textContent = study.createdAt ? `Saved on ${new Date(study.createdAt).toLocaleDateString()}` : '';
             descEl.textContent = 'Mark each step below as you complete it. Your progress is saved to your account.';
-            contentEl.innerHTML = formatTextToHtml(study.content || 'No study content was saved.');
+            const content = stripClosingPrayer(study.content || '');
+            contentEl.innerHTML = formatTextToHtml(content || 'No study content was saved.');
 
             renderSteps(study);
 
@@ -185,6 +187,8 @@
                 stepsWrapper.innerHTML = '';
                 const steps = Array.isArray(current.steps) ? current.steps : [];
                 const progress = current.stepsProgress || {};
+                const cadence = detectPlanCadence(steps);
+                const detailMap = buildStepDetails(content, steps);
 
                 if (steps.length === 0) {
                     const empty = document.createElement('div');
@@ -198,7 +202,18 @@
                 const completed = steps.filter((step) => progress[step.id]).length;
                 updateProgress(completed, steps.length);
 
-                steps.forEach((step) => {
+                const cadenceRow = document.createElement('div');
+                cadenceRow.className = 'flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]/80';
+                const cadenceLabel = document.createElement('span');
+                cadenceLabel.textContent = cadence.label;
+                const cadenceCount = document.createElement('span');
+                cadenceCount.className = 'rounded-full bg-white/70 px-2 py-1 text-[var(--color-stone)]';
+                cadenceCount.textContent = `${steps.length} steps`;
+                cadenceRow.appendChild(cadenceLabel);
+                cadenceRow.appendChild(cadenceCount);
+                stepsWrapper.appendChild(cadenceRow);
+
+                steps.forEach((step, index) => {
                     const card = document.createElement('div');
                     card.className = 'flex items-start gap-3 rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/90 p-4 shadow-sm';
 
@@ -214,10 +229,30 @@
                     });
 
                     const textBlock = document.createElement('div');
+                    const metaRow = document.createElement('div');
+                    metaRow.className = 'flex flex-wrap items-center gap-2';
+                    const unitLabel = document.createElement('span');
+                    unitLabel.className = 'text-xs font-semibold text-stone-500';
+                    unitLabel.textContent = `${cadence.unit} ${index + 1}`;
+                    metaRow.appendChild(unitLabel);
                     const title = document.createElement('p');
                     title.className = 'font-semibold text-stone-900';
                     title.textContent = step.title || 'Study step';
-                    textBlock.appendChild(title);
+                    metaRow.appendChild(title);
+                    textBlock.appendChild(metaRow);
+                    if (step.description) {
+                        const desc = document.createElement('p');
+                        desc.className = 'text-sm text-stone-700';
+                        desc.textContent = step.description;
+                        textBlock.appendChild(desc);
+                    }
+
+                    if (detailMap[step.id]) {
+                        const detail = document.createElement('div');
+                        detail.className = 'mt-2 text-sm text-stone-700';
+                        detail.innerHTML = detailMap[step.id];
+                        textBlock.appendChild(detail);
+                    }
 
                     card.appendChild(checkbox);
                     card.appendChild(textBlock);
@@ -262,6 +297,167 @@
                         return `<p>${section.replace(/\n/g, '<br>')}</p>`;
                     })
                     .join('\n');
+            }
+
+            function stripClosingPrayer(text) {
+                const raw = String(text || '');
+                const marker = raw.search(/\n?\s*closing\s+prayer[:]?/i);
+                if (marker === -1) return raw;
+                return raw.slice(0, marker).trim();
+            }
+
+            function buildStepDetails(content, steps) {
+                const details = {};
+                const cleanContent = stripClosingPrayer(content || '');
+                const sections = parseContentSections(cleanContent);
+
+                steps.forEach((step, index) => {
+                    const normalizedStep = normalizeLabel(step.title || '');
+                    let match = sections.find((section) => {
+                        const heading = normalizeLabel(section.heading);
+                        return heading.startsWith(normalizedStep) || normalizedStep.startsWith(heading);
+                    });
+
+                    if (!match && sections[index]) match = sections[index];
+                    if (match && match.body.trim()) {
+                        details[step.id] = formatRichText(match.body);
+                    } else if (match && match.preview) {
+                        details[step.id] = formatRichText(match.preview);
+                    }
+                });
+
+                if (!Object.keys(details).length && String(cleanContent || '').trim() && steps[0]) {
+                    details[steps[0].id] = formatRichText(cleanContent);
+                }
+
+                return details;
+            }
+
+            function parseContentSections(content) {
+                const text = String(content || '').replace(/\r\n/g, '\n');
+                if (!text.trim()) return [];
+
+                const normalized = text
+                    .replace(/#+\s*(?:day|week|session)\s*\d+/gi, (match) => `\n${match}`)
+                    .replace(/(?:^|\s)(?:\*\*\s*)?(day|week|session)\s*\d+[.:]/gi, (match) => `\n${match.trim()}`)
+                    .replace(/\n{3,}/g, '\n\n');
+
+                const lines = normalized.split('\n');
+                const sections = [];
+                let current = null;
+                let seenHeading = false;
+
+                lines.forEach((line) => {
+                    const trimmed = line.trim();
+                    const headingMatch = trimmed.match(/^(?:#+\s*)?(day|week|session)\s*(\d+)(?:[.:\-]\s*|\s+)?(.*)$/i);
+                    if (headingMatch) {
+                        seenHeading = true;
+                        if (current) sections.push(current);
+                        const [, label, number, remainder] = headingMatch;
+                        const headingText = `${capitalizeFirst(label)} ${number}${remainder ? `: ${remainder}` : ''}`.trim();
+                        current = { heading: headingText, bodyLines: remainder ? [remainder] : [] };
+                    } else if (current && seenHeading) {
+                        current.bodyLines.push(line);
+                    }
+                });
+
+                if (current) sections.push(current);
+
+                return sections.map((section) => {
+                    const body = section.bodyLines.join('\n').trim();
+                    return {
+                        heading: cleanStepTitle(section.heading),
+                        body,
+                        preview: createPreview(body || section.heading),
+                    };
+                });
+            }
+
+            function normalizeLabel(text) {
+                return String(text || '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, ' ')
+                    .trim();
+            }
+
+            function createPreview(text) {
+                const clean = cleanStepTitle(text || '');
+                if (!clean) return '';
+                return truncate(clean, 160);
+            }
+
+            function cleanStepTitle(value) {
+                return String(value || '')
+                    .replace(/^[#>*\-\s]+/, '')
+                    .replace(/^\d+\.\s*/, '')
+                    .replace(/\*\*([^*]+)\*\*/g, '$1')
+                    .replace(/\*(.+?)\*/g, '$1')
+                    .replace(/`([^`]+)`/g, '$1')
+                    .trim();
+            }
+
+            function truncate(value, max) {
+                const text = String(value || '').trim();
+                if (text.length <= max) return text;
+                return `${text.slice(0, Math.max(0, max - 1)).trim()}…`;
+            }
+
+            function capitalizeFirst(value) {
+                const text = String(value || '');
+                return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '';
+            }
+
+            function formatRichText(value) {
+                const safe = String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+
+                const formatted = safe
+                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+                const lines = formatted
+                    .split(/\n+/)
+                    .map((line) => line.trim())
+                    .filter(Boolean);
+
+                const blocks = [];
+                let listItems = [];
+
+                const flushList = () => {
+                    if (!listItems.length) return;
+                    blocks.push(`<ul class="list-disc space-y-1 pl-5">${listItems.join('')}</ul>`);
+                    listItems = [];
+                };
+
+                lines.forEach((line) => {
+                    const bullet = line.match(/^([-*•])\s+(.*)$/);
+                    if (bullet) {
+                        listItems.push(`<li>${bullet[2]}</li>`);
+                        return;
+                    }
+
+                    flushList();
+                    blocks.push(`<p>${line}</p>`);
+                });
+
+                flushList();
+
+                return blocks.join('');
+            }
+
+            function detectPlanCadence(steps) {
+                const titles = Array.isArray(steps) ? steps.map((s) => String(s.title || '')).filter(Boolean) : [];
+                const lowered = titles.map((t) => t.toLowerCase());
+                const dayMentions = lowered.filter((t) => t.includes('day')).length;
+                const weekMentions = lowered.filter((t) => t.startsWith('week')).length;
+                const sessionMentions = lowered.filter((t) => t.startsWith('session')).length;
+
+                if (dayMentions && dayMentions >= weekMentions) return { unit: 'Day', label: 'Daily plan' };
+                if (weekMentions && weekMentions >= dayMentions) return { unit: 'Week', label: 'Weekly plan' };
+                if (sessionMentions) return { unit: 'Session', label: 'Session plan' };
+                return { unit: 'Step', label: 'Study steps' };
             }
 
             const yearEl = document.getElementById('footer-year');

@@ -16,9 +16,18 @@
     }
   }
 
+  function isSubscriber() {
+    try {
+      return sessionStorage.getItem('gtfMemberSubscriber') === 'true';
+    } catch (error) {
+      return false;
+    }
+  }
+
   function updateAuthUI() {
     const signedIn = isSignedIn();
     const email = getEmail();
+    const subscriber = isSubscriber();
 
     document.querySelectorAll('[data-auth-show="signed-in"]').forEach((el) => {
       el.classList.toggle('hidden', !signedIn);
@@ -28,16 +37,23 @@
     });
 
     const navSignIn = document.querySelector('[data-auth-link="signin"]');
+    const navPortal = document.querySelector('[data-auth-link="portal"]');
     if (navSignIn) {
-      if (signedIn) {
-        navSignIn.textContent = 'Member Portal';
-        navSignIn.href = 'member-portal.html';
-        navSignIn.classList.add('text-[var(--color-cerulean)]');
-      } else {
-        navSignIn.textContent = 'Sign In';
-        navSignIn.href = 'signin.html';
-        navSignIn.classList.remove('text-[var(--color-cerulean)]');
-      }
+      navSignIn.classList.toggle('hidden', signedIn && subscriber);
+      navSignIn.classList.toggle('inline-flex', !signedIn || !subscriber);
+      navSignIn.classList.toggle('inline-block', !signedIn || !subscriber);
+      navSignIn.textContent = !signedIn ? 'Sign In' : 'Subscribe';
+      navSignIn.href = !signedIn ? 'signin.html' : 'membership.html#join';
+      navSignIn.classList.toggle('text-[var(--color-cerulean)]', signedIn && !subscriber);
+    }
+
+    if (navPortal) {
+      navPortal.classList.toggle('hidden', !signedIn || !subscriber);
+      navPortal.classList.toggle('inline-flex', signedIn && subscriber);
+      navPortal.classList.toggle('inline-block', signedIn && subscriber);
+      navPortal.textContent = 'Member Portal';
+      navPortal.href = 'member-portal.html';
+      navPortal.classList.add('text-[var(--color-cerulean)]');
     }
 
     document.querySelectorAll('[data-auth-indicator]').forEach((el) => {
@@ -70,5 +86,6 @@
     refresh: updateAuthUI,
     signedIn: isSignedIn,
     email: getEmail,
+    subscriber: isSubscriber,
   };
 })();
