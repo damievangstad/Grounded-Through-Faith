@@ -66,6 +66,14 @@
         el.classList.add('hidden');
       }
     });
+
+    document.querySelectorAll('[data-auth-email]').forEach((el) => {
+      if (signedIn) {
+        el.textContent = email || 'Account';
+      } else {
+        el.textContent = '';
+      }
+    });
   }
 
   window.addEventListener('visibilitychange', () => {

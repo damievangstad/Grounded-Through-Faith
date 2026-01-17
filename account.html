@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account | Grounded Through Faith</title>
+    <meta name="description" content="View your account details for Grounded Through Faith." />
+    <link rel="canonical" href="https://www.groundedthroughfaith.org/account.html" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap"
+          rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light;
+            --color-morning-sky: #f8f1e2;
+            --color-mist: #e8d9b8;
+            --color-honey: #c9a03a;
+            --color-cerulean: #7a5a2a;
+        }
+
+        body {
+            font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/30 text-stone-800">
+    <main class="mx-auto max-w-3xl px-6 py-16">
+        <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl shadow-[var(--color-mist)]/70">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Account</p>
+            <h1 class="section-title mt-3 text-3xl font-semibold text-stone-900 md:text-4xl">Your account details</h1>
+            <div class="mt-6 rounded-2xl border border-[var(--color-mist)]/60 bg-white/80 p-5 shadow-sm">
+                <p class="text-sm text-stone-600">Signed in email</p>
+                <p class="mt-2 text-lg font-semibold text-stone-900" data-auth-email>Account</p>
+                <p data-auth-show="signed-out" class="mt-3 hidden text-sm text-stone-600">
+                    You are not signed in. <a href="signin.html" class="font-semibold text-[var(--color-cerulean)] hover:text-[#8a6426]">Sign in</a>.
+                </p>
+            </div>
+        </div>
+    </main>
+    <script src="assets/auth-state.js"></script>
+</body>
+</html>

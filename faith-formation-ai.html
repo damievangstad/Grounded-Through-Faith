@@ -39,6 +39,17 @@
         .section-title {
             font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
         }
+
+        body.assistant-chat-active #assistant-form {
+            position: sticky;
+            bottom: 1.5rem;
+            z-index: 20;
+            backdrop-filter: blur(12px);
+        }
+
+        body.assistant-chat-active #assistant-results {
+            padding-bottom: 6rem;
+        }
     </style>
     <script type="application/ld+json">
         {
@@ -183,6 +194,7 @@
         const FAITH_FORMATION_USAGE_KEY = 'gtfFaithFormationFreeUses';
         const MEMBER_SESSION_KEY = 'gtfMemberSession';
         const CONVERSATION_STORAGE_KEY = 'gtfFaithFormationConversation';
+        const CONVERSATION_ID_KEY = 'gtfFaithFormationConversationId';
 
         function loadConversationHistory() {
             try {
@@ -205,13 +217,28 @@
             }
         }
 
-        async function streamAssistant(messages, handlers = {}) {
+        function getConversationId() {
+            try {
+                const stored = localStorage.getItem(CONVERSATION_ID_KEY) || sessionStorage.getItem(CONVERSATION_ID_KEY);
+                if (stored) return stored;
+                const generated = typeof crypto?.randomUUID === 'function'
+                    ? crypto.randomUUID()
+                    : `gtf-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                localStorage.setItem(CONVERSATION_ID_KEY, generated);
+                sessionStorage.setItem(CONVERSATION_ID_KEY, generated);
+                return generated;
+            } catch (error) {
+                return `gtf-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            }
+        }
+
+        async function streamAssistant(conversationId, messages, handlers = {}) {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ messages }),
+                body: JSON.stringify({ conversationId, messages }),
             });
 
             if (!response.ok || !response.body) {
@@ -322,12 +349,14 @@
             const paywall = document.getElementById('assistant-paywall');
             const submitButton = form.querySelector('button[type="submit"]');
             const conversation = loadConversationHistory();
+            const conversationId = getConversationId();
             const portalAvailable = Boolean(window.gtfPortalData && window.gtfPortalData.isSignedIn && window.gtfPortalData.isSignedIn());
             let selectedMode = null;
             let currentResponse = null;
 
             setupModeChooser();
             rehydrateConversation(conversation);
+            setChatDocked(conversation.length > 0);
 
             if (!hasFreeQuota()) {
                 showPaywall(paywall);
@@ -369,6 +398,7 @@
                 const requestPrompt = buildRequestPrompt({ prompt, mode: selectedMode, days: daysValue }, conversation);
                 const displayPrompt = formatUserPromptSummary({ prompt, mode: selectedMode, days: daysValue });
                 conversation.push({ role: 'user', content: requestPrompt, request: displayPrompt, meta: { mode: selectedMode, days: daysValue } });
+                setChatDocked(true);
 
                 setFeedback('Praying with your request...', 'info');
                 toggleSubmitting(true);
@@ -378,7 +408,7 @@
 
                 try {
                     const messages = buildMessages(conversation);
-                    const finalText = await streamAssistant(messages, {
+                    const finalText = await streamAssistant(conversationId, messages, {
                         onToken: (partial) => {
                             currentResponse = { prompt: displayPrompt, text: partial, mode: selectedMode };
                             renderResponse(currentResponse, { isFinal: false, showPortalSave });
@@ -423,7 +453,7 @@
 
                 const common = [
                     'You are the Faith Formation AI, a Catholic spiritual companion.',
-                    'Stay pastoral, Christ-centered, and concise. Use simple markdown headings and short paragraphs.',
+                    'Stay pastoral, Christ-centered, and concise. Respond conversationally like ChatGPT and continue the thread in the same manner. Use simple markdown headings and short paragraphs.',
                 ];
 
                 let task = '';
@@ -479,6 +509,10 @@
                         return `${label}: ${truncateText(entry.request || entry.content || '', 320)}`;
                     })
                     .join('\n');
+            }
+
+            function setChatDocked(isActive) {
+                document.body.classList.toggle('assistant-chat-active', Boolean(isActive));
             }
 
             function setupModeChooser() {

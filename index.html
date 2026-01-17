@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
@@ -55,6 +55,14 @@
         .section-title {
             font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
         }
+
+        details > summary {
+            list-style: none;
+        }
+
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
     </style>
     <script type="application/ld+json">
         {
@@ -91,31 +99,71 @@
         <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl"
              aria-hidden="true"></div>
 
-        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
-            <div class="text-center md:text-left">
-                <a href="index.html" class="text-lg font-semibold tracking-wide text-stone-900 transition hover:text-[var(--color-honey)]">Grounded Through Faith</a>
-                <p class="text-sm text-stone-500">Walk with Jesus.</p>
+        <div class="relative z-10 mx-auto flex max-w-6xl justify-end px-6 pt-6">
+            <div data-auth-show="signed-in" class="hidden">
+                <details class="group relative">
+                    <summary class="flex cursor-pointer items-center gap-2 rounded-full bg-[var(--color-morning-sky)]/90 px-4 py-2 text-xs font-semibold text-stone-700 shadow-lg shadow-[var(--color-mist)]/50 ring-1 ring-[var(--color-honey)]/40 transition hover:text-[var(--color-cerulean)]">
+                        <span data-auth-email>Account</span>
+                        <span class="text-[10px] text-stone-400 transition group-open:text-[var(--color-cerulean)]">v</span>
+                    </summary>
+                    <div class="absolute right-0 mt-2 hidden w-48 rounded-2xl border border-[var(--color-mist)]/70 bg-white/95 p-2 text-sm shadow-xl group-open:block">
+                        <a href="account.html" class="block rounded-xl px-3 py-2 text-stone-700 transition hover:bg-[var(--color-mist)]/40">Account</a>
+                        <a href="member-portal.html" class="block rounded-xl px-3 py-2 text-stone-700 transition hover:bg-[var(--color-mist)]/40">Dashboard</a>
+                    </div>
+                </details>
             </div>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
-                <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
-                <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
-                <div data-auth-show="signed-out" class="flex flex-col items-center gap-1 text-[11px] font-normal text-stone-500 md:items-start">
-                    <a data-auth-link="signin" href="signin.html" class="text-sm font-medium text-stone-600 transition hover:text-[var(--color-honey)]">Sign In</a>
-                    <span>Create an account for full AI access, a study tracker, and a Bible reading tracker.</span>
-                </div>
-                <a data-auth-link="portal" data-auth-show="signed-in" href="member-portal.html" class="hidden transition text-[var(--color-cerulean)] hover:text-[var(--color-honey)]">Member Portal</a>
-                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
-                <a data-membership-link="checkout" href="membership.html#join"
-                   class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
-                    Join Community
-                </a>
-            </div>
-        </nav>
+        </div>
 
-        <section class="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center">
+        <section class="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-6 pb-24 pt-20 text-center">
+            <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">
+                Faith Formation AI
+            </span>
+            <h1 class="section-title mt-6 text-4xl font-semibold text-stone-900 md:text-5xl lg:text-6xl">
+                What are you working on?
+            </h1>
+            <p class="mt-3 max-w-2xl text-base text-stone-600 md:text-lg">
+                Share your question or formation goal and receive Scripture, reflection, and next steps.
+            </p>
+            <form class="mt-10 w-full max-w-3xl">
+                <div class="relative flex items-center rounded-full border border-[var(--color-mist)]/70 bg-white px-5 py-3 shadow-xl shadow-[var(--color-mist)]/60">
+                    <span class="absolute left-6 text-xl font-semibold text-stone-500">+</span>
+                    <input type="text"
+                           aria-label="Ask faith formation AI"
+                           placeholder="Ask anything"
+                           class="w-full bg-transparent py-2 pl-8 pr-24 text-sm text-stone-700 placeholder:text-stone-400 focus:outline-none md:text-base" />
+                    <button type="button"
+                            class="absolute right-16 inline-flex h-9 w-9 items-center justify-center rounded-full text-stone-500 transition hover:bg-stone-100"
+                            aria-label="Use voice">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
+                            <path fill="currentColor" d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Zm-5 9a1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.08A7 7 0 0 0 19 12a1 1 0 1 0-2 0 5 5 0 0 1-10 0Z"/>
+                        </svg>
+                    </button>
+                    <button type="submit"
+                            class="absolute right-2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-honey)] text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]"
+                            aria-label="Send">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
+                            <path fill="currentColor" d="M5 3h2v18H5V3Zm4 4h2v10H9V7Zm4-2h2v14h-2V5Zm4 5h2v4h-2v-4Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">
+                <button type="button"
+                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+                    Create a 7-day devotional
+                </button>
+                <button type="button"
+                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+                    Help me study Scripture
+                </button>
+                <button type="button"
+                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+                    I'm wrestling with a question
+                </button>
+            </div>
+        </section>
+
+        <section class="relative z-10 mx-auto hidden max-w-6xl flex-col gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center">
             <div class="flex-1 space-y-8">
                 <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">
                     Catholic Formation Hub
@@ -139,17 +187,13 @@
                        class="rounded-full border border-[var(--color-honey)]/60 px-6 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:bg-[var(--color-honey)] hover:text-stone-900">
                         Explore Study Paths
                     </a>
-                    <a href="membership.html"
-                       class="rounded-full border border-[var(--color-cerulean)]/50 px-6 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:bg-[var(--color-cerulean)] hover:text-white">
-                        Join the Community
-                    </a>
                 </div>
             </div>
             <div class="flex-1">
                 <div class="relative rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
                     <div class="space-y-6 text-sm text-stone-600">
                         <p class="text-base font-semibold text-stone-900">
-                            "Rooted and built up in him and established in the faith." — Colossians 2:7
+                            "Rooted and built up in him and established in the faith." â€” Colossians 2:7
                         </p>
                         <ul class="space-y-4">
                             <li class="flex items-start gap-4">
@@ -218,52 +262,16 @@
                     </ul>
                     <div class="flex flex-wrap gap-4">
                         <a href="faith-formation-ai.html" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Launch Faith Formation AI</a>
-                        <a data-membership-link="details" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Membership options</a>
                     </div>
                 </div>
                 <div class="space-y-4 rounded-3xl bg-white/85 p-6 shadow-inner shadow-[var(--color-mist)]/50">
                     <div class="rounded-2xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/80 p-5">
                         <p class="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--color-cerulean)]">Popular prompts</p>
                         <ul class="mt-4 space-y-3 text-sm text-stone-700">
-                            <li>“Help me lead our men’s group through Ephesians.”</li>
-                            <li>“Design a 7-day plan to restore peace in my home.”</li>
-                            <li>“What Scriptures should I pray while discerning new work?”</li>
+                            <li>â€œHelp me lead our menâ€™s group through Ephesians.â€</li>
+                            <li>â€œDesign a 7-day plan to restore peace in my home.â€</li>
+                            <li>â€œWhat Scriptures should I pray while discerning new work?â€</li>
                         </ul>
-                    </div>
-                    <div class="rounded-2xl border border-dashed border-[var(--color-honey)]/40 p-5 text-sm text-stone-600">
-                        <p class="font-semibold text-stone-900">Community Member benefits</p>
-                        <ul class="mt-3 space-y-2 text-left text-stone-700">
-                            <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Unlimited Faith Formation AI</span></li>
-                            <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>All study plans with leader guides</span></li>
-                            <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Member portal with Bible reading &amp; study trackers</span></li>
-                            <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Private Facebook discipleship community</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="membership-preview" class="mx-auto max-w-6xl px-6">
-            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl shadow-[var(--color-mist)]/70">
-                <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Membership</p>
-                        <h2 class="section-title text-3xl font-semibold text-stone-900">Community Members unlock it all</h2>
-                        <p class="text-sm text-stone-600">Your membership fuels 100% of the mission and grants full access to Faith Formation AI, every study plan, the member portal trackers, and the private Facebook community.</p>
-                    </div>
-                    <div class="grid gap-3 text-sm text-stone-700 md:w-1/2">
-                        <div class="rounded-2xl border border-[var(--color-cerulean)]/30 bg-white/90 p-4 shadow-sm">
-                            <ul class="space-y-2">
-                                <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Unlimited Faith Formation AI</span></li>
-                                <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>All study plans &amp; leader guides</span></li>
-                                <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Member portal progress trackers</span></li>
-                                <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Private Facebook community</span></li>
-                                <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Parish finder, resources, devotionals</span></li>
-                            </ul>
-                        </div>
-                        <div class="flex flex-wrap gap-3">
-                            <a data-membership-link="details" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">View details</a>
-                            <a data-membership-link="checkout" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Join via Stripe</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -348,7 +356,7 @@
                     </h2>
                 </div>
                 <p class="max-w-2xl text-sm text-stone-600">
-                    Discover guided studies that keep your heart anchored to Christ—whether you seek long-term discipleship, a month of purposeful renewal, or strength to endure waiting.
+                    Discover guided studies that keep your heart anchored to Christâ€”whether you seek long-term discipleship, a month of purposeful renewal, or strength to endure waiting.
                 </p>
             </div>
             <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -361,9 +369,9 @@
                         Walk with brothers through a 52-week Catholic formation path that forges virtuous leaders, husbands, and fathers grounded in Christ.
                     </p>
                     <ul class="mt-6 space-y-3 text-sm text-stone-700">
-                        <li>✔️ Weekly themes exploring identity, integrity, work, family, purity, and legacy</li>
-                        <li>✔️ Every session offers context, Scripture, reflection, and prayer</li>
-                        <li>✔️ Built for small groups, mentorship, or personal study</li>
+                        <li>âœ”ï¸ Weekly themes exploring identity, integrity, work, family, purity, and legacy</li>
+                        <li>âœ”ï¸ Every session offers context, Scripture, reflection, and prayer</li>
+                        <li>âœ”ï¸ Built for small groups, mentorship, or personal study</li>
                     </ul>
                     <a href="mens-discipleship.html"
                        class="mt-8 flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]">
@@ -379,9 +387,9 @@
                         Renew your purpose with a month-long journey that aligns your daily life with the mission of Christ through Scripture, mission-focused practices, and communal prayer.
                     </p>
                     <ul class="mt-6 space-y-3 text-sm text-stone-700">
-                        <li>✔️ Four weekly movements exploring surrender, mission, mercy, and witness</li>
-                        <li>✔️ Daily prompts for Scripture meditation, journaling, and Christlike action</li>
-                        <li>✔️ Ideal for personal retreats or parish renewal groups</li>
+                        <li>âœ”ï¸ Four weekly movements exploring surrender, mission, mercy, and witness</li>
+                        <li>âœ”ï¸ Daily prompts for Scripture meditation, journaling, and Christlike action</li>
+                        <li>âœ”ï¸ Ideal for personal retreats or parish renewal groups</li>
                     </ul>
                     <a href="thirty-day-purpose.html"
                        class="mt-8 flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]">
@@ -394,12 +402,12 @@
                     </p>
                     <h3 class="mt-3 text-2xl font-semibold text-stone-900">Strength in the Waiting</h3>
                     <p class="mt-4 text-sm text-stone-600">
-                        Encounter the Lord’s faithfulness in delayed dreams through a contemplative series that cultivates patience, hope, and holy perseverance.
+                        Encounter the Lordâ€™s faithfulness in delayed dreams through a contemplative series that cultivates patience, hope, and holy perseverance.
                     </p>
                     <ul class="mt-6 space-y-3 text-sm text-stone-700">
-                        <li>✔️ Six themed sessions on trust, endurance, and joyful hope</li>
-                        <li>✔️ Lectio Divina guides, reflective journaling, and intercessory prayer</li>
-                        <li>✔️ Encouragement for individuals and communities navigating seasons of waiting</li>
+                        <li>âœ”ï¸ Six themed sessions on trust, endurance, and joyful hope</li>
+                        <li>âœ”ï¸ Lectio Divina guides, reflective journaling, and intercessory prayer</li>
+                        <li>âœ”ï¸ Encouragement for individuals and communities navigating seasons of waiting</li>
                     </ul>
                     <a href="strength-in-waiting.html"
                        class="mt-8 flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]">
@@ -569,30 +577,7 @@
                 </div>
             </div>
         </section>
-    </main>
-
-    <div id="mission-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
-        <div class="absolute inset-0 bg-black/60" data-close-modal="mission" aria-hidden="true"></div>
-        <div class="relative w-full max-w-xl rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)] p-8 shadow-2xl shadow-[var(--color-mist)]/60">
-            <button type="button" data-close-modal="mission" class="absolute right-4 top-4 rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600 shadow-sm transition hover:bg-stone-200">Close</button>
-            <div class="space-y-5 text-center text-stone-700">
-                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">New in the Member Portal</p>
-                <h2 class="section-title text-3xl font-semibold text-stone-900">Bible Reading Tracker</h2>
-                <p class="text-sm leading-relaxed">Log every book, chapter, and verse while seeing your progress through salvation history.</p>
-                <ul class="mx-auto max-w-lg space-y-2 text-left text-sm text-stone-800">
-                    <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Track all 73 books with chapter-level completion</span></li>
-                    <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Map your journey by biblical era and share wins with your group</span></li>
-                    <li class="flex items-start gap-2"><span class="mt-1 text-emerald-600">✔️</span><span>Sync with your member study plans to keep everything in one place</span></li>
-                </ul>
-                <div class="flex flex-wrap items-center justify-center gap-3">
-                    <a href="member-portal.html#reading" class="inline-flex items-center justify-center rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">View the tracker</a>
-                    <a data-membership-link="checkout" href="membership.html#join" class="inline-flex items-center justify-center rounded-full border border-[var(--color-cerulean)]/40 px-6 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Join as a member</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer id="newsletter" class="relative overflow-hidden bg-[var(--color-cerulean)]">
+    </main><footer id="newsletter" class="relative overflow-hidden bg-[var(--color-cerulean)]">
         <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-16 text-white">
             <div class="grid gap-10 md:grid-cols-[1.2fr,1fr]">
@@ -619,8 +604,9 @@
             </div>
             <div class="mt-16 space-y-4 border-t border-[var(--color-mist)]/40 pt-6 text-xs text-white/80">
                 <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <p>© <span id="year"></span> Grounded Through Faith. All rights reserved.</p>
+                    <p>Â© <span id="year"></span> Grounded Through Faith. All rights reserved.</p>
                     <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="about.html" class="hover:text-white">About</a>
                         <a href="#" class="hover:text-white">Privacy</a>
                         <a href="#" class="hover:text-white">Terms</a>
                     </div>
@@ -628,7 +614,6 @@
                 <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
                     <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
                     <div class="flex items-center gap-4">
-                        <a href="membership.html#join" data-donation-link class="hover:text-white">Subscribe</a>
                         <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
                         <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
                     </div>
@@ -636,37 +621,6 @@
             </div>
         </div>
         <script src="assets/auth-state.js"></script>
-        <script src="assets/membership-links.js"></script>
-        <script>
-            (function () {
-                const modal = document.getElementById('mission-modal');
-                if (!modal) return;
-
-                const STORAGE_KEY = 'gtfMissionTrialModal';
-                const closeButtons = modal.querySelectorAll('[data-close-modal="mission"]');
-
-                function openModal() {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                }
-
-                function closeModal() {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    try {
-                        window.sessionStorage.setItem(STORAGE_KEY, 'dismissed');
-                    } catch (error) {
-                        console.warn('Modal storage unavailable:', error);
-                    }
-                }
-
-                closeButtons.forEach((button) => button.addEventListener('click', closeModal));
-
-                if (!window.sessionStorage.getItem(STORAGE_KEY)) {
-                    window.setTimeout(openModal, 400);
-                }
-            })();
-        </script>
         <script>
             (function () {
                 const form = document.getElementById('devotional-form');
@@ -694,7 +648,7 @@
                     {
                         pattern: /(anx|worry|fear|peace|calm|rest|stress|trust)/i,
                         virtue: 'trust-filled peace',
-                        companion: 'St. Thérèse of Lisieux',
+                        companion: 'St. ThÃ©rÃ¨se of Lisieux',
                         encouragement: "Practice the little way by surrendering each concern with a simple 'Jesus, I trust in You.'",
                         invitation: "rest in the Father's care",
                     },
@@ -799,7 +753,7 @@
                         },
                         {
                             ref: 'Acts 2:42',
-                            note: 'They devoted themselves to the apostles’ teaching, fellowship, the breaking of bread, and prayers.',
+                            note: 'They devoted themselves to the apostlesâ€™ teaching, fellowship, the breaking of bread, and prayers.',
                         },
                         {
                             ref: 'Hebrews 10:24-25',
@@ -809,7 +763,7 @@
                     mission: [
                         {
                             ref: 'Matthew 5:14-16',
-                            note: 'You are the light of the world—let your light shine before others.',
+                            note: 'You are the light of the worldâ€”let your light shine before others.',
                         },
                         {
                             ref: '1 Peter 3:15',
@@ -831,7 +785,7 @@
                     ],
                     scripture: [
                         ({ focus, scriptureNote, analysis }) =>
-                            `Slowly read today’s verse aloud. ${scriptureNote} Ask the Spirit to highlight a word that speaks to how you will ${analysis.invitation} through ${focus}.`,
+                            `Slowly read todayâ€™s verse aloud. ${scriptureNote} Ask the Spirit to highlight a word that speaks to how you will ${analysis.invitation} through ${focus}.`,
                         ({ focus, scriptureNote, analysis }) =>
                             `Journal how this passage guides your next faithful step. ${scriptureNote} Notice any resistance and invite Christ to shape ${focus} according to His heart.`,
                     ],
@@ -839,13 +793,13 @@
                         ({ focus, scriptureNote, analysis }) =>
                             `Offer your anxieties to Jesus one by one. ${scriptureNote} As you breathe deeply, welcome ${analysis.virtue} to steady you within ${focus}.`,
                         ({ focus, scriptureNote, analysis }) =>
-                            `Imagine planting your intention beside living water. ${scriptureNote} Picture the roots of ${focus} stretching into God’s faithfulness.`,
+                            `Imagine planting your intention beside living water. ${scriptureNote} Picture the roots of ${focus} stretching into Godâ€™s faithfulness.`,
                     ],
                     mercy: [
                         ({ focus, scriptureNote, analysis }) =>
                             `Bring any wounds or strained relationships connected to ${focus} into prayer. ${scriptureNote} Ask the Lord where He longs to pour ${analysis.virtue}.`,
                         ({ focus, scriptureNote, analysis }) =>
-                            `Let the image of Divine Mercy wash over this situation. ${scriptureNote} Pray for the grace to see everyone involved in ${focus} through Christ’s compassion.`,
+                            `Let the image of Divine Mercy wash over this situation. ${scriptureNote} Pray for the grace to see everyone involved in ${focus} through Christâ€™s compassion.`,
                     ],
                     gratitude: [
                         ({ focus, scriptureNote, analysis }) =>
@@ -855,7 +809,7 @@
                     ],
                     sacrament: [
                         ({ focus, scriptureNote, analysis }) =>
-                            `Plan one sacramental encounter to anchor this journey—Mass, confession, or adoration. ${scriptureNote} Offer it for ${focus}.`,
+                            `Plan one sacramental encounter to anchor this journeyâ€”Mass, confession, or adoration. ${scriptureNote} Offer it for ${focus}.`,
                         ({ focus, scriptureNote, analysis }) =>
                             `Consider who can accompany you in this intention. ${scriptureNote} Invite them to intercede so ${analysis.virtue} continues to grow.`,
                     ],
@@ -876,21 +830,21 @@
                     ],
                     lectio: [
                         ({ focus }) =>
-                            `Pray Lectio Divina with today’s Scripture. Listen for a word or phrase that encourages ${focus}.`,
+                            `Pray Lectio Divina with todayâ€™s Scripture. Listen for a word or phrase that encourages ${focus}.`,
                         ({ analysis }) =>
-                            `During your prayer, pause after each verse to ask, “How does this guide me to ${analysis.invitation}?”`,
+                            `During your prayer, pause after each verse to ask, â€œHow does this guide me to ${analysis.invitation}?â€`,
                     ],
                     breath: [
                         ({ analysis }) =>
-                            `Practice a breath prayer. Inhale “Jesus, be my strength,” exhale “as I ${analysis.invitation}.” Repeat for five minutes.`,
+                            `Practice a breath prayer. Inhale â€œJesus, be my strength,â€ exhale â€œas I ${analysis.invitation}.â€ Repeat for five minutes.`,
                         ({ focus }) =>
                             `Each time anxiety rises about ${focus}, breathe slowly and trace the Sign of the Cross over your heart.`,
                     ],
                     service: [
                         ({ analysis }) =>
-                            `Choose a simple work of mercy that aligns with your intention—send a note, offer forgiveness, or meet a need quietly.`,
+                            `Choose a simple work of mercy that aligns with your intentionâ€”send a note, offer forgiveness, or meet a need quietly.`,
                         ({ focus }) =>
-                            `Offer today’s chores or acts of service for someone impacted by ${focus}.`,
+                            `Offer todayâ€™s chores or acts of service for someone impacted by ${focus}.`,
                     ],
                     gratitude: [
                         ({ analysis }) =>
@@ -908,7 +862,7 @@
                         ({ focus }) =>
                             `Tell a trusted friend what God has been doing through ${focus} and invite them to pray for you.`,
                         ({ analysis }) =>
-                            `Discern a small act of evangelization—send a Scripture, share a quote, or offer to pray with someone—as you ${analysis.invitation}.`,
+                            `Discern a small act of evangelizationâ€”send a Scripture, share a quote, or offer to pray with someoneâ€”as you ${analysis.invitation}.`,
                     ],
                 };
                 const prayerPrompts = {
@@ -973,13 +927,13 @@
                     `Lord, stay near as I carry ${focus}. May Your Spirit guide every step.`;
 
                 const dayBlueprints = [
-                    { title: 'Day 1 • Awaken Desire', tag: 'prepare', practice: 'journaling', prayer: 'surrender' },
-                    { title: 'Day 2 • Receive the Word', tag: 'scripture', practice: 'lectio', prayer: 'listening' },
-                    { title: 'Day 3 • Walk in Trust', tag: 'trust', practice: 'breath', prayer: 'trust' },
-                    { title: 'Day 4 • Mercy in Motion', tag: 'mercy', practice: 'service', prayer: 'mercy' },
-                    { title: 'Day 5 • Gratitude Rising', tag: 'gratitude', practice: 'gratitude', prayer: 'gratitude' },
-                    { title: 'Day 6 • Strengthened in Sacrament', tag: 'sacrament', practice: 'sacramental', prayer: 'strength' },
-                    { title: 'Day 7 • Commissioned to Shine', tag: 'mission', practice: 'share', prayer: 'mission' },
+                    { title: 'Day 1 â€¢ Awaken Desire', tag: 'prepare', practice: 'journaling', prayer: 'surrender' },
+                    { title: 'Day 2 â€¢ Receive the Word', tag: 'scripture', practice: 'lectio', prayer: 'listening' },
+                    { title: 'Day 3 â€¢ Walk in Trust', tag: 'trust', practice: 'breath', prayer: 'trust' },
+                    { title: 'Day 4 â€¢ Mercy in Motion', tag: 'mercy', practice: 'service', prayer: 'mercy' },
+                    { title: 'Day 5 â€¢ Gratitude Rising', tag: 'gratitude', practice: 'gratitude', prayer: 'gratitude' },
+                    { title: 'Day 6 â€¢ Strengthened in Sacrament', tag: 'sacrament', practice: 'sacramental', prayer: 'strength' },
+                    { title: 'Day 7 â€¢ Commissioned to Shine', tag: 'mission', practice: 'share', prayer: 'mission' },
                 ];
 
                 form.addEventListener('submit', (event) => {
@@ -1095,7 +1049,7 @@
                             return `
                           <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl shadow-[var(--color-mist)]/60">
                             <h4 class="text-base font-semibold text-stone-900">${safeTitle}</h4>
-                            <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture • ${safeScripture}</p>
+                            <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture â€¢ ${safeScripture}</p>
                             <p class="mt-2 text-sm text-stone-600">${safeScriptureNote}</p>
                             <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Reflect:</span> ${safeReflection}</p>
                             <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Practice:</span> ${safePractice}</p>
@@ -1162,7 +1116,7 @@
                     return {
                         virtue: 'renewed hope',
                         companion: 'St. John the Apostle',
-                        encouragement: "Let the words ‘Remain in my love’ echo whenever you feel uncertain.",
+                        encouragement: "Let the words â€˜Remain in my loveâ€™ echo whenever you feel uncertain.",
                         invitation: 'walk closely with Christ',
                     };
                 }
@@ -1202,7 +1156,7 @@
                     if (text.length <= maxLength) {
                         return text;
                     }
-                    return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
+                    return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}â€¦`;
                 }
 
                 function planToPlainText(plan) {
@@ -1217,7 +1171,7 @@
 
                     plan.days.forEach((day, index) => {
                         lines.push(`${sanitizePlainText(day.title || `Day ${index + 1}`)}`);
-                        lines.push(`  Scripture: ${sanitizePlainText(day.scripture)} — ${sanitizePlainText(day.scriptureNote)}`);
+                        lines.push(`  Scripture: ${sanitizePlainText(day.scripture)} â€” ${sanitizePlainText(day.scriptureNote)}`);
                         lines.push(`  Reflection: ${sanitizePlainText(day.reflection)}`);
                         lines.push(`  Practice: ${sanitizePlainText(day.practice)}`);
                         lines.push(`  Prayer: ${sanitizePlainText(day.prayer)}`);
@@ -1319,7 +1273,7 @@
           </head>
           <body>
             <header>
-              <h1>Grounded Through Faith • 7-Day Devotional</h1>
+              <h1>Grounded Through Faith â€¢ 7-Day Devotional</h1>
               <p class="summary"><strong>Focus:</strong> ${safeFocus}</p>
               <p class="summary"><strong>Virtue emphasis:</strong> ${safeVirtue}</p>
               <p class="summary"><strong>Spiritual companion:</strong> ${safeCompanion}</p>
@@ -1576,41 +1530,7 @@
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 </footer>
-<div id="mission-toast" class="fixed bottom-4 right-4 z-50 w-80 max-w-full rounded-3xl border border-[var(--color-honey)]/60 bg-[var(--color-morning-sky)]/95 p-5 shadow-2xl shadow-[var(--color-mist)]/60 sm:bottom-6 sm:right-6">
-    <div class="flex items-start gap-3">
-        <div class="flex-1 text-left">
-            <p class="text-sm font-semibold text-stone-900">Join the mission</p>
-            <p class="mt-1 text-xs text-stone-600">Subscribe to stay connected as we release new Christ-centered journeys and devotionals.</p>
-            <a href="https://subscribe-forms.beehiiv.com/9070d55e-33e1-4694-a132-ed0effabd180"
-               class="mt-3 inline-flex items-center justify-center rounded-full bg-[var(--color-cerulean)] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
-               target="_blank"
-               rel="noreferrer">
-                Subscribe now
-            </a>
-        </div>
-        <button id="mission-toast-close" type="button" class="-m-1 rounded-full p-1 text-stone-400 transition hover:text-stone-600" aria-label="Dismiss notice">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-</div>
-<script>
-    (function () {
-        const toast = document.getElementById('mission-toast');
-        const close = document.getElementById('mission-toast-close');
-        if (!toast || !close) return;
-
-        const storageKey = 'gtf-mission-toast-dismissed';
-        const isDismissed = sessionStorage.getItem(storageKey);
-        if (isDismissed) {
-            toast.classList.add('hidden');
-            return;
-        }
-
-        close.addEventListener('click', () => {
-            toast.classList.add('hidden');
-            sessionStorage.setItem(storageKey, 'true');
-        });
-    })();
-</script>
 </body>
 </html>
+
+
