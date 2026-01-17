@@ -1,1422 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grounded Through Faith</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      crossorigin=""
-    />
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      crossorigin=""
-    ></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personal AI Bible Guide - 100% Free</title>
     <style>
-      :root {
-        color-scheme: light;
-        --color-morning-sky: #f8f1e2;
-        --color-mist: #e8d9b8;
-        --color-honey: #c9a03a;
-        --color-cerulean: #7a5a2a;
-      }
-      body {
-        font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont,
-          'Segoe UI', sans-serif;
-      }
-      .section-title {
-        font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
-      }
-    </style>
-  </head>
-  <body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/30 text-stone-800">
-    <header class="relative overflow-hidden">
-      <div
-        class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="pointer-events-none absolute -left-20 top-10 h-60 w-60 rounded-full bg-[var(--color-honey)]/20 blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl"
-        aria-hidden="true"
-      ></div>
-
-      <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl items-center justify-between gap-6 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-4 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur">
-        <div class="flex items-center gap-3">
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]"
-          >
-            <span class="text-2xl font-semibold">GF</span>
-          </div>
-          <div>
-            <p class="text-lg font-semibold tracking-wide text-stone-900">Grounded Through Faith</p>
-            <p class="text-sm text-stone-500">Rooted. Growing. Together.</p>
-          </div>
-        </div>
-        <div class="hidden items-center gap-6 text-sm font-medium text-stone-600 md:flex">
-          <a href="mens-discipleship.html" class="transition hover:text-[var(--color-honey)]">Men's Discipleship</a>
-          <a href="#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
-          <a href="#resources" class="transition hover:text-[var(--color-honey)]">Resources</a>
-        </div>
-        <a
-          href="#newsletter"
-          class="hidden rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d] md:inline-flex"
-        >
-          Join the Journey
-        </a>
-      </nav>
-
-      <section class="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center">
-        <div class="flex-1 space-y-8">
-          <span
-            class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]"
-          >
-            Catholic Formation Hub
-          </span>
-          <h1 class="text-4xl font-bold text-stone-900 md:text-5xl lg:text-6xl">
-            Discover tools that brighten your walk with Christ every day.
-          </h1>
-          <p class="max-w-xl text-lg text-stone-600">
-            Grounded Through Faith curates bible studies, vibrant resources, and community connections that keep you rooted in Scripture and nourished by the Sacraments.
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <a
-              href="#study-plans"
-              class="rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
-            >
-              Explore Study Paths
-            </a>
-            <a
-              href="#resources"
-              class="rounded-full border border-stone-200 px-6 py-3 text-sm font-semibold text-stone-700 transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[var(--color-cerulean)]"
-            >
-              Browse Resources
-            </a>
-          </div>
-        </div>
-        <div class="flex-1">
-          <div class="relative rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
-            <div class="space-y-6 text-sm text-stone-600">
-              <p class="text-base font-semibold text-stone-900">
-                "Rooted and built up in him and established in the faith." — Colossians 2:7
-              </p>
-              <ul class="space-y-4">
-                <li class="flex items-start gap-4">
-                  <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">1</span>
-                  <div>
-                    <p class="font-semibold text-stone-900">Tailored Catholic Study Paths</p>
-                    <p>
-                      Follow the plan that speaks to your vocation—whether you are building a holy home, encouraging men and women, or guiding young disciples.
-                    </p>
-                  </div>
-                </li>
-                <li class="flex items-start gap-4">
-                  <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">2</span>
-                  <div>
-                    <p class="font-semibold text-stone-900">Trusted Resources</p>
-                    <p>
-                      Discover high-quality Bibles, podcasts, and formation series endorsed by faithful Catholic leaders.
-                    </p>
-                  </div>
-                </li>
-                <li class="flex items-start gap-4">
-                  <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">3</span>
-                  <div>
-                    <p class="font-semibold text-stone-900">Community Connections</p>
-                    <p>
-                      Plug into local groups and parish events that keep you supported on the journey.
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-    </header>
-
-    <main class="relative z-10 space-y-28 pb-32">
-      <section id="custom-devotional" class="mx-auto max-w-6xl px-6">
-        <div class="relative overflow-hidden rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl shadow-[var(--color-mist)]/70">
-          <div
-            class="pointer-events-none absolute -right-24 top-10 hidden h-56 w-56 rounded-full bg-[var(--color-honey)]/25 blur-3xl md:block"
-            aria-hidden="true"
-          ></div>
-          <div
-            class="pointer-events-none absolute -left-20 bottom-10 hidden h-56 w-56 rounded-full bg-[var(--color-honey)]/20 blur-3xl md:block"
-            aria-hidden="true"
-          ></div>
-          <div class="relative grid gap-10 lg:grid-cols-[1.15fr_1fr]">
-            <div class="space-y-6">
-              <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">
-                New Spiritual Companion
-              </span>
-              <h2 class="section-title text-3xl font-semibold text-stone-900 md:text-4xl">
-                Craft a custom 7-day devotional in seconds
-              </h2>
-              <p class="text-sm leading-relaxed text-stone-600">
-                Share a focus, longing, or intention and our on-page guide will prayerfully assemble a week of Scripture, reflection prompts, and spiritual practices to help you stay rooted. Every plan honors Catholic teaching while giving you room to listen to the Holy Spirit.
-              </p>
-              <form id="devotional-form" class="space-y-4 rounded-3xl bg-[var(--color-morning-sky)]/90 p-6 shadow-inner shadow-[var(--color-mist)]/50">
-                <div class="space-y-2">
-                  <label for="devotional-focus" class="text-sm font-semibold text-stone-700">Share your focus or intention</label>
-                  <textarea
-                    id="devotional-focus"
-                    name="devotional-focus"
-                    class="h-28 w-full rounded-2xl border border-stone-200 bg-[var(--color-morning-sky)] px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30"
-                    placeholder="Example: Help my family pray together each evening or Grow in trust during a stressful season"
-                    required
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
-                >
-                  Generate my devotional
-                </button>
-                <p id="devotional-feedback" class="hidden text-sm text-stone-600" aria-live="polite"></p>
-              </form>
-            </div>
-            <div class="space-y-6">
-              <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/90 p-6 text-sm text-stone-600 shadow-lg">
-                <h3 class="text-lg font-semibold text-stone-900">How the custom agent helps you</h3>
-                <ul class="mt-4 space-y-3">
-                  <li class="flex gap-3">
-                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">1</span>
-                    <div>
-                      <p class="font-semibold text-stone-800">Listens to your prompt</p>
-                      <p>We gather keywords from your focus to highlight a virtue, saintly companion, and encouragement for the week.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">2</span>
-                    <div>
-                      <p class="font-semibold text-stone-800">Builds a seven-day rhythm</p>
-                      <p>Each day blends Scripture, a guided reflection, a concrete spiritual practice, and a short prayer to keep you moving.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-honey)]/20 text-[var(--color-cerulean)]">3</span>
-                    <div>
-                      <p class="font-semibold text-stone-800">Offers gentle accountability</p>
-                      <p>Save or print the plan, revisit it anytime, and refresh the prompt when the Lord invites you into something new.</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div class="rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/30 p-6 text-sm text-stone-600">
-                <p class="font-semibold text-stone-800">Tip for group leaders</p>
-                <p class="mt-2">Ask everyone in your circle to enter the same intention and compare how the prompts inspire different concrete actions. It is a beautiful way to discern together.</p>
-              </div>
-            </div>
-          </div>
-          <div id="devotional-results" class="relative mt-10 hidden space-y-8" aria-live="polite"></div>
-        </div>
-      </section>
-      <section id="study-plans" class="mx-auto max-w-6xl px-6">
-        <div class="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">
-              Bible Study Journeys
-            </p>
-            <h2 class="section-title mt-2 text-3xl font-semibold text-stone-900 md:text-4xl">
-              Formation paths for every season of life
-            </h2>
-          </div>
-          <p class="max-w-2xl text-sm text-stone-600">
-            Dive into our featured bible study plans that are ready to support your walk with Christ today.
-          </p>
-        </div>
-        <div class="grid gap-6 md:grid-cols-2">
-          <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)] p-6 shadow-xl shadow-[var(--color-mist)]/70">
-            <p class="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500">
-              Available Now
-            </p>
-            <h3 class="mt-3 text-2xl font-semibold text-stone-900">Men's Discipleship</h3>
-            <p class="mt-4 text-sm text-stone-600">
-              Walk with brothers through a 52-week Catholic formation path that forges virtuous leaders, husbands, and fathers grounded in Christ.
-            </p>
-            <ul class="mt-6 space-y-3 text-sm text-stone-700">
-              <li>✔️ Weekly themes exploring identity, integrity, work, family, purity, and legacy</li>
-              <li>✔️ Every session offers context, Scripture, reflection, and prayer</li>
-              <li>✔️ Built for small groups, mentorship, or personal study</li>
-            </ul>
-            <a
-              href="mens-discipleship.html"
-              class="mt-8 flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:bg-[#a67925]"
-            >
-              Explore the 52-week plan
-            </a>
-          </article>
-        </div>
-      </section>
-
-      <section id="resources" class="relative bg-[var(--color-mist)]/60">
-        <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-morning-sky)]/70 via-[var(--color-mist)]/50 to-[var(--color-morning-sky)]/40" aria-hidden="true"></div>
-        <div class="relative mx-auto max-w-6xl px-6 py-20">
-          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">
-                Curated Library
-              </p>
-              <h2 class="section-title mt-2 text-3xl font-semibold text-stone-900 md:text-4xl">
-                Recommended Catholic resources we love
-              </h2>
-            </div>
-            <p class="max-w-2xl text-sm text-stone-600">
-              Explore a handpicked collection of trusted Bibles, podcasts, and digital libraries. Each recommendation keeps you rooted in the teachings of the Church while inviting you to encounter Christ more deeply.
-            </p>
-          </div>
-          <div class="mt-12 grid gap-8 lg:grid-cols-3">
-            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl">
-              <h3 class="text-xl font-semibold text-stone-900">Sacred Scripture</h3>
-              <ul class="mt-4 space-y-3 text-sm text-stone-600">
-                <li>
-                  <a
-                    href="https://ascensionpress.com/collections/the-great-adventure"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Great Adventure Catholic Bible
-                  </a>
-                  <p>Dynamic color-coded timeline with study notes from Ascension.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://shop.franciscanmedia.org/collections/bibles"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    NABRE Catholic Study Bible
-                  </a>
-                  <p>Comprehensive footnotes, maps, and Church document references.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://www.wordonfire.org/bible/"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Word on Fire Gospels
-                  </a>
-                  <p>Beautifully bound edition featuring sacred art and commentary.</p>
-                </li>
-              </ul>
-            </div>
-            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl">
-              <h3 class="text-xl font-semibold text-stone-900">Digital Discipleship</h3>
-              <ul class="mt-4 space-y-3 text-sm text-stone-600">
-                <li>
-                  <a
-                    href="https://hallow.com"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Hallow App
-                  </a>
-                  <p>Guided Catholic meditations, rosaries, and daily gospel reflections.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://formed.org"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    FORMED
-                  </a>
-                  <p>On-demand Catholic studies, films, and audio series for parishes.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://praymoreretreat.org"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Pray More Retreat
-                  </a>
-                  <p>Seasonal online retreats with talks from trusted Catholic voices.</p>
-                </li>
-              </ul>
-            </div>
-            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl">
-              <h3 class="text-xl font-semibold text-stone-900">Formation Essentials</h3>
-              <ul class="mt-4 space-y-3 text-sm text-stone-600">
-                <li>
-                  <a
-                    href="https://ascensionpress.com/pages/bibleinayear"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Bible in a Year (Fr. Mike Schmitz)
-                  </a>
-                  <p>Popular podcast walking day-by-day through Salvation history.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://www.avemariapress.com/products/jesus-approaches"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Jesus Approaches by Elizabeth Kelly
-                  </a>
-                  <p>Stories of healing and encounter written for women at every stage.</p>
-                </li>
-                <li>
-                  <a
-                    href="https://www.thestationofthecross.com/programs/the-catholic-current/"
-                    class="font-semibold text-[var(--color-cerulean)] hover:text-[#a67925]"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    The Catholic Current
-                  </a>
-                  <p>Daily radio and podcast tackling culture, theology, and prayer.</p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="parish-finder" class="relative overflow-hidden">
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/70 via-[var(--color-mist)]/60 to-[var(--color-honey)]/35" aria-hidden="true"></div>
-        <div class="relative mx-auto max-w-6xl px-6 py-20">
-          <div class="grid gap-12 lg:grid-cols-[1fr,1.2fr]">
-            <div class="space-y-6">
-              <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">
-                Parish Finder
-              </span>
-              <h2 class="section-title text-3xl font-semibold text-stone-900 md:text-4xl">
-                Locate Catholic churches wherever you are
-              </h2>
-              <p class="text-sm leading-relaxed text-stone-600">
-                Use the interactive map to discover nearby parishes for Mass, confession, and community. Search by city or ZIP code, or let us use your location to highlight churches close to you.
-              </p>
-              <form id="parish-search-form" class="space-y-3 rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/90 p-6 shadow-inner shadow-[var(--color-mist)]/40">
-                <div class="space-y-2">
-                  <label for="parish-search" class="text-sm font-semibold text-stone-700">Search by city, ZIP, or parish name</label>
-                  <div class="flex flex-col gap-3 sm:flex-row">
-                    <input
-                      id="parish-search"
-                      type="text"
-                      placeholder="e.g., Austin, TX or St. Patrick"
-                      class="w-full flex-1 rounded-2xl border border-stone-200 bg-[var(--color-morning-sky)] px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30"
-                    />
-                    <button
-                      type="submit"
-                      class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-cerulean)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
-                    >
-                      Search Area
-                    </button>
-                  </div>
-                </div>
-                <button
-                  id="parish-locate"
-                  type="button"
-                  class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-cerulean)]/30 px-6 py-3 text-sm font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]"
-                >
-                  Use my current location
-                </button>
-                <p id="parish-status" class="hidden text-sm" role="status" aria-live="polite"></p>
-                <ul id="parish-results" class="space-y-2 text-sm text-stone-600" aria-live="polite"></ul>
-              </form>
-            </div>
-            <div class="overflow-hidden rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/90 shadow-2xl">
-              <div id="parish-map" class="h-[420px] w-full"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer id="newsletter" class="relative overflow-hidden bg-[var(--color-cerulean)]">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
-      <div class="relative mx-auto max-w-6xl px-6 py-16 text-white">
-        <div class="grid gap-10 md:grid-cols-[1.2fr,1fr]">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
-              Stay Connected
-            </p>
-            <h2 class="section-title mt-3 text-3xl font-semibold md:text-4xl">
-              Receive updates, prayer prompts, and launch invitations
-            </h2>
-            <p class="mt-4 text-sm text-white/80">
-              Be the first to know as new study plans, parish partnerships, and events roll out. We email sparingly and share only what will bless your walk with Jesus.
-            </p>
-          </div>
-          <form class="rounded-3xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/30 p-6 shadow-xl backdrop-blur">
-            <label class="text-sm font-semibold" for="email">Email Address</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              class="mt-3 w-full rounded-2xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/90 px-4 py-3 text-sm text-stone-800 placeholder:text-stone-500 focus:border-[var(--color-honey)] focus:outline-none"
-              required
-            />
-            <label class="mt-6 block text-sm font-semibold" for="location">Your City &amp; Parish</label>
-            <input
-              id="location"
-              type="text"
-              placeholder="City, Parish"
-              class="mt-3 w-full rounded-2xl border border-[var(--color-mist)]/50 bg-[var(--color-morning-sky)]/90 px-4 py-3 text-sm text-stone-800 placeholder:text-stone-500 focus:border-[var(--color-honey)] focus:outline-none"
-            />
-            <button
-              type="submit"
-              class="mt-8 w-full rounded-2xl bg-[var(--color-honey)] py-3 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/50 transition hover:bg-amber-300"
-            >
-              Notify Me
-            </button>
-            <p class="mt-4 text-xs text-white/80">
-              We respect your inbox. Unsubscribe any time.
-            </p>
-          </form>
-        </div>
-        <div class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-mist)]/40 pt-6 text-xs text-white/80 md:flex-row">
-          <p>© <span id="year"></span> Grounded Through Faith. All rights reserved.</p>
-          <div class="flex items-center gap-4">
-            <a href="mailto:hello@groundedthroughfaith.org" class="hover:text-white">Contact</a>
-            <a href="#" class="hover:text-white">Privacy</a>
-            <a href="#" class="hover:text-white">Terms</a>
-          </div>
-        </div>
-      </div>
-      <script>
-        (function () {
-          const form = document.getElementById('devotional-form');
-          if (!form) return;
-
-          const focusInput = document.getElementById('devotional-focus');
-          const feedback = document.getElementById('devotional-feedback');
-          const results = document.getElementById('devotional-results');
-          const submitButton = form.querySelector('button[type="submit"]');
-          let currentPlan = null;
-
-          if (!feedback || !results) {
-            console.warn('Custom devotional UI elements are missing.');
-            return;
-          }
-
-          const focusThemes = [
-            {
-              pattern: /(family|marriage|spouse|parent|mother|father|children|home|household)/i,
-              virtue: 'steadfast unity',
-              companion: 'St. Joseph and the Holy Family',
-              encouragement: 'Invite the Holy Family to guard your household each night.',
-              invitation: 'nurture your family life',
-            },
-            {
-              pattern: /(anx|worry|fear|peace|calm|rest|stress|trust)/i,
-              virtue: 'trust-filled peace',
-              companion: 'St. Thérèse of Lisieux',
-              encouragement: "Practice the little way by surrendering each concern with a simple 'Jesus, I trust in You.'",
-              invitation: "rest in the Father's care",
-            },
-            {
-              pattern: /(discern|vocation|work|career|mission|ministry|serve|service|lead)/i,
-              virtue: 'courageous obedience',
-              companion: 'St. John Paul II',
-              encouragement: 'Ask the Holy Spirit to inflame your gifts for the sake of the Gospel.',
-              invitation: 'step boldly into your call',
-            },
-            {
-              pattern: /(healing|grief|sorrow|loss|hurt|mercy|forgive|forgiveness|reconcile)/i,
-              virtue: 'compassionate mercy',
-              companion: 'St. Faustina Kowalska',
-              encouragement: 'Picture the Divine Mercy chaplet embracing the situation that needs healing.',
-              invitation: "welcome Christ's healing",
-            },
-            {
-              pattern: /(youth|teen|student|study|school|learning|children's ministry|kids)/i,
-              virtue: 'joyful discipleship',
-              companion: 'Blessed Carlo Acutis',
-              encouragement: 'Offer technology and creativity to the Lord so young hearts encounter Jesus.',
-              invitation: 'ignite young disciples',
-            },
-          ];
-
-          const scriptureLibrary = {
-            prepare: [
-              {
-                ref: 'Psalm 37:3-5',
-                note: 'Entrust your desires to the Lord who acts on your behalf.',
-              },
-              {
-                ref: 'Proverbs 16:3',
-                note: 'Commit your work to the Lord and your plans will be established.',
-              },
-              {
-                ref: 'Isaiah 43:19',
-                note: 'God is doing something new even in the wilderness.',
-              },
-            ],
-            scripture: [
-              {
-                ref: 'Luke 8:15',
-                note: 'Hold fast to the Word with a generous heart and bear fruit with perseverance.',
-              },
-              {
-                ref: 'Colossians 3:16',
-                note: 'Let the word of Christ dwell in you richly as you teach and encourage one another.',
-              },
-              {
-                ref: 'Romans 12:2',
-                note: "Be transformed by the renewal of your mind to discern God's will.",
-              },
-            ],
-            trust: [
-              {
-                ref: 'Jeremiah 17:7-8',
-                note: 'Those who trust in the Lord are like trees planted by water.',
-              },
-              {
-                ref: 'Philippians 4:6-7',
-                note: 'In everything, by prayer and supplication, let your requests be made known.',
-              },
-              {
-                ref: 'Matthew 6:33-34',
-                note: 'Seek first the Kingdom and let tomorrow worry about itself.',
-              },
-            ],
-            mercy: [
-              {
-                ref: 'Ephesians 4:32',
-                note: 'Be kind, tenderhearted, forgiving one another as God forgave you.',
-              },
-              {
-                ref: 'Psalm 147:3',
-                note: 'He heals the brokenhearted and binds up their wounds.',
-              },
-              {
-                ref: 'Micah 6:8',
-                note: 'Act justly, love mercy, and walk humbly with your God.',
-              },
-            ],
-            gratitude: [
-              {
-                ref: '1 Thessalonians 5:16-18',
-                note: 'Rejoice always, pray constantly, give thanks in all circumstances.',
-              },
-              {
-                ref: 'Psalm 103:1-5',
-                note: 'Bless the Lord and do not forget all His benefits.',
-              },
-              {
-                ref: 'James 1:17',
-                note: 'Every good and perfect gift is from above.',
-              },
-            ],
-            sacrament: [
-              {
-                ref: 'John 15:4-5',
-                note: 'Remain in Christ, for apart from Him you can do nothing.',
-              },
-              {
-                ref: 'Acts 2:42',
-                note: 'They devoted themselves to the apostles’ teaching, fellowship, the breaking of bread, and prayers.',
-              },
-              {
-                ref: 'Hebrews 10:24-25',
-                note: 'Stir up love and good works, not neglecting to meet together.',
-              },
-            ],
-            mission: [
-              {
-                ref: 'Matthew 5:14-16',
-                note: 'You are the light of the world—let your light shine before others.',
-              },
-              {
-                ref: '1 Peter 3:15',
-                note: 'Always be ready to give a reason for the hope that is in you.',
-              },
-              {
-                ref: 'Mark 16:15',
-                note: 'Go into all the world and proclaim the Gospel to the whole creation.',
-              },
-            ],
-          };
-
-          const reflectionTemplates = {
-            prepare: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Begin this journey by naming before the Lord why ${focus} matters right now. ${scriptureNote} Allow ${analysis.virtue} to settle into your heart as you ${analysis.invitation}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Quiet your heart and invite Jesus to see the places where you long to ${analysis.invitation}. ${scriptureNote} Trust that He already holds ${focus} in His care.`,
-            ],
-            scripture: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Slowly read today’s verse aloud. ${scriptureNote} Ask the Spirit to highlight a word that speaks to how you will ${analysis.invitation} through ${focus}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Journal how this passage guides your next faithful step. ${scriptureNote} Notice any resistance and invite Christ to shape ${focus} according to His heart.`,
-            ],
-            trust: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Offer your anxieties to Jesus one by one. ${scriptureNote} As you breathe deeply, welcome ${analysis.virtue} to steady you within ${focus}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Imagine planting your intention beside living water. ${scriptureNote} Picture the roots of ${focus} stretching into God’s faithfulness.`,
-            ],
-            mercy: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Bring any wounds or strained relationships connected to ${focus} into prayer. ${scriptureNote} Ask the Lord where He longs to pour ${analysis.virtue}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Let the image of Divine Mercy wash over this situation. ${scriptureNote} Pray for the grace to see everyone involved in ${focus} through Christ’s compassion.`,
-            ],
-            gratitude: [
-              ({ focus, scriptureNote, analysis }) =>
-                `List three moments of grace you have already received while you ${analysis.invitation}. ${scriptureNote} Give thanks for the seeds God has planted in ${focus}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Pause midday to bless the Lord for a hidden gift. ${scriptureNote} Let gratitude reshape how you carry ${focus}.`,
-            ],
-            sacrament: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Plan one sacramental encounter to anchor this journey—Mass, confession, or adoration. ${scriptureNote} Offer it for ${focus}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Consider who can accompany you in this intention. ${scriptureNote} Invite them to intercede so ${analysis.virtue} continues to grow.`,
-            ],
-            mission: [
-              ({ focus, scriptureNote, analysis }) =>
-                `Ask the Lord who needs to hear the hope you are receiving. ${scriptureNote} Pray for courage to share a testimony from ${focus}.`,
-              ({ focus, scriptureNote, analysis }) =>
-                `Discern one concrete way to bless another person today. ${scriptureNote} Let ${analysis.virtue} overflow into loving action.`,
-            ],
-          };
-
-          const practicePrompts = {
-            journaling: [
-              ({ analysis }) =>
-                `Journal about three fruits you hope to see as you ${analysis.invitation}. Offer each desire to Jesus by name.`,
-              ({ focus }) =>
-                `Write a short letter to the Lord describing why ${focus} matters this week. End by surrendering every outcome to Him.`,
-            ],
-            lectio: [
-              ({ focus }) =>
-                `Pray Lectio Divina with today’s Scripture. Listen for a word or phrase that encourages ${focus}.`,
-              ({ analysis }) =>
-                `During your prayer, pause after each verse to ask, “How does this guide me to ${analysis.invitation}?”`,
-            ],
-            breath: [
-              ({ analysis }) =>
-                `Practice a breath prayer. Inhale “Jesus, be my strength,” exhale “as I ${analysis.invitation}.” Repeat for five minutes.`,
-              ({ focus }) =>
-                `Each time anxiety rises about ${focus}, breathe slowly and trace the Sign of the Cross over your heart.`,
-            ],
-            service: [
-              ({ analysis }) =>
-                `Choose a simple work of mercy that aligns with your intention—send a note, offer forgiveness, or meet a need quietly.`,
-              ({ focus }) =>
-                `Offer today’s chores or acts of service for someone impacted by ${focus}.`,
-            ],
-            gratitude: [
-              ({ analysis }) =>
-                `Create a gratitude list at the end of the day, naming how you glimpsed ${analysis.virtue}.`,
-              ({ focus }) =>
-                `Share one grace connected to ${focus} with a friend or family member and thank God together.`,
-            ],
-            sacramental: [
-              ({ focus }) =>
-                `Schedule time for the Sacrament of Reconciliation or Eucharistic adoration, offering it specifically for ${focus}.`,
-              ({ analysis }) =>
-                `Light a candle before a sacred image at home or church and renew your commitment to ${analysis.invitation}.`,
-            ],
-            share: [
-              ({ focus }) =>
-                `Tell a trusted friend what God has been doing through ${focus} and invite them to pray for you.`,
-              ({ analysis }) =>
-                `Discern a small act of evangelization—send a Scripture, share a quote, or offer to pray with someone—as you ${analysis.invitation}.`,
-            ],
-          };
-
-          const prayerPrompts = {
-            surrender: [
-              ({ focus }) =>
-                `Jesus, I give You ${focus}. Shape it according to Your heart and let nothing be outside of Your mercy.`,
-              ({ analysis }) =>
-                `Sacred Heart of Jesus, I entrust my desire to ${analysis.invitation} to Your perfect love.`,
-            ],
-            listening: [
-              ({ focus }) =>
-                `Holy Spirit, speak Your wisdom into ${focus}. Help me hear and obey Your gentle voice.`,
-              ({ analysis }) =>
-                `Come, Holy Spirit, quiet every distraction so I can notice how You invite me to ${analysis.invitation}.`,
-            ],
-            trust: [
-              ({ focus }) =>
-                `Lord, increase my trust. May every worry about ${focus} become an opportunity to lean on You.`,
-              ({ analysis }) =>
-                `Jesus, teach my heart to rest in ${analysis.virtue} and to depend on Your providence.`,
-            ],
-            mercy: [
-              ({ focus }) =>
-                `Jesus, Divine Mercy, enter every wound connected to ${focus} and make me an instrument of reconciliation.`,
-              ({ analysis }) =>
-                `Lord, wrap me in ${analysis.virtue} so that I can extend forgiveness freely.`,
-            ],
-            gratitude: [
-              ({ focus }) =>
-                `Father, thank You for the hidden ways You are already moving within ${focus}.`,
-              ({ analysis }) =>
-                `God of abundance, awaken ${analysis.virtue} in me so that I praise You in all things.`,
-            ],
-            strength: [
-              ({ focus }) =>
-                `Lord Jesus, feed me with Your grace in the sacraments so I have strength for ${focus}.`,
-              ({ analysis }) =>
-                `Come, Bread of Life, fortify me with ${analysis.virtue} as I stay close to You.`,
-            ],
-            mission: [
-              ({ focus }) =>
-                `Holy Spirit, send me where You will. Let the fruit of ${focus} bless everyone I meet.`,
-              ({ analysis }) =>
-                `Lord, set my heart on fire with ${analysis.virtue} so that my life proclaims Your love.`,
-            ],
-          };
-
-          const defaultScripture = {
-            ref: 'Psalm 23:1-3',
-            note: 'The Lord is my shepherd; He restores my soul.',
-          };
-
-          const fallbackReflection = ({ focus, analysis }) => {
-            const invitation = (analysis && analysis.invitation) || 'walk closely with Him';
-            return `Bring ${focus} to Jesus and ask for the grace to ${invitation}.`;
-          };
-
-          const fallbackPractice = ({ focus }) =>
-            `Write a short prayer entrusting ${focus} to God and keep it where you will see it daily.`;
-
-          const fallbackPrayer = ({ focus }) =>
-            `Lord, stay near as I carry ${focus}. May Your Spirit guide every step.`;
-
-          const dayBlueprints = [
-            { title: 'Day 1 • Awaken Desire', tag: 'prepare', practice: 'journaling', prayer: 'surrender' },
-            { title: 'Day 2 • Receive the Word', tag: 'scripture', practice: 'lectio', prayer: 'listening' },
-            { title: 'Day 3 • Walk in Trust', tag: 'trust', practice: 'breath', prayer: 'trust' },
-            { title: 'Day 4 • Mercy in Motion', tag: 'mercy', practice: 'service', prayer: 'mercy' },
-            { title: 'Day 5 • Gratitude Rising', tag: 'gratitude', practice: 'gratitude', prayer: 'gratitude' },
-            { title: 'Day 6 • Strengthened in Sacrament', tag: 'sacrament', practice: 'sacramental', prayer: 'strength' },
-            { title: 'Day 7 • Commissioned to Shine', tag: 'mission', practice: 'share', prayer: 'mission' },
-          ];
-
-          form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            if (!focusInput) return;
-
-            const rawFocus = focusInput.value.trim();
-            if (!rawFocus) {
-              feedback.textContent = 'Please share a focus or intention so we can craft your devotional.';
-              feedback.classList.remove('hidden');
-              feedback.classList.add('text-rose-600');
-              feedback.classList.remove('text-emerald-600');
-              feedback.classList.remove('text-stone-600');
-              results.classList.add('hidden');
-              results.innerHTML = '';
-              return;
-            }
-
-            feedback.textContent = 'Prayerfully crafting your devotional...';
-            feedback.classList.remove('hidden', 'text-rose-600', 'text-emerald-600');
-            feedback.classList.add('text-stone-600');
-            if (submitButton) {
-              submitButton.disabled = true;
-              submitButton.classList.add('opacity-70');
-            }
-
-            window.requestAnimationFrame(() => {
-              const plan = buildDevotional(rawFocus);
-              renderPlan(plan);
-              feedback.textContent = 'Your custom devotional is ready! Scroll to explore each day.';
-              feedback.classList.remove('text-rose-600', 'text-stone-600');
-              feedback.classList.add('text-emerald-600');
-              if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.classList.remove('opacity-70');
-              }
-              results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-          });
-
-          function buildDevotional(rawFocus) {
-            const analysis = analyzeFocus(rawFocus);
-            const focus = rawFocus || 'your intention';
-            const seed = createSeed(focus + analysis.virtue + analysis.companion);
-
-            const days = dayBlueprints.map((blueprint, index) => {
-              const scriptureOptions = scriptureLibrary[blueprint.tag] || scriptureLibrary.prepare;
-              const reflections = reflectionTemplates[blueprint.tag] || reflectionTemplates.prepare;
-              const practices = practicePrompts[blueprint.practice] || practicePrompts.journaling;
-              const prayers = prayerPrompts[blueprint.prayer] || prayerPrompts.surrender;
-
-              const scriptureEntry = pickFrom(scriptureOptions, seed + index);
-              const scripture =
-                scriptureEntry && typeof scriptureEntry === 'object'
-                  ? scriptureEntry
-                  : defaultScripture;
-
-              const reflectionTemplate = pickFrom(reflections, seed + index * 2);
-              const reflection =
-                typeof reflectionTemplate === 'function'
-                  ? reflectionTemplate({
-                      focus,
-                      scriptureNote: scripture.note,
-                      analysis,
-                    })
-                  : fallbackReflection({ focus, analysis });
-
-              const practiceTemplate = pickFrom(practices, seed + index * 3);
-              const practice =
-                typeof practiceTemplate === 'function'
-                  ? practiceTemplate({ focus, analysis })
-                  : fallbackPractice({ focus, analysis });
-
-              const prayerTemplate = pickFrom(prayers, seed + index * 4);
-              const prayer =
-                typeof prayerTemplate === 'function'
-                  ? prayerTemplate({ focus, analysis })
-                  : fallbackPrayer({ focus, analysis });
-
-              return {
-                title: blueprint.title,
-                scripture: scripture.ref,
-                scriptureNote: scripture.note,
-                reflection,
-                practice,
-                prayer,
-              };
-            });
-
-            return {
-              focus,
-              analysis,
-              days,
-            };
-          }
-
-          function renderPlan(plan) {
-            const safeFocus = escapeHtml(plan.focus);
-            const safeVirtue = escapeHtml(plan.analysis.virtue || 'renewed hope');
-            const safeCompanion = escapeHtml(plan.analysis.companion || 'a saintly friend');
-            const safeEncouragement = escapeHtml(plan.analysis.encouragement || 'Invite the Holy Spirit to guide each step.');
-            currentPlan = plan;
-
-            const daysHtml = plan.days
-              .map((day) => {
-                const safeTitle = escapeHtml(day.title);
-                const safeScripture = escapeHtml(day.scripture);
-                const safeScriptureNote = escapeHtml(day.scriptureNote);
-                const safeReflection = escapeHtml(day.reflection);
-                const safePractice = escapeHtml(day.practice);
-                const safePrayer = escapeHtml(day.prayer);
-
-                return `
-                  <article class="rounded-3xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-6 shadow-xl shadow-[var(--color-mist)]/60">
-                    <h4 class="text-base font-semibold text-stone-900">${safeTitle}</h4>
-                    <p class="mt-3 text-sm font-semibold text-[var(--color-cerulean)]">Scripture • ${safeScripture}</p>
-                    <p class="mt-2 text-sm text-stone-600">${safeScriptureNote}</p>
-                    <p class="mt-4 text-sm text-stone-700"><span class="font-semibold text-stone-900">Reflect:</span> ${safeReflection}</p>
-                    <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Practice:</span> ${safePractice}</p>
-                    <p class="mt-3 text-sm text-stone-700"><span class="font-semibold text-stone-900">Pray:</span> ${safePrayer}</p>
-                  </article>
-                `;
-              })
-              .join('');
-
-            results.innerHTML = `
-              <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-[var(--color-morning-sky)]/90 p-6 shadow-lg">
-                <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div>
-                    <h3 class="text-lg font-semibold text-stone-900">Your intention</h3>
-                    <p class="mt-2 text-sm text-stone-600">Focus: <span class="font-semibold text-stone-900">${safeFocus}</span></p>
-                    <p class="mt-2 text-sm text-stone-600">Virtue emphasis: <span class="font-semibold text-stone-900">${safeVirtue}</span></p>
-                    <p class="mt-2 text-sm text-stone-600">Spiritual companion: <span class="font-semibold text-stone-900">${safeCompanion}</span></p>
-                    <p class="mt-4 text-sm text-stone-600">${safeEncouragement}</p>
-                  </div>
-                  <div class="flex flex-wrap gap-3">
-                    <button
-                      id="print-devotional"
-                      type="button"
-                      class="inline-flex items-center gap-2 rounded-full bg-[var(--color-cerulean)] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]"
-                    >
-                      Print devotional
-                    </button>
-                    <button
-                      id="email-devotional"
-                      type="button"
-                      class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-5 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]"
-                    >
-                      Email to myself
-                    </button>
-                  </div>
-                </div>
-                <p class="mt-4 text-xs text-stone-500">Download a printable copy or launch your email app so you can carry this seven-day journey wherever the Lord leads.</p>
-              </div>
-              <div class="grid gap-6 lg:grid-cols-2">
-                ${daysHtml}
-              </div>
-            `;
-
-            results.classList.remove('hidden');
-
-            const printButton = document.getElementById('print-devotional');
-            const emailButton = document.getElementById('email-devotional');
-
-            if (printButton) {
-              printButton.addEventListener('click', () => openPrintView(plan));
-            }
-
-            if (emailButton) {
-              emailButton.addEventListener('click', () => sharePlanByEmail(plan));
-            }
-          }
-
-          function analyzeFocus(text) {
-            for (const theme of focusThemes) {
-              if (theme.pattern.test(text)) {
-                return theme;
-              }
-            }
-
-            return {
-              virtue: 'renewed hope',
-              companion: 'St. John the Apostle',
-              encouragement: "Let the words ‘Remain in my love’ echo whenever you feel uncertain.",
-              invitation: 'walk closely with Christ',
-            };
-          }
-
-          function createSeed(text) {
-            let seed = 0;
-            for (let i = 0; i < text.length; i += 1) {
-              seed += text.charCodeAt(i);
-            }
-            return seed || 7;
-          }
-
-          function pickFrom(items, index) {
-            if (!Array.isArray(items) || items.length === 0) return '';
-            const position = Math.abs(index) % items.length;
-            return items[position];
-          }
-
-          function escapeHtml(value) {
-            return String(value || '')
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
-          }
-
-          function sanitizePlainText(value) {
-            return String(value || '')
-              .replace(/[<>]/g, '')
-              .replace(/\r/g, '')
-              .trim();
-          }
-
-          function truncateText(value, maxLength) {
-            const text = String(value || '').trim();
-            if (text.length <= maxLength) {
-              return text;
-            }
-            return `${text.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
-          }
-
-          function planToPlainText(plan) {
-            if (!plan) return '';
-
-            const lines = [];
-            lines.push('Grounded Through Faith - 7-Day Devotional');
-            lines.push(`Focus: ${sanitizePlainText(plan.focus)}`);
-            lines.push(`Virtue emphasis: ${sanitizePlainText(plan.analysis.virtue || 'renewed hope')}`);
-            lines.push(`Spiritual companion: ${sanitizePlainText(plan.analysis.companion || 'a saintly friend')}`);
-            lines.push('');
-
-            plan.days.forEach((day, index) => {
-              lines.push(`${sanitizePlainText(day.title || `Day ${index + 1}`)}`);
-              lines.push(`  Scripture: ${sanitizePlainText(day.scripture)} — ${sanitizePlainText(day.scriptureNote)}`);
-              lines.push(`  Reflection: ${sanitizePlainText(day.reflection)}`);
-              lines.push(`  Practice: ${sanitizePlainText(day.practice)}`);
-              lines.push(`  Prayer: ${sanitizePlainText(day.prayer)}`);
-              lines.push('');
-            });
-
-            lines.push('May the Holy Spirit guide your week in Christ.');
-
-            return lines.join('\n');
-          }
-
-          function createPrintableHtml(plan) {
-            if (!plan) return '';
-
-            const safeFocus = escapeHtml(plan.focus);
-            const safeVirtue = escapeHtml(plan.analysis.virtue || 'renewed hope');
-            const safeCompanion = escapeHtml(plan.analysis.companion || 'a saintly friend');
-            const safeEncouragement = escapeHtml(plan.analysis.encouragement || 'Invite the Holy Spirit to guide each step.');
-
-            const daySections = plan.days
-              .map((day, index) => {
-                const safeTitle = escapeHtml(day.title || `Day ${index + 1}`);
-                const safeScripture = escapeHtml(day.scripture);
-                const safeScriptureNote = escapeHtml(day.scriptureNote);
-                const safeReflection = escapeHtml(day.reflection);
-                const safePractice = escapeHtml(day.practice);
-                const safePrayer = escapeHtml(day.prayer);
-
-                return `
-                  <section class="day">
-                    <h2>${safeTitle}</h2>
-                    <p><strong>Scripture:</strong> ${safeScripture}</p>
-                    <p class="note">${safeScriptureNote}</p>
-                    <p><strong>Reflection:</strong> ${safeReflection}</p>
-                    <p><strong>Practice:</strong> ${safePractice}</p>
-                    <p><strong>Prayer:</strong> ${safePrayer}</p>
-                  </section>
-                `;
-              })
-              .join('');
-
-            return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Printable Devotional</title>
-    <style>
-      body {
-        font-family: 'Montserrat', system-ui, sans-serif;
-        background: #f8f1e2;
-        color: #2d1f13;
-        margin: 0;
-        padding: 32px;
-        line-height: 1.6;
-      }
-      header {
-        border-bottom: 2px solid #c9a03a;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-      }
-      h1 {
-        margin: 0 0 8px;
-        font-size: 26px;
-      }
-      h2 {
-        font-size: 20px;
-        margin-top: 0;
-        color: #8a6426;
-      }
-      .summary {
-        margin: 0 0 12px;
-      }
-      .day {
-        border: 1px solid rgba(138, 100, 38, 0.25);
-        border-radius: 16px;
-        padding: 16px 20px;
-        margin-bottom: 16px;
-        background: rgba(255, 255, 255, 0.8);
-      }
-      .note {
-        font-style: italic;
-        color: #5f4d30;
-      }
-      footer {
-        margin-top: 24px;
-        font-size: 12px;
-        color: #5f4d30;
-        text-align: center;
-      }
-      @media print {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-          padding: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
         }
-        .day {
-          page-break-inside: avoid;
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            text-align: center;
         }
-      }
+        
+        .eyebrow {
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: #0a0a0a;
+        }
+        
+        .subheadline {
+            font-size: 24px;
+            color: #4a5568;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        
+        .value-props {
+            margin: 50px 0;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .value-prop {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+        
+        .checkmark {
+            width: 28px;
+            height: 28px;
+            background: #10b981;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        
+        .value-text {
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        
+        .cta-section {
+            margin: 60px 0 30px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            padding: 24px 60px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+        }
+        
+        .guarantee {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .no-risk {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+            
+            .subheadline {
+                font-size: 20px;
+            }
+            
+            .value-text {
+                font-size: 18px;
+            }
+            
+            .cta-button {
+                font-size: 20px;
+                padding: 20px 40px;
+                width: 100%;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <header>
-      <h1>Grounded Through Faith • 7-Day Devotional</h1>
-      <p class="summary"><strong>Focus:</strong> ${safeFocus}</p>
-      <p class="summary"><strong>Virtue emphasis:</strong> ${safeVirtue}</p>
-      <p class="summary"><strong>Spiritual companion:</strong> ${safeCompanion}</p>
-      <p class="summary">${safeEncouragement}</p>
-    </header>
-    ${daySections}
-    <footer>Carry this guide with you in prayer. Visit groundedthroughfaith.org for more resources.</footer>
-  </body>
-</html>`;
-          }
-
-          function openPrintView(planOverride) {
-            const plan = planOverride || currentPlan;
-            if (!plan) {
-              alert('Generate a devotional before printing.');
-              return;
-            }
-
-            const printable = createPrintableHtml(plan);
-            const printWindow = window.open('', '_blank', 'noopener');
-            if (!printWindow) {
-              alert('Please allow pop-ups so we can open a printable devotional.');
-              return;
-            }
-
-            printWindow.document.open();
-            printWindow.document.write(printable);
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-          }
-
-          function sharePlanByEmail(planOverride) {
-            const plan = planOverride || currentPlan;
-            if (!plan) {
-              alert('Generate a devotional before emailing it.');
-              return;
-            }
-
-            const subjectFocus = truncateText(sanitizePlainText(plan.focus || 'my devotional'), 60);
-            const subject = encodeURIComponent(`7-Day Devotional: ${subjectFocus}`);
-            const body = encodeURIComponent(planToPlainText(plan));
-
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-          }
-        })();
-
-        (function () {
-          if (typeof L === 'undefined') return;
-
-          const mapContainer = document.getElementById('parish-map');
-          if (!mapContainer) return;
-
-          const map = L.map(mapContainer, { zoomControl: false }).setView([39.8283, -98.5795], 4);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19,
-          }).addTo(map);
-          L.control
-            .zoom({ position: 'bottomright' })
-            .addTo(map);
-
-          const markers = L.layerGroup().addTo(map);
-          const status = document.getElementById('parish-status');
-          const resultsList = document.getElementById('parish-results');
-          const searchForm = document.getElementById('parish-search-form');
-          const searchInput = document.getElementById('parish-search');
-          const locateButton = document.getElementById('parish-locate');
-
-          if (status) {
-            status.classList.add('mt-2');
-          }
-
-          const toneClasses = {
-            info: ['text-stone-600'],
-            success: ['text-emerald-600'],
-            error: ['text-rose-600'],
-          };
-
-          function safeText(value) {
-            return String(value || '')
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
-          }
-
-          function setStatus(message, tone = 'info') {
-            if (!status) return;
-            status.textContent = message;
-            status.classList.remove('hidden', 'text-stone-600', 'text-emerald-600', 'text-rose-600');
-            const classes = toneClasses[tone] || toneClasses.info;
-            status.classList.add(...classes);
-          }
-
-          function clearStatus() {
-            if (!status) return;
-            status.classList.add('hidden');
-            status.textContent = '';
-            status.classList.remove('text-stone-600', 'text-emerald-600', 'text-rose-600');
-          }
-
-          function resetResults() {
-            markers.clearLayers();
-            if (resultsList) {
-              resultsList.innerHTML = '';
-            }
-          }
-
-          function renderLocations(locations, descriptor) {
-            resetResults();
-
-            if (!Array.isArray(locations) || locations.length === 0) {
-              setStatus(`We couldn't find Catholic churches near ${descriptor}. Try another search.`, 'error');
-              return;
-            }
-
-            const bounds = [];
-
-            locations.forEach((location) => {
-              const latitude = parseFloat(location.lat);
-              const longitude = parseFloat(location.lon);
-              if (Number.isNaN(latitude) || Number.isNaN(longitude)) return;
-
-              const fullName = location.display_name || 'Catholic Church';
-              const [primaryName, ...detailParts] = fullName.split(',');
-              const heading = (primaryName || 'Catholic Church').trim();
-              const details = detailParts.join(',').trim();
-              const marker = L.marker([latitude, longitude]).addTo(markers);
-              const popupContent = details
-                ? `<strong>${safeText(heading)}</strong><br />${safeText(details)}`
-                : `<strong>${safeText(heading)}</strong>`;
-              marker.bindPopup(popupContent);
-              bounds.push([latitude, longitude]);
-
-              if (resultsList) {
-                const item = document.createElement('li');
-                item.className = 'rounded-2xl border border-stone-200 bg-[var(--color-morning-sky)]/95 p-3 shadow-sm';
-                const mapLink = `https://www.openstreetmap.org/?mlat=${latitude.toFixed(5)}&mlon=${longitude.toFixed(5)}#map=16/${latitude.toFixed(5)}/${longitude.toFixed(5)}`;
-                item.innerHTML = `
-                  <p class="font-semibold text-stone-900">${safeText(heading)}</p>
-                  ${
-                    details
-                      ? `<p class="mt-1 text-xs text-stone-600">${safeText(details)}</p>`
-                      : ''
-                  }
-                  <div class="mt-2">
-                    <a
-                      class="inline-flex items-center gap-2 rounded-full bg-[var(--color-morning-sky)] px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-cerulean)]/30 transition hover:bg-[var(--color-cerulean)] hover:text-white"
-                      href="${mapLink}"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View on map
-                    </a>
-                  </div>
-                `;
-                item.addEventListener('mouseenter', () => marker.openPopup());
-                item.addEventListener('mouseleave', () => marker.closePopup());
-                item.addEventListener('click', () => {
-                  map.setView([latitude, longitude], 15);
-                  marker.openPopup();
-                });
-                resultsList.appendChild(item);
-              }
-            });
-
-            if (bounds.length > 0) {
-              map.fitBounds(bounds, { padding: [24, 24], maxZoom: 15 });
-            }
-
-            setStatus(`Showing Catholic churches near ${descriptor}.`, 'success');
-          }
-
-          async function fetchLocations(url, descriptor) {
-            try {
-              setStatus('Searching for Catholic churches...', 'info');
-              const response = await fetch(url, {
-                headers: {
-                  Accept: 'application/json',
-                },
-              });
-              if (!response.ok) {
-                throw new Error('Request failed');
-              }
-              const data = await response.json();
-              renderLocations(data, descriptor);
-            } catch (error) {
-              console.error('Parish finder error:', error);
-              resetResults();
-              setStatus('We could not load parish information right now. Please try again soon.', 'error');
-            }
-          }
-
-          function searchByQuery(query) {
-            if (!query) {
-              setStatus('Please enter a city, ZIP code, or parish name to search.', 'error');
-              return;
-            }
-
-            const descriptor = query;
-            const url = `https://nominatim.openstreetmap.org/search?format=json&limit=8&dedupe=1&q=${encodeURIComponent(
-              `Catholic Church near ${query}`
-            )}`;
-            fetchLocations(url, descriptor);
-          }
-
-          function searchByCoordinates(latitude, longitude) {
-            const descriptor = 'you';
-            const delta = 0.45;
-            const viewbox = [longitude - delta, latitude + delta, longitude + delta, latitude - delta]
-              .map((value) => value.toFixed(4))
-              .join(',');
-            const url = `https://nominatim.openstreetmap.org/search?format=json&limit=8&dedupe=1&bounded=1&viewbox=${viewbox}&q=${encodeURIComponent(
-              'Catholic Church'
-            )}`;
-            fetchLocations(url, descriptor);
-          }
-
-          if (searchForm) {
-            searchForm.addEventListener('submit', (event) => {
-              event.preventDefault();
-              const value = searchInput ? searchInput.value.trim() : '';
-              searchByQuery(value);
-            });
-          }
-
-          if (locateButton) {
-            locateButton.addEventListener('click', () => {
-              if (!navigator.geolocation) {
-                setStatus('Location services are not supported on this device. Please enter a city or ZIP instead.', 'error');
-                return;
-              }
-
-              setStatus('Locating you...', 'info');
-              navigator.geolocation.getCurrentPosition(
-                (position) => {
-                  const { latitude, longitude } = position.coords;
-                  map.setView([latitude, longitude], 12);
-                  searchByCoordinates(latitude, longitude);
-                },
-                () => {
-                  setStatus('We could not access your location. Please enter a city or ZIP code instead.', 'error');
-                }
-              );
-            });
-          }
-
-          clearStatus();
-        })();
-      </script>
-      <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-      </script>
-    </footer>
-  </body>
+</head>
+<body>
+    <div class="container">
+        <div class="eyebrow">100% FREE AI TOOL</div>
+        
+        <h1>Your Personal AI Guide to Understanding the Bible</h1>
+        
+        <p class="subheadline">
+            Get personalized scripture guidance and custom study plans tailored to your journey—completely free.
+        </p>
+        
+        <div class="value-props">
+            <div class="value-prop">
+                <div class="checkmark">✓</div>
+                <div class="value-text">AI-powered guidance through scripture passages and teachings</div>
+            </div>
+            
+            <div class="value-prop">
+                <div class="checkmark">✓</div>
+                <div class="value-text">Custom Bible study plans created just for you</div>
+            </div>
+            
+            <div class="value-prop">
+                <div class="checkmark">✓</div>
+                <div class="value-text">100% free—no credit card, no catch, no strings attached</div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <a href="https://groundedthroughfaith.org" class="cta-button">Try It Out Free</a>
+            
+            <p class="guarantee">⚡ Available 24/7 • Start in 30 Seconds</p>
+            
+            <p class="no-risk">You literally have nothing to lose and everything to gain.</p>
+        </div>
+    </div>
+</body>
 </html>
