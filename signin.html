@@ -35,146 +35,53 @@
     </style>
 </head>
 <body class="bg-gradient-to-b from-[var(--color-morning-sky)] via-[var(--color-mist)]/40 to-[var(--color-honey)]/30 text-stone-800">
-    <header class="relative overflow-hidden">
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--color-morning-sky)]/80 via-[var(--color-mist)]/70 to-[var(--color-honey)]/25" aria-hidden="true"></div>
-        <div class="pointer-events-none absolute -left-20 top-10 h-60 w-60 rounded-full bg-[var(--color-honey)]/20 blur-3xl" aria-hidden="true"></div>
-        <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl" aria-hidden="true"></div>
-        <nav class="relative z-10 mx-auto mt-6 flex max-w-6xl flex-col items-center gap-4 rounded-full border border-[var(--color-honey)]/40 bg-[var(--color-morning-sky)]/90 px-6 py-5 shadow-lg shadow-[var(--color-mist)]/70 backdrop-blur md:flex-row md:justify-between md:gap-6">
-            <div class="text-center md:text-left">
-                <a href="index.html" class="text-lg font-semibold tracking-wide text-stone-900 transition hover:text-[var(--color-honey)]">Grounded Through Faith</a>
-                <p class="text-sm text-stone-500">Walk with Jesus.</p>
-            </div>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
-                <a href="faith-formation-ai.html" class="transition hover:text-[var(--color-honey)]">Faith Formation AI</a>
-                <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
-                <a href="signin.html" class="transition text-[var(--color-cerulean)]">Sign In</a>
-                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
-            </div>
-            <a href="#member-register" class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Create Free Account</a>
-        </nav>
-        <section class="relative z-10 mx-auto flex max-w-4xl flex-col gap-6 px-6 pb-24 pt-20 text-center">
-            <span class="mx-auto inline-flex items-center gap-2 rounded-full bg-[var(--color-honey)]/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-cerulean)]">Free Account</span>
-            <h1 class="section-title text-4xl font-semibold text-stone-900 md:text-5xl">Create your free account</h1>
-            <p class="mx-auto max-w-2xl text-base text-stone-600">Step 1: create a Grounded Through Faith login with your email and a password you choose. Step 2: sign in to save your Faith Formation AI chats and resources.</p>
-        </section>
-    </header>
-    <main class="relative z-10 space-y-20 pb-24">
-        <section class="mx-auto max-w-5xl px-6">
-            <div class="rounded-3xl border border-[var(--color-mist)]/70 bg-[var(--color-morning-sky)]/95 p-8 shadow-2xl">
-                <div class="grid gap-8 md:grid-cols-2">
-                    <div class="space-y-4 rounded-3xl bg-white/85 p-6 text-sm text-stone-700 shadow-inner">
-                        <form id="member-register" class="space-y-4 border-b border-[var(--color-cerulean)]/15 pb-6">
-                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Step 1: Create account</div>
-                            <h2 class="section-title text-3xl font-semibold text-stone-900">Set up your login</h2>
-                            <p class="text-stone-600">Create your email and password to start. You will use this login on every device.</p>
-                            <div class="space-y-2">
-                                <label for="register-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
-                                <input id="register-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
-                            </div>
-                            <div class="space-y-2">
-                                <label for="register-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                                <input id="register-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
-                            </div>
-                            <div class="space-y-2">
-                                <label for="register-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
-                                <input id="register-password-confirm" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
-                            </div>
-                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Create account</button>
-                            <p id="register-status" class="hidden text-sm" aria-live="polite"></p>
-                        </form>
-                        <form id="member-signin" class="space-y-4">
-                            <div class="rounded-xl border border-[var(--color-cerulean)]/20 bg-[var(--color-morning-sky)]/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Step 2: Sign in</div>
-                            <h2 class="section-title text-3xl font-semibold text-stone-900" id="signin-heading">Sign in to your account</h2>
-                            <p class="text-stone-600" id="signin-subhead">Use the email and password you just created. We will remember this login for every visit.</p>
-                            <div class="space-y-2">
-                                <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
-                                <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
-                            </div>
-                            <div class="space-y-2">
-                                <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                                <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white/90 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Your saved password" />
-                            </div>
-                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign In</button>
-                            <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
-                        </form>
-                        <div id="password-setup" class="hidden space-y-3 rounded-2xl border border-[var(--color-cerulean)]/40 bg-[var(--color-morning-sky)]/80 p-4 text-sm text-stone-700">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Set your new password</p>
-                                <p class="text-stone-600">You signed in with a temporary access code. Save a password now to keep logging in on any device.</p>
-                            </div>
-                            <div class="grid gap-3 md:grid-cols-2">
-                                <div class="space-y-1">
-                                    <label for="setup-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
-                                    <input id="setup-password" type="password" minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
-                                </div>
-                                <div class="space-y-1">
-                                    <label for="setup-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
-                                    <input id="setup-password-confirm" type="password" minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter password" />
-                                </div>
-                            </div>
-                            <button type="button" id="setup-submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Save password &amp; continue</button>
-                        </div>
-                        <p class="text-xs text-stone-500">We’ll securely save your portal progress to your account so you can pick up where you left off on any device.</p>
-                    </div>
-                    <div id="recovery-panel" class="hidden space-y-4 rounded-3xl border border-[var(--color-cerulean)]/30 bg-[var(--color-morning-sky)]/70 p-6 text-sm text-stone-700 shadow-inner">
-                        <div class="space-y-1">
-                            <p class="text-base font-semibold text-stone-900">Reset your password</p>
-                            <p class="text-xs text-stone-600">Request a reset link, then enter the code we email you along with a new password to get back in.</p>
-                        </div>
-                        <form id="recovery-request" class="space-y-3 text-sm">
-                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email for your account</label>
-                            <input id="recovery-email" type="email" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
-                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2 font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5">Send reset code</button>
-                        </form>
-                        <form id="recovery-complete" class="space-y-3 text-sm">
-                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Reset code</label>
-                            <input id="recovery-token" type="text" required class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Paste the code" />
-                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">New password</label>
-                            <input id="recovery-password" type="password" required minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
-                            <input id="recovery-password-confirm" type="password" required minlength="8" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Confirm new password" />
-                            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-[var(--color-cerulean)] px-4 py-2 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#a67925]">Update password</button>
-                            <p class="text-xs text-stone-500">We’ll sign you in after updating your password.</p>
-                            <p id="recovery-code-display" class="hidden break-all text-[11px] text-stone-500"></p>
-                        </form>
-                        <p id="recovery-status" class="hidden text-sm" aria-live="polite"></p>
-                    </div>
-                    <div class="space-y-4 rounded-3xl border border-dashed border-[var(--color-cerulean)]/40 bg-white/85 p-6 text-sm text-stone-700">
-                        <h3 class="text-xl font-semibold text-stone-900">After you sign in</h3>
-                        <ol class="list-decimal space-y-3 pl-5">
-                            <li>Your Bible tracker, custom devotionals, and AI sessions stay synced to your account.</li>
-                            <li>We will redirect you to your account portal to keep going.</li>
-                            <li>Use the portal to revisit saved studies and keep chatting with Faith Formation AI.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="mx-auto max-w-4xl px-6">
-            <div class="rounded-3xl border border-[var(--color-mist)]/60 bg-white/90 p-8 text-center shadow-xl">
-                <h2 class="section-title text-3xl font-semibold text-stone-900">Ready to keep chatting?</h2>
-                <p class="mt-3 text-sm text-stone-600">Create a free account to keep going after your five complimentary Faith Formation AI chats and to save your history across devices.</p>
-                <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
-                    <a href="#member-register" class="inline-flex items-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Create free account</a>
-                    <a href="#member-signin" class="inline-flex items-center rounded-2xl border border-[var(--color-cerulean)]/40 px-5 py-3 text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">Sign in</a>
-                </div>
-                <p class="mt-4 text-xs text-stone-500">Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
-            </div>
-        </section>
-    </main>
-    <footer class="relative overflow-hidden bg-[var(--color-cerulean)] text-white">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#2f1d10]/50 via-transparent to-[var(--color-morning-sky)]/20" aria-hidden="true"></div>
-        <div class="relative mx-auto max-w-6xl space-y-4 px-6 py-12 text-sm text-white/80">
-            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-                <p>© <span id="signin-year"></span> Grounded Through Faith. Made for the mission.</p>
-                <div class="flex flex-wrap items-center justify-center gap-4">
-                    <a href="mailto:TheMissionEffect@gmail.com" class="hover:text-white">TheMissionEffect@gmail.com</a>
-                    <a href="#member-register" class="hover:text-white">Create account</a>
-                    <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
-                    <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
-                </div>
-            </div>
+    <main class="min-h-screen px-6 py-16">
+        <div class="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <a href="index.html" class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Grounded Through Faith</a>
+            <h1 class="section-title mt-4 text-3xl font-semibold text-stone-900 md:text-4xl">Sign in or create your account</h1>
+            <p class="mt-3 max-w-2xl text-sm text-stone-600 md:text-base">
+                Save Faith Formation AI chats and keep your resources synced across devices.
+            </p>
         </div>
-    </footer>
+        <div class="mx-auto mt-10 max-w-2xl rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-8 shadow-xl shadow-[var(--color-mist)]/50">
+            <form id="member-register" class="space-y-4">
+                <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Create account</div>
+                <h2 class="section-title text-2xl font-semibold text-stone-900">Start here</h2>
+                <div class="space-y-2">
+                    <label for="register-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                    <input id="register-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                </div>
+                <div class="space-y-2">
+                    <label for="register-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                    <input id="register-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                </div>
+                <div class="space-y-2">
+                    <label for="register-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
+                    <input id="register-password-confirm" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
+                </div>
+                <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-honey)] px-5 py-3 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Create account</button>
+                <p id="register-status" class="hidden text-sm" aria-live="polite"></p>
+            </form>
+            <div class="mt-8 border-t border-[var(--color-mist)]/60 pt-8">
+                <form id="member-signin" class="space-y-4">
+                    <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Sign in</div>
+                    <h2 class="section-title text-2xl font-semibold text-stone-900" id="signin-heading">Welcome back</h2>
+                    <p class="text-sm text-stone-600" id="signin-subhead">Use the email and password tied to your account.</p>
+                    <div class="space-y-2">
+                        <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                        <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                        <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Your saved password" />
+                    </div>
+                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--color-honey)]/70 bg-white px-5 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">Sign in</button>
+                    <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
+                </form>
+            </div>
+            <p class="mt-8 text-center text-xs text-stone-500">Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
+        </div>
+    </main>
     <script>
         // Client-side authentication helper for the free account flow:
         // 1) Create an email/password account

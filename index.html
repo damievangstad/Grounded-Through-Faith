@@ -90,6 +90,106 @@
             display: block;
         }
 
+        .chat-active .chat-suggestions {
+            display: none;
+        }
+
+        .chat-suggestions {
+            gap: 14px;
+        }
+
+        .chat-suggestion {
+            position: relative;
+            border-radius: 999px;
+            border: 1px solid var(--color-mist);
+            background: transparent;
+            padding: 10px 20px;
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--color-cerulean);
+            transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .chat-suggestion::before,
+        .chat-suggestion::after {
+            position: absolute;
+            color: var(--color-honey);
+            font-size: 1.1rem;
+        }
+
+        .chat-suggestion::before {
+            content: "“";
+            left: 10px;
+            top: 6px;
+        }
+
+        .chat-suggestion::after {
+            content: "”";
+            right: 10px;
+            bottom: 4px;
+        }
+
+        .chat-suggestion:hover,
+        .chat-suggestion:focus-visible {
+            border-color: var(--color-honey);
+            color: var(--color-cerulean);
+            transform: translateY(-2px);
+        }
+
+        .chat-bubble {
+            line-height: 1.6;
+        }
+
+        .chat-bubble--assistant {
+            border: 1px solid rgba(122, 90, 42, 0.08);
+        }
+
+        .chat-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .chat-title {
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #3b2b18;
+        }
+
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            padding-left: 0.4rem;
+            border-left: 2px solid rgba(201, 160, 58, 0.25);
+        }
+
+        .chat-section-title {
+            font-weight: 600;
+            color: #4a3521;
+        }
+
+        .chat-list {
+            margin: 0;
+            padding-left: 1.1rem;
+        }
+
+        .chat-list li {
+            margin: 0.15rem 0;
+        }
+
+        .chat-line {
+            margin: 0;
+        }
+
+        .chat-ref {
+            font-size: 0.85em;
+            letter-spacing: 0.02em;
+            color: #6b4c25;
+        }
+
         .chat-cursor {
             display: inline-block;
             margin-left: 2px;
@@ -196,17 +296,14 @@
                 <div class="chat-messages max-h-[360px] space-y-4 overflow-y-auto pr-2 text-sm text-stone-700 md:text-base"
                      data-chat-messages></div>
             </div>
-            <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">
-                <button type="button"
-                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+            <div class="chat-suggestions mt-6 flex flex-wrap justify-center text-sm" data-chat-suggestions>
+                <button type="button" class="chat-suggestion" data-chat-suggestion>
                     Create a 7-day devotional
                 </button>
-                <button type="button"
-                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+                <button type="button" class="chat-suggestion" data-chat-suggestion>
                     Help me study Scripture
                 </button>
-                <button type="button"
-                        class="rounded-full border border-[var(--color-mist)]/70 bg-white/80 px-4 py-2 font-medium text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">
+                <button type="button" class="chat-suggestion" data-chat-suggestion>
                     I'm wrestling with a question
                 </button>
             </div>
@@ -217,6 +314,7 @@
         const chatBar = document.querySelector('.chat-bar');
         const chatInput = chatBar ? chatBar.querySelector('input') : null;
         const chatMessages = document.querySelector('[data-chat-messages]');
+        const chatSuggestions = document.querySelector('[data-chat-suggestions]');
         const chatEndpoint =
             (typeof window !== 'undefined' && window.GTF_CHAT_ENDPOINT) ||
             document.documentElement.getAttribute('data-chat-endpoint') ||
@@ -256,14 +354,103 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        const emojiLeadPattern = /^[\uD800-\uDBFF][\uDC00-\uDFFF]/;
+
+        function splitParagraphs(text) {
+            const normalized = text.replace(/\r\n/g, '\n');
+            const lines = normalized.split('\n');
+            const paragraphs = [];
+            let current = [];
+
+            lines.forEach((line) => {
+                const trimmed = line.trim();
+                if (!trimmed) {
+                    if (current.length) {
+                        paragraphs.push(current);
+                        current = [];
+                    }
+                    return;
+                }
+                current.push(trimmed);
+            });
+
+            if (current.length) paragraphs.push(current);
+            return paragraphs;
+        }
+
+        function renderAssistantContent(container, content) {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            const paragraphs = splitParagraphs(content);
+            if (!paragraphs.length) {
+                container.textContent = content;
+                return;
+            }
+
+            paragraphs.forEach((lines, index) => {
+                const firstLine = lines[0] || '';
+                const hasEmojiLead = emojiLeadPattern.test(firstLine);
+
+                if (index === 0 && lines.length === 1) {
+                    const title = document.createElement('div');
+                    title.className = 'chat-title';
+                    title.textContent = firstLine;
+                    container.appendChild(title);
+                    return;
+                }
+
+                if (hasEmojiLead && lines.length > 1) {
+                    const section = document.createElement('div');
+                    section.className = 'chat-section';
+
+                    const sectionTitle = document.createElement('div');
+                    sectionTitle.className = index === 0 ? 'chat-title' : 'chat-section-title';
+                    sectionTitle.textContent = firstLine;
+                    section.appendChild(sectionTitle);
+
+                    const list = document.createElement('ul');
+                    list.className = 'chat-list';
+                    lines.slice(1).forEach((line) => {
+                        const item = document.createElement('li');
+                        item.textContent = line;
+                        if (emojiLeadPattern.test(line)) {
+                            item.className = 'chat-ref';
+                        }
+                        list.appendChild(item);
+                    });
+                    section.appendChild(list);
+                    container.appendChild(section);
+                    return;
+                }
+
+                const paragraph = document.createElement('div');
+                lines.forEach((line) => {
+                    const lineEl = document.createElement('p');
+                    lineEl.className = 'chat-line';
+                    lineEl.textContent = line;
+                    paragraph.appendChild(lineEl);
+                });
+                container.appendChild(paragraph);
+            });
+        }
+
         function buildMessageBubble(role, content, withCursor) {
             const bubble = document.createElement('div');
-            const text = document.createElement('span');
+            const contentNode = document.createElement('div');
             bubble.className = role === 'user'
-                ? 'ml-auto max-w-[85%] rounded-2xl bg-[var(--color-honey)]/20 px-4 py-3 text-stone-800'
-                : 'max-w-[85%] rounded-2xl bg-[var(--color-mist)]/40 px-4 py-3 text-stone-700';
-            text.textContent = content;
-            bubble.appendChild(text);
+                ? 'chat-bubble chat-bubble--user ml-auto max-w-[85%] rounded-2xl bg-[var(--color-honey)]/20 px-4 py-3 text-stone-800'
+                : 'chat-bubble chat-bubble--assistant max-w-[85%] rounded-2xl bg-[var(--color-mist)]/40 px-4 py-3 text-stone-700';
+            contentNode.className = 'chat-content';
+
+            if (role === 'assistant') {
+                renderAssistantContent(contentNode, content);
+            } else {
+                contentNode.textContent = content;
+            }
+
+            bubble.appendChild(contentNode);
 
             let cursor = null;
             if (withCursor) {
@@ -273,15 +460,15 @@
                 bubble.appendChild(cursor);
             }
 
-            return { bubble, text, cursor };
+            return { bubble, contentNode, cursor };
         }
 
         function appendMessage(role, content, withCursor = false) {
             if (!chatMessages) return { text: null, cursor: null };
-            const { bubble, text, cursor } = buildMessageBubble(role, content, withCursor);
+            const { bubble, contentNode, cursor } = buildMessageBubble(role, content, withCursor);
             chatMessages.appendChild(bubble);
             scrollMessagesToBottom();
-            return { text, cursor };
+            return { text: contentNode, cursor };
         }
 
         function setStreamingState(streaming) {
@@ -323,7 +510,7 @@
                 });
             } catch (error) {
                 messages[assistantIndex].content = 'Sorry, something went wrong.';
-                if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                if (activeAssistant) renderAssistantContent(activeAssistant, messages[assistantIndex].content);
                 if (activeCursor) activeCursor.remove();
                 setStreamingState(false);
                 return;
@@ -331,7 +518,7 @@
 
             if (!response.ok || !response.body) {
                 messages[assistantIndex].content = 'Sorry, something went wrong.';
-                if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                if (activeAssistant) renderAssistantContent(activeAssistant, messages[assistantIndex].content);
                 if (activeCursor) activeCursor.remove();
                 setStreamingState(false);
                 return;
@@ -370,12 +557,12 @@
                     if (payload?.delta) {
                         messages[assistantIndex].content += payload.delta;
                         if (activeAssistant) {
-                            activeAssistant.textContent = messages[assistantIndex].content;
+                            renderAssistantContent(activeAssistant, messages[assistantIndex].content);
                             scrollMessagesToBottom();
                         }
                     } else if (payload?.error) {
                         messages[assistantIndex].content = 'Sorry, something went wrong.';
-                        if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                        if (activeAssistant) renderAssistantContent(activeAssistant, messages[assistantIndex].content);
                         doneStreaming = true;
                         break;
                     }
@@ -408,6 +595,18 @@
                 if (!text || isStreaming) return;
                 chatInput.value = '';
                 sendMessage(text);
+            });
+        }
+
+        if (chatSuggestions && chatInput) {
+            chatSuggestions.addEventListener('click', (event) => {
+                const target = event.target.closest('[data-chat-suggestion]');
+                if (!target) return;
+                const text = target.textContent.trim();
+                if (!text) return;
+                setChatActive(true);
+                chatInput.value = text;
+                chatInput.focus();
             });
         }
     </script>

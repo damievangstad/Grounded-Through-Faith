@@ -403,7 +403,7 @@
                 setFeedback('Praying with your request...', 'info');
                 toggleSubmitting(true);
                 currentResponse = { prompt: displayPrompt, text: '', mode: selectedMode };
-                const showPortalSave = portalAvailable && selectedMode !== 'question';
+                const showPortalSave = portalAvailable && selectedMode === 'study';
                 renderResponse(currentResponse, { isFinal: false, showPortalSave });
 
                 try {
@@ -587,7 +587,7 @@
                     ? 'Review prayerfully before sharing with others.'
                     : 'Faith Formation AI is gathering a response rooted in Scripture.';
                 const portalNote = options.isFinal && options.showPortalSave
-                    ? '<p class="text-xs text-[var(--color-cerulean)]">Track this study in your member portal.</p>'
+                    ? '<p class="text-xs text-[var(--color-cerulean)]">Saved study plans appear in your member dashboard.</p>'
                     : '';
 
                 results.innerHTML = `
@@ -622,7 +622,7 @@
             function renderActions(showPortalSave) {
                 const portalButton = showPortalSave
                     ? `<button id="assistant-save" type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-cerulean)]/40 px-4 py-2 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">
-                            Save to Member Portal
+                            Save as Custom Study Plan
                         </button>`
                     : '';
 
@@ -725,7 +725,7 @@
                     mode: meta.mode || null,
                 };
 
-                const showPortalSave = portalAvailable && currentResponse.mode !== 'question';
+                const showPortalSave = portalAvailable && currentResponse.mode === 'study';
                 renderResponse(currentResponse, { isFinal: true, showPortalSave });
             }
 
