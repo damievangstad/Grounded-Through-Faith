@@ -124,10 +124,8 @@ export async function onRequestPost({ request, env }) {
   try {
     if (!env.OPENAI_API_KEY) {
       const body =
-        `event: response.error\n` +
-        `data: ${JSON.stringify({ message: "Missing OpenAI credentials." })}\n\n` +
-        `event: response.completed\n` +
-        `data: {}\n\n`;
+        `data: ${JSON.stringify({ error: "Missing OpenAI credentials." })}\n\n` +
+        `data: [DONE]\n\n`;
       return new Response(body, { status: 500, headers: HEADERS });
     }
 
@@ -135,10 +133,8 @@ export async function onRequestPost({ request, env }) {
 
     if (!conversationId || typeof conversationId !== "string") {
       const body =
-        `event: response.error\n` +
-        `data: ${JSON.stringify({ message: "Conversation id required." })}\n\n` +
-        `event: response.completed\n` +
-        `data: {}\n\n`;
+        `data: ${JSON.stringify({ error: "Conversation id required." })}\n\n` +
+        `data: [DONE]\n\n`;
       return new Response(body, { status: 400, headers: HEADERS });
     }
 
@@ -192,10 +188,8 @@ export async function onRequestPost({ request, env }) {
     if (!upstream.ok || !upstream.body) {
       const text = await upstream.text().catch(() => "Upstream error");
       const body =
-        `event: response.error\n` +
-        `data: ${JSON.stringify({ message: text })}\n\n` +
-        `event: response.completed\n` +
-        `data: {}\n\n`;
+        `data: ${JSON.stringify({ error: text })}\n\n` +
+        `data: [DONE]\n\n`;
       return new Response(body, { status: 500, headers: HEADERS });
     }
 
@@ -203,8 +197,13 @@ export async function onRequestPost({ request, env }) {
     const stream = new TransformStream();
     const writer = stream.writable.getWriter();
     const decoder = new TextDecoder("utf-8");
+    const encoder = new TextEncoder();
     let buffer = "";
     let assistantText = "";
+
+    const writeSse = async (data) => {
+      await writer.write(encoder.encode(`data: ${data}\n\n`));
+    };
 
     const processStream = async () => {
       try {
@@ -214,7 +213,6 @@ export async function onRequestPost({ request, env }) {
           done = streamDone;
 
           if (value) {
-            await writer.write(value);
             buffer += decoder.decode(value, { stream: !done });
           }
 
@@ -257,7 +255,13 @@ export async function onRequestPost({ request, env }) {
               const delta = typeof payload === "string" ? payload : payload?.delta || "";
               if (delta) {
                 assistantText += delta;
+                await writeSse(JSON.stringify({ delta }));
               }
+            } else if (eventName === "response.error") {
+              const message = typeof payload === "string" ? payload : payload?.message || "Upstream error";
+              await writeSse(JSON.stringify({ error: message }));
+              done = true;
+              break;
             } else if (eventName === "response.completed") {
               done = true;
               break;
@@ -268,6 +272,11 @@ export async function onRequestPost({ request, env }) {
         }
       } catch (error) {
         console.error("Chat stream error:", error);
+        try {
+          await writeSse(JSON.stringify({ error: "Stream error" }));
+        } catch (streamError) {
+          console.error("Chat stream write failed:", streamError);
+        }
       } finally {
         try {
           if (db && assistantText.trim()) {
@@ -282,6 +291,11 @@ export async function onRequestPost({ request, env }) {
         } catch (error) {
           console.warn("Chat message persistence failed:", error);
         }
+        try {
+          await writeSse("[DONE]");
+        } catch (error) {
+          console.error("Chat stream completion write failed:", error);
+        }
         await writer.close();
       }
     };
@@ -291,10 +305,8 @@ export async function onRequestPost({ request, env }) {
     return new Response(stream.readable, { status: 200, headers: HEADERS });
   } catch (error) {
     const body =
-      `event: response.error\n` +
-      `data: ${JSON.stringify({ message: error.message || "Server error" })}\n\n` +
-      `event: response.completed\n` +
-      `data: {}\n\n`;
+      `data: ${JSON.stringify({ error: error.message || "Server error" })}\n\n` +
+      `data: [DONE]\n\n`;
     return new Response(body, { status: 500, headers: HEADERS });
   }
 }

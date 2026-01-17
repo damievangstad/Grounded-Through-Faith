@@ -88,6 +88,18 @@
         .chat-active .chat-panel {
             display: block;
         }
+
+        .chat-cursor {
+            display: inline-block;
+            margin-left: 2px;
+            animation: chat-blink 1s steps(2, start) infinite;
+        }
+
+        @keyframes chat-blink {
+            to {
+                opacity: 0;
+            }
+        }
     </style>
     <script type="application/ld+json">
         {
@@ -168,14 +180,8 @@
                 </div>
             </form>
             <div class="chat-panel mt-8 w-full max-w-3xl rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-6 text-left shadow-2xl shadow-[var(--color-mist)]/50">
-                <div class="space-y-4 text-sm text-stone-700 md:text-base">
-                    <div class="max-w-[85%] rounded-2xl bg-[var(--color-mist)]/40 px-4 py-3 text-stone-700">
-                        Welcome. Share what you are working through and I will respond with Scripture, reflection, and next steps.
-                    </div>
-                    <div class="ml-auto max-w-[85%] rounded-2xl bg-[var(--color-honey)]/20 px-4 py-3 text-stone-800">
-                        I want to better understand David&#39;s story.
-                    </div>
-                </div>
+                <div class="chat-messages max-h-[360px] space-y-4 overflow-y-auto pr-2 text-sm text-stone-700 md:text-base"
+                     data-chat-messages></div>
             </div>
             <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">
                 <button type="button"
@@ -196,11 +202,195 @@
     <script>
         const chatToggle = document.querySelector('[data-chat-toggle]');
         const chatBar = document.querySelector('.chat-bar');
+        const chatInput = chatBar ? chatBar.querySelector('input') : null;
+        const chatMessages = document.querySelector('[data-chat-messages]');
+        const greeting =
+            "Welcome. Share what you are working through and I will respond with Scripture, reflection, and next steps.";
+        const messages = [];
+        let abortController = null;
+        let isStreaming = false;
+        let activeAssistant = null;
+        let activeCursor = null;
+        let conversationId = null;
+
+        function resolveConversationId() {
+            try {
+                const stored = localStorage.getItem('gtf-chat-id');
+                if (stored) return stored;
+                const hasCrypto = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function';
+                const nextId = hasCrypto
+                    ? crypto.randomUUID()
+                    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                localStorage.setItem('gtf-chat-id', nextId);
+                return nextId;
+            } catch (error) {
+                return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            }
+        }
+
+        function setChatActive(active) {
+            if (!chatToggle) return;
+            document.body.classList.toggle('chat-active', active);
+            chatToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
+        }
+
+        function scrollMessagesToBottom() {
+            if (!chatMessages) return;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function buildMessageBubble(role, content, withCursor) {
+            const bubble = document.createElement('div');
+            const text = document.createElement('span');
+            bubble.className = role === 'user'
+                ? 'ml-auto max-w-[85%] rounded-2xl bg-[var(--color-honey)]/20 px-4 py-3 text-stone-800'
+                : 'max-w-[85%] rounded-2xl bg-[var(--color-mist)]/40 px-4 py-3 text-stone-700';
+            text.textContent = content;
+            bubble.appendChild(text);
+
+            let cursor = null;
+            if (withCursor) {
+                cursor = document.createElement('span');
+                cursor.className = 'chat-cursor';
+                cursor.textContent = '|';
+                bubble.appendChild(cursor);
+            }
+
+            return { bubble, text, cursor };
+        }
+
+        function appendMessage(role, content, withCursor = false) {
+            if (!chatMessages) return { text: null, cursor: null };
+            const { bubble, text, cursor } = buildMessageBubble(role, content, withCursor);
+            chatMessages.appendChild(bubble);
+            scrollMessagesToBottom();
+            return { text, cursor };
+        }
+
+        function setStreamingState(streaming) {
+            isStreaming = streaming;
+            if (chatInput) {
+                chatInput.disabled = streaming;
+            }
+        }
+
+        async function sendMessage(userText) {
+            if (!userText || isStreaming) return;
+            setChatActive(true);
+            if (!conversationId) {
+                conversationId = resolveConversationId();
+            }
+
+            messages.push({ role: 'user', content: userText });
+            appendMessage('user', userText);
+
+            const assistantIndex = messages.length;
+            messages.push({ role: 'assistant', content: '' });
+            const assistantNodes = appendMessage('assistant', '', true);
+            activeAssistant = assistantNodes.text;
+            activeCursor = assistantNodes.cursor;
+            setStreamingState(true);
+
+            abortController = new AbortController();
+            let response = null;
+
+            try {
+                response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conversationId,
+                        messages: messages.slice(0, assistantIndex),
+                    }),
+                    signal: abortController.signal,
+                });
+            } catch (error) {
+                messages[assistantIndex].content = 'Sorry, something went wrong.';
+                if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                if (activeCursor) activeCursor.remove();
+                setStreamingState(false);
+                return;
+            }
+
+            if (!response.ok || !response.body) {
+                messages[assistantIndex].content = 'Sorry, something went wrong.';
+                if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                if (activeCursor) activeCursor.remove();
+                setStreamingState(false);
+                return;
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let doneStreaming = false;
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const events = buffer.split('\n\n');
+                buffer = events.pop() || '';
+
+                for (const evt of events) {
+                    const line = evt.split('\n').find((item) => item.startsWith('data:'));
+                    if (!line) continue;
+
+                    const data = line.slice(5).trim();
+                    if (data === '[DONE]') {
+                        doneStreaming = true;
+                        break;
+                    }
+
+                    let payload = null;
+                    try {
+                        payload = JSON.parse(data);
+                    } catch (error) {
+                        payload = null;
+                    }
+
+                    if (payload?.delta) {
+                        messages[assistantIndex].content += payload.delta;
+                        if (activeAssistant) {
+                            activeAssistant.textContent = messages[assistantIndex].content;
+                            scrollMessagesToBottom();
+                        }
+                    } else if (payload?.error) {
+                        messages[assistantIndex].content = 'Sorry, something went wrong.';
+                        if (activeAssistant) activeAssistant.textContent = messages[assistantIndex].content;
+                        doneStreaming = true;
+                        break;
+                    }
+                }
+
+                if (doneStreaming) break;
+            }
+
+            if (activeCursor) activeCursor.remove();
+            setStreamingState(false);
+            activeAssistant = null;
+            activeCursor = null;
+        }
 
         if (chatToggle && chatBar) {
             chatToggle.addEventListener('click', () => {
-                const isActive = document.body.classList.toggle('chat-active');
-                chatToggle.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                const isActive = !document.body.classList.contains('chat-active');
+                setChatActive(isActive);
+            });
+        }
+
+        if (chatMessages) {
+            appendMessage('assistant', greeting);
+        }
+
+        if (chatBar && chatInput) {
+            chatBar.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const text = chatInput.value.trim();
+                if (!text || isStreaming) return;
+                chatInput.value = '';
+                sendMessage(text);
             });
         }
     </script>
