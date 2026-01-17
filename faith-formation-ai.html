@@ -68,19 +68,18 @@
                 <p class="text-sm text-stone-500">Walk with Jesus.</p>
             </div>
             <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-stone-600">
-                <a href="index.html" class="transition hover:text-[var(--color-honey)]">Home</a>
-                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
                 <a href="faith-formation-ai.html" class="transition text-[var(--color-cerulean)]">Faith Formation AI</a>
                 <a href="index.html#study-plans" class="transition hover:text-[var(--color-honey)]">Study Plans</a>
-                <a href="membership.html" class="transition hover:text-[var(--color-honey)]">Membership</a>
+                <a href="signin.html" class="transition hover:text-[var(--color-honey)]">Create Account</a>
                 <a data-auth-link="signin" data-auth-show="signed-out" href="signin.html" class="transition hover:text-[var(--color-honey)]">Sign In</a>
                 <a data-auth-link="portal" data-auth-show="signed-in" href="member-portal.html" class="hidden transition text-[var(--color-cerulean)] hover:text-[var(--color-honey)]">Member Portal</a>
+                <a href="about.html" class="transition hover:text-[var(--color-honey)]">About</a>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <span data-auth-indicator class="hidden rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--color-cerulean)] shadow-sm ring-1 ring-[var(--color-honey)]/50">Signed in</span>
-                <a data-membership-link="checkout" href="membership.html#join"
+                <a href="signin.html?redirect=faith-formation-ai"
                    class="inline-flex items-center rounded-full bg-[var(--color-honey)] px-6 py-2 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">
-                    Join Community
+                    Create Free Account
                 </a>
             </div>
         </nav>
@@ -131,27 +130,26 @@
                         <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Send</button>
                     </div>
                     <p id="assistant-feedback" class="mt-1 hidden text-sm text-stone-600" aria-live="polite"></p>
-                    <p class="text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response. Free visitors receive one prompt—join the community for unlimited access.</p>
+                    <p class="text-xs text-stone-500">Tip: Include names, ministries, or hopes you’re discerning to shape a more personal response. Free visitors receive five prompts—sign in to a free account to keep chatting.</p>
                 </div>
             </form>
             <div id="assistant-results" class="mx-auto mt-10 hidden max-w-3xl space-y-6" aria-live="polite"></div>
             <div id="assistant-paywall" class="mx-auto mt-8 hidden max-w-3xl rounded-3xl border border-[var(--color-cerulean)]/40 bg-white/95 p-6 text-sm text-stone-700 shadow-2xl">
                 <div class="space-y-4">
                     <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Community Member Access</p>
-                        <h3 class="mt-2 text-2xl font-semibold text-stone-900">Unlock unlimited guidance &amp; private community</h3>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Free Account Access</p>
+                        <h3 class="mt-2 text-2xl font-semibold text-stone-900">Continue after 5 free chats</h3>
                     </div>
-                    <p>You've used your complimentary Faith Formation AI response. Become a Community Member to receive unlimited prompts, premium study plans, and access to our moderated Facebook group.</p>
+                    <p>You've used your five free Faith Formation AI chats. Sign in or create a free account to keep the conversation going and save your history.</p>
                     <ul class="space-y-2 text-sm">
-                        <li>✔️ Unlimited Faith Formation AI conversations</li>
-                        <li>✔️ Exclusive study plans &amp; leader resources</li>
-                        <li>✔️ Private Facebook accountability circle</li>
+                        <li>✔️ Keep your prompts and responses synced</li>
+                        <li>✔️ Resume conversations on any device</li>
+                        <li>✔️ Save study plans for later prayer</li>
                     </ul>
                     <div class="flex flex-wrap gap-3">
-                        <a data-membership-link="details" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-[var(--color-cerulean)]/40 px-4 py-3 text-xs font-semibold text-[var(--color-cerulean)] transition hover:-translate-y-0.5 hover:border-[var(--color-cerulean)] hover:text-[#8a6426]">View membership plans</a>
-                        <a data-membership-link="checkout" href="membership.html#join" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Join via Stripe</a>
+                        <a href="signin.html?redirect=faith-formation-ai" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-[var(--color-cerulean)] px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-[var(--color-cerulean)]/40 transition hover:-translate-y-0.5 hover:bg-[#a67925]">Sign in or create a free account</a>
                     </div>
-                    <p class="text-xs text-stone-500">Already part of the community? <a href="signin.html?redirect=faith-formation-ai" class="underline-offset-2 hover:underline">Sign in for full access</a>. Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
+                    <p class="text-xs text-stone-500">Already have a free account? <a href="signin.html?redirect=faith-formation-ai" class="underline-offset-2 hover:underline">Sign in to continue</a>. Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
                 </div>
             </div>
         </section>
@@ -162,7 +160,7 @@
             <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
                 <p>© <span id="faith-formation-year"></span> Grounded Through Faith. Walk with Jesus every day.</p>
                 <div class="flex flex-wrap items-center justify-center gap-4">
-                    <a href="index.html" class="hover:text-white">Home</a>
+                    <a href="faith-formation-ai.html" class="hover:text-white">Faith Formation AI</a>
                     <a href="mens-discipleship.html" class="hover:text-white">Men's Discipleship</a>
                     <a href="thirty-day-purpose.html" class="hover:text-white">30-Day Way of Jesus</a>
                     <a href="strength-in-waiting.html" class="hover:text-white">Strength in Waiting</a>
@@ -171,7 +169,7 @@
             <div class="flex flex-col items-center justify-between gap-3 text-center text-white/70 md:flex-row md:text-left">
                 <p class="font-medium text-white">Contact: <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:text-white hover:underline">TheMissionEffect@gmail.com</a></p>
                 <div class="flex items-center gap-4">
-                    <a href="membership.html#join" data-donation-link class="hover:text-white">Subscribe</a>
+                    <a href="signin.html" class="hover:text-white">Create account</a>
                     <a href="#" data-facebook-link target="_blank" rel="noreferrer" class="hover:text-white">Facebook</a>
                     <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" class="hover:text-white">Instagram</a>
                 </div>
@@ -180,9 +178,8 @@
     </footer>
     <script src="assets/auth-state.js"></script>
     <script src="assets/portal-data.js"></script>
-    <script src="assets/membership-links.js"></script>
     <script>
-        const FREE_USAGE_LIMIT = 1;
+        const FREE_USAGE_LIMIT = 5;
         const FAITH_FORMATION_USAGE_KEY = 'gtfFaithFormationFreeUses';
         const MEMBER_SESSION_KEY = 'gtfMemberSession';
         const CONVERSATION_STORAGE_KEY = 'gtfFaithFormationConversation';
@@ -362,7 +359,7 @@
 
                 if (!hasFreeQuota()) {
                     showPaywall(paywall);
-                    setFeedback('Join the Grounded Through Faith community for unlimited Faith Formation AI access.', 'error');
+                    setFeedback('Please sign in to a free account to continue chatting.', 'error');
                     if (results) {
                         results.classList.add('hidden');
                     }
