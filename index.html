@@ -63,6 +63,23 @@
         details > summary::-webkit-details-marker {
             display: none;
         }
+
+        .chat-toggle svg {
+            transition: transform 0.2s ease;
+        }
+
+        .chat-active .chat-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        .chat-active .chat-bar {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            z-index: 50;
+            width: min(90vw, 48rem);
+            transform: translateX(-50%);
+        }
     </style>
     <script type="application/ld+json">
         {
@@ -124,7 +141,7 @@
             <p class="mt-3 max-w-2xl text-base text-stone-600 md:text-lg">
                 Share your question or formation goal and receive Scripture, reflection, and next steps.
             </p>
-            <form class="mt-10 w-full max-w-3xl">
+            <form class="chat-bar mt-10 w-full max-w-3xl">
                 <div class="relative flex items-center rounded-full border border-[var(--color-mist)]/70 bg-white px-5 py-3 shadow-xl shadow-[var(--color-mist)]/60">
                     <span class="absolute left-6 text-xl font-semibold text-stone-500">+</span>
                     <input type="text"
@@ -132,10 +149,12 @@
                            placeholder="Ask anything"
                            class="w-full bg-transparent py-2 pl-8 pr-24 text-sm text-stone-700 placeholder:text-stone-400 focus:outline-none md:text-base" />
                     <button type="button"
-                            class="absolute right-16 inline-flex h-9 w-9 items-center justify-center rounded-full text-stone-500 transition hover:bg-stone-100"
-                            aria-label="Use voice">
+                            class="chat-toggle absolute right-16 inline-flex h-9 w-9 items-center justify-center rounded-full text-stone-500 transition hover:bg-stone-100"
+                            aria-label="Start chat"
+                            aria-pressed="false"
+                            data-chat-toggle>
                         <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
-                            <path fill="currentColor" d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Zm-5 9a1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.08A7 7 0 0 0 19 12a1 1 0 1 0-2 0 5 5 0 0 1-10 0Z"/>
+                            <path d="M12 5v10m0 0l-4-4m4 4l4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                     <button type="submit"
@@ -163,5 +182,33 @@
             </div>
         </section>
     </header>
+    <script>
+        const chatToggle = document.querySelector('[data-chat-toggle]');
+        const chatBar = document.querySelector('.chat-bar');
+
+        if (chatToggle && chatBar) {
+            chatToggle.addEventListener('click', () => {
+                const isActive = document.body.classList.toggle('chat-active');
+                chatToggle.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
+    </script>
+    <footer class="relative z-10 border-t border-white/60 bg-white/80">
+        <div class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10">
+            <div class="space-y-3">
+                <img src="assets/treelogo.png" alt="Grounded Through Faith logo" class="h-12 w-12 rounded-full shadow-md">
+                <p class="text-sm text-stone-600">Grounded Through Faith equips Catholics with study plans, devotionals, and community resources rooted in Scripture.</p>
+                <p class="text-xs text-stone-500">Contact: groundedthroughfaith@gmail.com</p>
+            </div>
+        </div>
+        <div class="border-t border-[var(--color-mist)]/70 bg-white/90">
+            <div class="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+                <p>© <span id="year"></span> Grounded Through Faith. All rights reserved.</p>
+            </div>
+        </div>
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
 </body>
 </html>
