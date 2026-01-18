@@ -38,45 +38,45 @@
     <main class="min-h-screen px-6 py-16">
         <div class="mx-auto flex max-w-3xl flex-col items-center text-center">
             <a href="index.html" class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-cerulean)]">Grounded Through Faith</a>
-            <h1 class="section-title mt-4 text-3xl font-semibold text-stone-900 md:text-4xl">Sign in or create your account</h1>
+            <h1 class="section-title mt-4 text-3xl font-semibold text-stone-900 md:text-4xl">Sign in to your account</h1>
             <p class="mt-3 max-w-2xl text-sm text-stone-600 md:text-base">
-                Save Faith Formation AI chats and keep your resources synced across devices.
+                Access your saved Faith Formation AI chats and keep your resources synced across devices.
             </p>
         </div>
         <div class="mx-auto mt-10 max-w-2xl rounded-3xl border border-[var(--color-mist)]/70 bg-white/90 p-8 shadow-xl shadow-[var(--color-mist)]/50">
-            <form id="member-register" class="space-y-4">
-                <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Create account</div>
-                <h2 class="section-title text-2xl font-semibold text-stone-900">Start here</h2>
+            <form id="member-signin" class="space-y-4">
+                <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Sign in</div>
+                <h2 class="section-title text-2xl font-semibold text-stone-900" id="signin-heading">Welcome back</h2>
+                <p class="text-sm text-stone-600" id="signin-subhead">Use the email and password tied to your account.</p>
                 <div class="space-y-2">
-                    <label for="register-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
-                    <input id="register-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                    <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                    <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
                 </div>
                 <div class="space-y-2">
-                    <label for="register-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                    <input id="register-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
+                    <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                    <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Your saved password" />
                 </div>
-                <div class="space-y-2">
-                    <label for="register-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
-                    <input id="register-password-confirm" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
-                </div>
-                <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-honey)] px-5 py-3 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Create account</button>
-                <p id="register-status" class="hidden text-sm" aria-live="polite"></p>
+                <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--color-honey)]/70 bg-white px-5 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">Sign in</button>
+                <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
             </form>
             <div class="mt-8 border-t border-[var(--color-mist)]/60 pt-8">
-                <form id="member-signin" class="space-y-4">
-                    <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Sign in</div>
-                    <h2 class="section-title text-2xl font-semibold text-stone-900" id="signin-heading">Welcome back</h2>
-                    <p class="text-sm text-stone-600" id="signin-subhead">Use the email and password tied to your account.</p>
+                <form id="member-register" class="space-y-4">
+                    <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Create account</div>
+                    <h2 class="section-title text-2xl font-semibold text-stone-900">Start here</h2>
                     <div class="space-y-2">
-                        <label for="member-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
-                        <input id="member-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
+                        <label for="register-email" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Email address</label>
+                        <input id="register-email" type="email" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="you@example.com" />
                     </div>
                     <div class="space-y-2">
-                        <label for="member-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
-                        <input id="member-password" type="password" required class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Your saved password" />
+                        <label for="register-password" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Password</label>
+                        <input id="register-password" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Minimum 8 characters" />
                     </div>
-                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--color-honey)]/70 bg-white px-5 py-3 text-sm font-semibold text-[var(--color-cerulean)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-honey)]">Sign in</button>
-                    <p id="signin-status" class="hidden text-sm" aria-live="polite"></p>
+                    <div class="space-y-2">
+                        <label for="register-password-confirm" class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cerulean)]">Confirm password</label>
+                        <input id="register-password-confirm" type="password" required minlength="8" class="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-[var(--color-cerulean)] focus:outline-none focus:ring-2 focus:ring-[var(--color-cerulean)]/30" placeholder="Re-enter your password" />
+                    </div>
+                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-honey)] px-5 py-3 text-sm font-semibold text-stone-900 shadow-lg shadow-[var(--color-honey)]/40 transition hover:-translate-y-0.5 hover:bg-[#b5862d]">Create account</button>
+                    <p id="register-status" class="hidden text-sm" aria-live="polite"></p>
                 </form>
             </div>
             <p class="mt-8 text-center text-xs text-stone-500">Need help? Email <a href="mailto:TheMissionEffect@gmail.com" class="underline-offset-2 hover:underline">TheMissionEffect@gmail.com</a>.</p>
