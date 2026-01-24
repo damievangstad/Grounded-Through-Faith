@@ -234,8 +234,6 @@
              aria-hidden="true"></div>
         <div class="pointer-events-none absolute -left-20 top-10 h-60 w-60 rounded-full bg-[var(--color-honey)]/20 blur-3xl"
              aria-hidden="true"></div>
-        <div class="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[var(--color-honey)]/30 blur-3xl"
-             aria-hidden="true"></div>
 
         <div class="relative z-10 mx-auto flex max-w-6xl justify-end px-6 pt-6">
             <div class="flex flex-wrap items-center justify-end gap-3">
@@ -292,17 +290,6 @@
                 <div class="chat-messages max-h-[360px] space-y-4 overflow-y-auto pr-2 text-sm text-stone-700 md:text-base"
                      data-chat-messages></div>
             </div>
-            <div class="chat-suggestions mt-6 flex flex-wrap justify-center text-sm" data-chat-suggestions>
-                <button type="button" class="chat-suggestion" data-chat-suggestion>
-                    Create a 7-day devotional
-                </button>
-                <button type="button" class="chat-suggestion" data-chat-suggestion>
-                    Help me study Scripture
-                </button>
-                <button type="button" class="chat-suggestion" data-chat-suggestion>
-                    I'm wrestling with a question
-                </button>
-            </div>
         </section>
     </header>
     <script>
@@ -315,8 +302,7 @@
             (typeof window !== 'undefined' && window.GTF_CHAT_ENDPOINT) ||
             document.documentElement.getAttribute('data-chat-endpoint') ||
             '/api/chat';
-        const greeting =
-            "Welcome. Share what you are working through and I will respond with Scripture, reflection, and next steps.";
+        const greeting = "";
         const messages = [];
         let abortController = null;
         let isStreaming = false;
@@ -580,9 +566,7 @@
             });
         }
 
-        if (chatMessages) {
-            appendMessage('assistant', greeting);
-        }
+        // no initial greeting message
 
         if (chatBar && chatInput) {
             chatBar.addEventListener('submit', (event) => {
